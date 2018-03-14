@@ -1,0 +1,28 @@
+import React, { Component } from 'react';
+import { Text, View, AsyncStorage } from 'react-native';
+import { Button } from '../../commons/components';
+import style from 'styled-components/native';
+import { Actions } from 'react-native-router-flux';
+
+export default class Home extends Component {
+  itemExist = async () => {
+    const authentication = await AsyncStorage.getItem('authentication');
+    return authentication || null;
+  }
+
+  logOut = async () => {
+    Actions.login();
+    await AsyncStorage.removeItem('authentication');
+  }
+
+  render() {
+    const { name } = this.props;
+
+    return (
+      <View>
+        <Text>Welcome {name}</Text>
+        <Button title='Log Out' onPress={this.logOut} />
+      </View>
+    )
+  }
+}
