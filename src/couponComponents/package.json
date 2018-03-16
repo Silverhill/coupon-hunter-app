@@ -1,7 +1,0 @@
-{
-  "name": "coupon-components-native",
-  "version": "0.1.0",
-  "description": "Contain all components of Coupon App",
-  "main": "./index.js",
-  "license": "MIT"
-}
