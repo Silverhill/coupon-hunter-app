@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 import { storiesOf } from '@storybook/react-native'
 import { action } from '@storybook/addon-actions'
-import { Input } from '../../src/commons/components'
+import { Input } from 'coupon-components-native'
 
 import CenterView from './CenterView'
 import Section from './Section'

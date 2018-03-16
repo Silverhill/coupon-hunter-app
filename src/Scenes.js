@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
 import { Util, AppLoading } from 'expo';
 import { connect, Provider } from 'react-redux';
 import { Router } from 'react-native-router-flux';
-// import {  } from 'react-intl';
 
 import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
@@ -18,6 +17,9 @@ const RouterWithRedux = connect()(Router);
 
 // Routes
 import AllRoutes from './routes';
+
+// Configs
+import config from '../config';
 
 export default class Scenes extends Component {
   state = {
@@ -36,7 +38,7 @@ export default class Scenes extends Component {
   client = () => {
     const { authentication } = this.state;
 
-    const httpLink = new HttpLink({ uri: 'http://192.168.201.76:3000/graphql' });
+    const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
     const authMiddleware = new ApolloLink((operation, forward) => {
       operation.setContext(({headers = {} }) => {
         return {

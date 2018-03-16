@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 import { storiesOf } from '@storybook/react-native'
 import { action } from '@storybook/addon-actions'
-import { Typo } from '../../src/commons/components';
+import { Typo } from 'coupon-components-native';
 
 import CenterView from './CenterView'
 

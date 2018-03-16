@@ -1,10 +1,8 @@
 import Scenes from './src/Scenes';
 import Storybook from './storybook';
-import { Constants  } from 'expo';
+import config from './config';
 
 let currentEnv = Scenes;
-if(Constants.manifest.env.REACT_NATIVE_ENV === 'storybook') {
-  currentEnv = Storybook;
-}
+if(config.env === 'storybook') currentEnv = Storybook;
 
 export default currentEnv;

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'react-apollo';
 import { Actions, ActionConst } from 'react-native-router-flux';
 
-import { Input, Button } from '../../commons/components';
+import { Input, Button } from 'coupon-components-native';
 import LoginForm from './LoginForm';
 import * as gql from '../../actions/graphql/queries';
 import * as userActions from '../../actions/userActions';

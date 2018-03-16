@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import { Button, ButtonGradient, RoundButton } from '../../src/commons/components';
+import { Button, ButtonGradient, RoundButton } from 'coupon-components-native';
 
 import CenterView from './CenterView'
 
