@@ -6,6 +6,8 @@ import { Palette } from '../../styles';
 import Typo from '../Typography';
 import { Ionicons } from '@expo/vector-icons';
 
+console.log('asd');
+
 const StyledButton = styled(View)`
   height: 45;
   background-color: ${props => {
