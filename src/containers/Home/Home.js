@@ -16,11 +16,11 @@ export default class Home extends Component {
   }
 
   render() {
-    const { name } = this.props;
+    const { title } = this.props;
 
     return (
       <View>
-        <Text>Welcome {name}</Text>
+        <Text>Welcome {title}</Text>
         <Button title='Log Out' onPress={this.logOut} />
       </View>
     )

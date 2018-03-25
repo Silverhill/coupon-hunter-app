@@ -19,6 +19,7 @@ const LoginForm = (props) => {
         keyboardType="email-address"
         autoCapitalize="none"
         name="email"
+        returnKeyType='next'
       />
       <Field
         component={Input}
@@ -27,6 +28,7 @@ const LoginForm = (props) => {
         placeholder='Contraseña'
         secureTextEntry
         name="password"
+        returnKeyType='next'
       />
       <Button title="Ingresar" onPress={props.handleSubmit} />
     </View>
