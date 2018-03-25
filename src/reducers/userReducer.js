@@ -28,9 +28,18 @@ const auth = (state = initialState.auth, action = {}) => {
   }
 };
 
+const profile = (state = initialState.profile, action = {}) => {
+  switch (action.type) {
+    case actionTypes.SET_USER_PROFILE:
+      return action.payload;
+    default:
+      return state;
+  }
+}
 
 const user = combineReducers({
   auth,
+  profile,
 });
 
 export default user;

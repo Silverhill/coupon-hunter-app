@@ -11,6 +11,11 @@ export const authNotValid = () => ({
   type: actionTypes.AUTH_NOTVALID,
 });
 
+export const setUserProfile = (profile) => ({
+  type: actionTypes.SET_USER_PROFILE,
+  payload: profile
+});
+
 export const loginAsync = (token = '') => async (dispatch) => {
   if(token) {
     await AsyncStorage.setItem(HEADER_AUTHENTICATION_KEY, token);

@@ -5,21 +5,29 @@ import { Text, ScrollView, AsyncStorage, StatusBar } from 'react-native';
 import { Button, NavBar } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { Actions } from 'react-native-router-flux';
+import { FormattedDate, injectIntl } from 'react-intl';
 import { HEADER_AUTHENTICATION_KEY, SCENE_KEY_LOGIN } from '../../constants';
 import { query } from '../../services/graphql';
-import { FormattedDate, injectIntl } from 'react-intl';
+import * as userActions from '../../actions/userActions';
 
 const TodayContainer = styled(ScrollView)`
   flex: 1;
   background-color: white;
 `;
 
-@connect(null)
+@connect(state => ({ user: state.user }), {
+  setUserProfile: userActions.setUserProfile,
+})
 @graphql(query.getMyInfo)
 class Home extends Component {
 
+  componentWillReceiveProps(nextProps) {
+    const { setUserProfile } = this.props;
+    if(nextProps.data.me) setUserProfile(nextProps.data.me);
+  }
+
   render() {
-    const { title, data: { loading, error, me }, intl } = this.props;
+    const { title, data: { loading, error }, intl, setUserProfile, user: { profile } } = this.props;
 
     if(loading) return <Text>Loading...</Text>
     else if(error) return <Text>{error.message}</Text>
@@ -38,7 +46,7 @@ class Home extends Component {
           }}
         />
 
-        <Text>Welcome {me.name}</Text>
+        <Text>Welcome {profile.name}</Text>
         <Button title='Log Out' onPress={this.logOut} />
       </TodayContainer>
     )
