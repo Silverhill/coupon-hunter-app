@@ -1,7 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import * as actionTypes from './actionTypes';
 import { HEADER_AUTHENTICATION_KEY } from '../constants';
-import axios from 'axios';
 
 export const authValid = (token) => ({
   type: actionTypes.AUTH_VALID,

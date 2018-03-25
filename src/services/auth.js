@@ -16,8 +16,9 @@ export const getAuthenticationAsync = async () => {
 export const removeAuthenticationAsync = async () => {
   try {
     await AsyncStorage.removeItem(HEADER_AUTHENTICATION_KEY);
-    return true;
   } catch (err) {
     return false;
   }
+
+  return true;
 }

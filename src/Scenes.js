@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-nativ
 import { Util, AppLoading } from 'expo';
 import { connect, Provider } from 'react-redux';
 import { Router } from 'react-native-router-flux';
+import { IntlProvider, addLocaleData } from 'react-intl';
 
 import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
@@ -21,6 +22,13 @@ import AllRoutes from './routes';
 
 // Configs
 import config from '../config';
+import messages from './messages';
+import { flattenMessages } from './services/intl';
+
+import 'intl';
+import en from 'react-intl/locale-data/en';
+import es from 'react-intl/locale-data/es';
+addLocaleData([...en, ...es]);
 
 export default class Scenes extends Component {
   state = {
@@ -77,7 +85,13 @@ export default class Scenes extends Component {
       return (
         <ApolloProvider client={this.client()}>
           <Provider store={store}>
-            <RouterWithRedux scenes={AllRoutes} />
+            <IntlProvider
+              locale={locale}
+              messages={flattenMessages(messages[locale])}
+              textComponent={Text}
+            >
+              <RouterWithRedux scenes={AllRoutes} />
+            </IntlProvider>
           </Provider>
         </ApolloProvider>
       );
