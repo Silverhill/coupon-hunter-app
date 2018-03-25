@@ -10,9 +10,10 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
+import { getAuthenticationAsync } from './services/auth';
+
 // Redux
 import store from './store';
-import * as userActions from './actions/userActions';
 const RouterWithRedux = connect()(Router);
 
 // Routes
@@ -30,7 +31,7 @@ export default class Scenes extends Component {
 
   async componentWillMount() {
     const locale = await this.getCurrentLocale();
-    const authentication = await store.dispatch(userActions.getAuthenticationAsync());
+    const authentication = await getAuthenticationAsync();
 
     this.setState({ locale, appIsReady: true, authentication });
   }

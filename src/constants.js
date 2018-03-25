@@ -6,3 +6,4 @@ export const SCENE_KEY_WALLET = 'wallet';
 export const SCENE_KEY_EXPLORE = 'explore';
 export const SCENE_KEY_NOTIFICATIONS = 'notifications';
 export const SCENE_KEY_TABBAR = 'tabbar';
+export const SCENE_KEY_LOGIN = 'login';

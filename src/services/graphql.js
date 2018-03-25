@@ -14,3 +14,15 @@ export const login = graphql(gql`
     }
   })
 });
+
+export const query = {
+  getMyInfo: gql`
+    query getMyInfo {
+      me {
+        name
+        role
+        email
+      }
+    }
+  `,
+}
