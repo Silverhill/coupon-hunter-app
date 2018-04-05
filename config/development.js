@@ -3,5 +3,5 @@ import url from 'url'
 const { hostname } = url.parse(NativeModules.SourceCode.scriptURL);
 
 module.exports = {
-  graphqlEndpoint: `http://${hostname}:3000/graphql`,
+  graphqlEndpoint: `http://${hostname}:7001/graphql`,
 };

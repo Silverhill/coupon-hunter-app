@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
 import { Util, AppLoading } from 'expo';
 import { connect, Provider } from 'react-redux';
-import { Router } from 'react-native-router-flux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
 import { ApolloClient } from 'apollo-client';
@@ -11,19 +10,21 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
-import { getAuthenticationAsync } from './services/auth';
+import { getAuthenticationAsync, isAuthorized } from './services/auth';
 
 // Redux
 import store from './store';
-const RouterWithRedux = connect()(Router);
 
 // Routes
-import AllRoutes from './routes';
+import StackNavigator from './routes';
+
+// Assets
+import assets from './assets';
 
 // Configs
 import config from '../config';
 import messages from './messages';
-import { flattenMessages } from './services/intl';
+import { intlService, assetsService } from './services';
 
 import 'intl';
 import en from 'react-intl/locale-data/en';
@@ -34,28 +35,36 @@ export default class Scenes extends Component {
   state = {
     locale: null,
     appIsReady: false,
-    authentication: null,
+    authorized: false,
+    token: null,
   }
 
   async componentWillMount() {
     const locale = await this.getCurrentLocale();
-    const authentication = await getAuthenticationAsync();
 
-    this.setState({ locale, appIsReady: true, authentication });
+    try {
+      const { authorized, token } = await isAuthorized();
+      await this.preLoadingAssets();
+      await this.setState({ locale, authorized, token, appIsReady: true });
+    } catch (error) {
+      console.log('SCENES ERROR', error);
+    }
+
+    const { authorized } = this.state;
   }
 
-  client = () => {
-    const { authentication } = this.state;
+  async preLoadingAssets() {
+    await assetsService.cacheImages(assets.images);
+  }
 
+  client = (token) => {
     const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
     const authMiddleware = new ApolloLink((operation, forward) => {
       operation.setContext(({headers = {} }) => {
         return {
-          headers: {
-            authentication,
-            ...headers
-          }
-        }
+          ...headers,
+          headers: { authentication: token }
+        };
 
       });
 
@@ -78,25 +87,32 @@ export default class Scenes extends Component {
     return locale;
   }
 
-  render() {
-    const { locale, appIsReady } = this.state;
+  handleChangeLoginState = async (authorized = false, token) => {
+    if(token && authorized) {
+      await this.setState({ token, authorized });
+    }
+  }
 
-    if (appIsReady) {
-      return (
-        <ApolloProvider client={this.client()}>
-          <Provider store={store}>
-            <IntlProvider
-              locale={locale}
-              messages={flattenMessages(messages[locale])}
-              textComponent={Text}
-            >
-              <RouterWithRedux scenes={AllRoutes} />
-            </IntlProvider>
-          </Provider>
-        </ApolloProvider>
-      );
+  render() {
+    const { locale, appIsReady, authorized, token } = this.state;
+
+    if (!appIsReady && !authorized) {
+      return <AppLoading />
     }
 
-    return <AppLoading/>;
+    const client = this.client(token);
+    return (
+      <Provider store={store}>
+        <ApolloProvider client={client}>
+          <IntlProvider
+            locale={locale}
+            messages={intlService.flattenMessages(messages[locale])}
+            textComponent={Text}
+          >
+            <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
+          </IntlProvider>
+        </ApolloProvider>
+      </Provider>
+    );
   }
 }

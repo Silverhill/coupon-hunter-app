@@ -16,9 +16,6 @@ export const flattenMessages = (nestedMessages, prefix = '') => {
   }, {});
 }
 
-export const cacheImages = (images) => {
-  return images.map((image) => {
-    if (typeof image === 'string') return Image.prefetch(image);
-    return Asset.fromModule(image).downloadAsync();
-  });
+export default {
+  flattenMessages,
 }

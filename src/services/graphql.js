@@ -15,6 +15,28 @@ export const login = graphql(gql`
   })
 });
 
+export const mutation = {
+  signUp: graphql(gql`
+    mutation register($input: AddUserInput){
+      signUp(input: $input) {
+        _id
+        name
+        email
+      }
+    }
+  `, {
+    props: ({ownProps, mutate}) => ({
+      signUp(input) {
+        return mutate({
+          variables: {
+            input: { ...input, role: 'hunter' },
+          }
+        })
+      }
+    })
+  }),
+}
+
 export const query = {
   getMyInfo: gql`
     query getMyInfo {
@@ -25,4 +47,17 @@ export const query = {
       }
     }
   `,
+
+  signIn: gql`
+    query signIn($email: String!, $password: String!) {
+      signIn(email: $email, password: $password) {
+        token
+      }
+    }
+  `,
+}
+
+export default {
+  query,
+  mutation,
 }

@@ -14,7 +14,7 @@ story.addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
 story.add('Simple Avatar', () => (
   <React.Fragment>
     <Avatar
-      borderColor={Palette.primary}
+      borderColor={Palette.primary.css()}
       source={{ uri: "https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png" }}
     />
     <Avatar

@@ -1,83 +1,59 @@
 import React from 'react';
-import decode from 'jwt-decode';
-import { Text, View, AsyncStorage } from 'react-native';
-import { Stack, Scene, Router, Actions } from 'react-native-router-flux';
-import { getAuthenticationAsync, removeAuthenticationAsync } from './services/auth';
-import WhiteStatusBar from './components/WhiteStatusBar';
+import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StackNavigator, SwitchNavigator } from 'react-navigation';
 
-import {
-  SCENE_KEY_EXPLORE,
-  SCENE_KEY_NOTIFICATIONS,
-  SCENE_KEY_TODAY,
-  SCENE_KEY_WALLET,
-  SCENE_KEY_TABBAR,
-  HEADER_AUTHENTICATION_KEY,
-} from './constants';
+import { TopBar } from 'coupon-components-native';
+import LoginScreen from './containers/Login/LoginScreen';
+import SignInScreen from './containers/SignIn/SignInScreen';
+import RegisterScreen from './containers/Register/RegisterScreen';
+import HomeScreen from './containers/Home/HomeScreen';
+import AuthLoadingScreen from './containers/AuthLoadingScreen/AuthLoadingScreen';
+import ProfileScene from './containers/Profile/ProfileScene';
+import CouponExtendedScene from './containers/CouponExtended/CouponExtendedScene';
 
-// Redux
-import store from './store';
-import * as userActions from './actions/userActions';
+// Assets
+import arrow_left_c from './assets/images/arrow-left-c.png'
 
-// Import Components
-import Login from './containers/Login/Login';
-import Home from './containers/Home/Home';
+const AuthStack = StackNavigator({
+  Login: { screen: LoginScreen },
+  SignIn: { screen: SignInScreen },
+  Register: { screen: RegisterScreen },
+},{
+  initialRouteName: 'Login',
+  navigationOptions: ({ navigation }) => ({
+    headerStyle: {
+      backgroundColor: 'white',
+    },
+    headerTitleStyle: {
+      fontWeight: '900',
+    },
+    headerBackImage: arrow_left_c,
+    headerBackTitleStyle: {
+      color: 'black',
+      fontSize: 14,
+    },
+  })
+});
 
-const dispatchActionNotValidAuth = async () => {
-  await removeAuthenticationAsync();
-  store.dispatch(userActions.authNotValid());
-}
-const dispatchActionValidAuth = (token) => store.dispatch(userActions.authValid(token));
-
-const ifUserLogged = async () => {
-  const notAuthorized = false;
-  const authenticated = true;
-
-  const token = await getAuthenticationAsync();
-  if (!token) {
-    await dispatchActionNotValidAuth();
-    return notAuthorized;
+const AppStack = StackNavigator({
+  Home: { screen: HomeScreen },
+  Profile: { screen: ProfileScene },
+  CouponExtended: { screen: CouponExtendedScene }
+},
+{
+  navigationOptions: {
+    header: null
   }
+});
 
-  try {
-    const { exp } = decode(token);
-    const date = new Date();
-
-    if(exp < date.getTime() / 1000) {
-      await dispatchActionNotValidAuth()
-      return notAuthorized;
-    }
-
-  } catch(err) {
-    await dispatchActionNotValidAuth();
-    return notAuthorized;
-  }
-
-  dispatchActionValidAuth(token);
-  return authenticated;
-}
-
-const verifyAuth = async (props) => {
-  const authenticated = await ifUserLogged();
-  if(authenticated) Actions.reset(SCENE_KEY_TABBAR);
-}
-
-const commonProps = {
-  navBar: WhiteStatusBar
-}
-
-const AllRoutes = () => (
-  <Router>
-    <Stack key="root">
-      <Scene key="login" title="Login" component={Login} initial onEnter={verifyAuth}/>
-
-      <Scene key={SCENE_KEY_TABBAR} tabs tabBarStyle={{ backgroundColor: '#FFFFFF' }}>
-        <Scene key={SCENE_KEY_TODAY} title="Hoy" component={Home} {...commonProps} />
-        <Scene key={SCENE_KEY_WALLET} title="Wallet" component={() => <Text>Wallet</Text>} hideNavBar {...commonProps}/>
-        <Scene key={SCENE_KEY_EXPLORE} title="Explorar" component={() => <Text>Explorar</Text>} hideNavBar {...commonProps}/>
-        <Scene key={SCENE_KEY_NOTIFICATIONS} title="Notificaciones" component={() => <Text>Notificaciones</Text>} hideNavBar {...commonProps}/>
-      </Scene>
-    </Stack>
-  </Router>
+export default SwitchNavigator(
+  {
+    AuthLoading: AuthLoadingScreen,
+    App: AppStack,
+    Auth: AuthStack,
+  },
+  {
+    initialRouteName: 'AuthLoading',
+  },
 );
-
-export default AllRoutes;

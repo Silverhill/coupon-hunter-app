@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import styled from 'styled-components/native';
 
 const StatusB = styled(View)`
@@ -9,7 +9,10 @@ const StatusB = styled(View)`
 
 const WhiteStatusBar = (props) => {
   return(
-    <StatusB />
+    <React.Fragment>
+      <StatusBar barStyle="dark-content"/>
+      <StatusB />
+    </React.Fragment>
   );
 };
 
