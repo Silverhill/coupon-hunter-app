@@ -17,6 +17,8 @@ story.add('Simple Coupon', () => (
     numberOfCoupons={ 50 }
     title="2x1 en Hamburguesas Mexicanas"
     subTitle="Carbon Burguer"
+    direction="24 de Mayo y segundo cueva celi, esq. Departamento 81"
     date="11 de Marzo - 12 de Abril"
+    status="available"
   />
 ))
