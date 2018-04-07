@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { graphql } from 'react-apollo';
-import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert } from 'react-native';
+import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal } from 'react-native';
 import { Button, HeaderBar, Coupon } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { FormattedDate, injectIntl } from 'react-intl';
@@ -10,6 +10,7 @@ import { HEADER_AUTHENTICATION_KEY } from '../../constants';
 import { query } from '../../services/graphql';
 import * as userActions from '../../actions/userActions';
 import { graphqlService } from '../../services';
+import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 
 const TodayContainer = styled(ScrollView)`
   flex: 1;
@@ -18,6 +19,9 @@ const TodayContainer = styled(ScrollView)`
 
 const StyledCoupon = styled(Coupon)`
   margin-bottom: 10;
+`;
+
+const CampaignsContainer = styled(View)`
 `;
 
 @connect(state => ({ user: state.user }), {
@@ -31,12 +35,9 @@ class HomeScreen extends Component {
 
   state = {
     loading: true,
+    modalVisible: false,
+    currentDetails: {},
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   const { setUserProfile } = this.props;
-  //   if(nextProps.data.me) setUserProfile(nextProps.data.me);
-  // }
 
   async componentDidMount() {
     const { client: { query }, setUserProfile } = this.props;
@@ -60,9 +61,65 @@ class HomeScreen extends Component {
     navigation.navigate('Profile');
   }
 
-  pressCoupon = () => {
-    const { navigation } = this.props;
-    navigation.navigate('CouponExtended');
+  pressCoupon = (campaign) => {
+    // const { navigation } = this.props;
+    // console.log(navigation);
+    // navigation.navigate('CouponDetails', { campaign });
+    this.setState({ currentDetails: campaign, modalVisible: true });
+  }
+
+  handleCloseModal = () => {
+    this.setState({ modalVisible: false, currentDetails: {} });
+  }
+
+  get getCampaigns() {
+    return [
+      {
+        id: 0,
+        imageSource: { uri: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=82203e4d57fc0d3bdd8ffc0f66d09763&auto=format&fit=crop&w=1525&q=80" },
+        avatarSource: { uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
+        numberOfCoupons: 150,
+        title:"2x1 en Hamburguesas Mexicanas",
+        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
+        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
+        date:"11 de Marzo - 12 de Abril",
+        status:"available",
+        maker: {
+          name: "Carbon Burguer",
+          slogan: "Hamburguesa para el alma",
+        }
+      },
+      {
+        id: 1,
+        imageSource: { uri: "https://images.unsplash.com/photo-1485921198582-a55119c97421?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=c6d9cabdc7f046b490c67663caa3754e&auto=format&fit=crop&w=800&q=60" },
+        avatarSource: { uri: "https://images.unsplash.com/profile-1455100486911-21a209bba0cf?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
+        numberOfCoupons: 30,
+        title:"2x1 en Hamburguesas Mexicanas",
+        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
+        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
+        date:"11 de Marzo - 12 de Abril",
+        status:"available",
+        maker: {
+          name: "Carbon Burguer",
+          // slogan: "Hamburguesa para el alma",
+        }
+      },
+      {
+        id: 2,
+        imageSource: { uri: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=82203e4d57fc0d3bdd8ffc0f66d09763&auto=format&fit=crop&w=1525&q=80" },
+        avatarSource: { uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
+        numberOfCoupons: 120,
+        title:"2x1 en Hamburguesas Mexicanas",
+        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
+        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
+        date:"11 de Marzo - 12 de Abril",
+        status: "available",
+        maker: {
+          name: "Carbon Burguer",
+          slogan: "Hamburguesa para el alma",
+        }
+      }
+    ]
   }
 
   render() {
@@ -83,38 +140,19 @@ class HomeScreen extends Component {
           }}
         />
 
-        <StyledCoupon
-          onPress={this.pressCoupon}
-          imageSource={{ uri: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=82203e4d57fc0d3bdd8ffc0f66d09763&auto=format&fit=crop&w=1525&q=80" }}
-          avatarSource={{ uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" }}
-          numberOfCoupons={ 50 }
-          title="2x1 en Hamburguesas Mexicanas"
-          subTitle="Carbon Burguer"
-          direction="24 de Mayo y segundo cueva celi, esq. Departamento 81"
-          date="11 de Marzo - 12 de Abril"
-          status="available"
-          tagButton={{
-            onPress: () => Alert.alert('Cupon capturado!'),
-          }}
-        />
+        <CampaignsContainer>
+          {(this.getCampaigns || []).map((campaign) =>
+            <StyledCoupon key={campaign.id} {...campaign} onPress={() => this.pressCoupon(campaign)}/>
+          )}
+        </CampaignsContainer>
 
-        <StyledCoupon
-          imageSource={{ uri: "https://images.unsplash.com/photo-1485921198582-a55119c97421?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=c6d9cabdc7f046b490c67663caa3754e&auto=format&fit=crop&w=800&q=60" }}
-          avatarSource={{ uri: "https://images.unsplash.com/profile-1455100486911-21a209bba0cf?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" }}
-          numberOfCoupons={ 120 }
-          title="Picaditas"
-          subTitle="Avenue"
-          date="11 de Marzo - 12 de Abril"
-        />
-
-        <StyledCoupon
-          imageSource={{ uri: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=c9443baefd581d4e532b6d4f1e7879be&auto=format&fit=crop&w=800&q=60" }}
-          avatarSource={{ uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" }}
-          numberOfCoupons={ 200 }
-          title="50% descuento en Parmesana"
-          subTitle="Pizzería Roma"
-          date="11 de Marzo - 12 de Abril"
-        />
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+        >
+          <CouponDetailScene {...this.state.currentDetails} onClose={this.handleCloseModal}/>
+        </Modal>
       </TodayContainer>
     )
   }

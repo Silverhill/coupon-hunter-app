@@ -30,10 +30,7 @@ class SignInScreen extends Component {
     try {
       const res = await query({
         query: graphqlService.query.signIn,
-        variables: {
-          email: form.email,
-          password: form.password,
-        }
+        variables: { email: form.email, password: form.password },
       });
 
       const { data: { signIn } } = res;
@@ -51,7 +48,7 @@ class SignInScreen extends Component {
     }
   }
 
-  render() {
+  get _renderFormSteps() {
     const steps = [
       {
         id: 0,
@@ -71,13 +68,17 @@ class SignInScreen extends Component {
       },
     ];
 
+    return steps;
+  }
+
+  render() {
     const { client } = this.props;
 
     return (
       <Container>
         <StatusBar barStyle="dark-content"/>
         <Form
-          steps={steps}
+          steps={this._renderFormSteps}
           onSubmit={this.handleSubmit}
         />
       </Container>

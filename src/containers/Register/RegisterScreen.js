@@ -30,25 +30,28 @@ class RegisterScreen extends Component {
 
       const { data: { signUp: signUpResponse } } = signUpRes;
 
-      const signInRes = await client.query({
-        query: graphqlService.query.signIn,
-        variables: {
-          email: form.email,
-          password: form.password,
-        }
-      });
+      console.log(signUpRes, this.props);
 
-      const { data: { signIn: { token } } } = signInRes;
-      const { logged } = await logInAsync(token);
+      // const signInRes = await client.query({
+      //   query: graphqlService.query.mutation,
+      //   variables: {
+      //     email: form.email,
+      //     name: fomr.name,
+      //     password: form.password,
+      //   }
+      // });
 
-      if(logged) navigation.navigate('Home');
+      // const { data: { signIn: { token } } } = signInRes;
+      // const { logged } = await logInAsync(token);
+
+      // if(logged) navigation.navigate('App');
     } catch (error) {
       console.log(error);
       return;
     }
   }
 
-  render() {
+  get _renderSteps(){
     const nextButtonTitle = 'Siguiente';
     const steps = [
       {
@@ -77,11 +80,15 @@ class RegisterScreen extends Component {
       },
     ];
 
+    return steps;
+  }
+
+  render() {
     return (
       <Container>
         <StatusBar barStyle="dark-content"/>
         <Form
-          steps={steps}
+          steps={this._renderSteps}
           onSubmit={this.handleSubmit}
         />
       </Container>

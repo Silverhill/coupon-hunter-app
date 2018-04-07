@@ -72,10 +72,6 @@ class LoginScreen extends Component {
     title: 'Inicio',
   }
 
-  state = {
-    loginFormIsShowing: false,
-  }
-
   navigateTo = (route) => {
     if(!route) return;
 
@@ -86,57 +82,29 @@ class LoginScreen extends Component {
   goToRegisterScene = () => this.navigateTo('Register');
   goToSignInScene = () => this.navigateTo('SignIn');
 
-  loginUser = async (values = {}) => {
-    const { login, loginAsync } = this.props;
-    const { email, password } = values;
-
-    try {
-      const res = await login(email, password);
-      const { data: { login: _login } } = res;
-      const token = _login.toString();
-
-      const { logged } = await loginAsync(token);
-      if(logged) this.navigateTo('Home');
-
-    } catch (error) {
-      return;
-    }
-  }
-
-  handleChangeInput = (text, label) => {
-    this.setState(prevState => ({
-      user: {
-        ...prevState.user,
-        [label]: text,
-      }
-    }))
-  }
-
-  render() {
-    const { loginFormIsShowing } = this.state;
-
-    let currentForm = (
+  get accessButtons() {
+    return (
       <Card marginBetweenChildrens centerItemsVertical centerItemsHorizontal height={200}>
-        <Button pill backgroundColor={colors.facebook} title="Connectate con Facebook" />
-        <Button pill backgroundColor={colors.twitter} title="Connectate con Twitter" />
+        <Button iconColor={Palette.white.css()} leftIcon="logo-facebook" pill backgroundColor={colors.facebook} title="Connectate con Facebook" />
+        <Button iconColor={Palette.white.css()} leftIcon="logo-twitter" pill backgroundColor={colors.twitter} title="Connectate con Twitter" />
 
         <TouchableOpacity onPress={this.goToSignInScene}>
           <Link highlight>Ingresa con tu email</Link>
         </TouchableOpacity>
       </Card>
-    );
+    )
+  }
 
+  render() {
     return (
       <Container>
         <StatusBar barStyle="light-content"/>
         <ContainerImage source={{ uri: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=c75e0437e819afdceeb3050a6bcdd71b&auto=format&fit=crop&w=953&q=80" }}>
-          <Gradient
-            colors={[Palette.dark.alpha(0.7).css(), 'transparent']}
-          >
+          <Gradient colors={[Palette.dark.alpha(0.7).css(), 'transparent']}>
             <Logo source={cplogo} />
 
             <ContainerCards>
-              {currentForm}
+              {this.accessButtons}
 
               <NewAccountCard>
                 <Card centerItemsVertical centerItemsHorizontal>

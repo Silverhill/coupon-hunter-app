@@ -19,9 +19,10 @@ export const mutation = {
   signUp: graphql(gql`
     mutation register($input: AddUserInput){
       signUp(input: $input) {
-        _id
+        id
         name
         email
+        role
       }
     }
   `, {
