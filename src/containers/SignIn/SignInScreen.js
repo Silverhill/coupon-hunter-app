@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StatusBar } from 'react-native';
-import { Form, Input } from 'coupon-components-native';
+import { Form, Input, Loader } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { withApollo  } from 'react-apollo';
 import { connect } from 'react-redux';
@@ -24,8 +24,17 @@ class SignInScreen extends Component {
     title: 'Ingreso',
   }
 
+  state = {
+    waitingSignIn: false,
+  }
+
+  showLoading = (showing = true) => {
+    this.setState({ waitingSignIn: showing });
+  }
+
   handleSubmit = async (form) => {
     const { client: { query }, logInAsync, navigation } = this.props;
+    this.showLoading();
 
     try {
       const res = await query({
@@ -40,7 +49,11 @@ class SignInScreen extends Component {
 
       if(auth.logged) {
         await screenProps.changeLoginState(auth.logged, signIn.token);
-        navigation.navigate('App');
+
+        setTimeout(() => {
+          this.showLoading(false);
+          navigation.navigate('App');
+        }, 4000)
       }
     } catch (error) {
       console.log(error);
@@ -73,6 +86,7 @@ class SignInScreen extends Component {
 
   render() {
     const { client } = this.props;
+    const { waitingSignIn } = this.state;
 
     return (
       <Container>
@@ -81,6 +95,8 @@ class SignInScreen extends Component {
           steps={this._renderFormSteps}
           onSubmit={this.handleSubmit}
         />
+
+        <Loader visible={waitingSignIn} />
       </Container>
     )
   }

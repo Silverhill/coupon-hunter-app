@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { View, ImageBackground } from 'react-native';
 import { Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
@@ -38,12 +38,13 @@ const Title = styled(Typo.Title)`
 
 // Footer
 const Footer = styled(View)`
-  flex-flow: row nowrap;
+  flex-flow: ${props => props.catched ? 'column' : 'row'};
+  bottom: ${({ catched }) => catched ? '80' : '0'};
 `;
 
 const CompanyName = styled(Typo.Header)`
-  flex: 1;
-  align-self: flex-end;
+  align-self: ${({ catched }) => catched ? 'flex-start' : 'flex-end'};
+  ${({ catched }) => !catched && css`flex: 1`};
 `;
 
 const TicketsContainer = styled(View)`
@@ -57,6 +58,7 @@ const TicketsNumber = styled(Typo.Title)`
   align-items: flex-end;
   top: 15;
   left: 5;
+  text-align: right;
 `;
 
 const TicketsHeader = styled(Typo.TextBody)`
@@ -67,9 +69,16 @@ const TicketsHeaderIcon = styled(Ionicons)`
   margin-right: 10;
 `;
 
+const TicketHeaderCode = styled(Typo.TextBody)`
+
+`;
+
+const TicketCode = styled(Typo.Title)`
+`
+
 const upperCaseText = (text = '') => text.toUpperCase();
 
-const CouponCover = ({ background, date, title, companyName, couponsCount, couponsCountCaption }) => {
+const CouponCover = ({ background, date, title, companyName, couponsCount, couponsCountCaption, catched = false }) => {
   return (
     <Container source={background} resizeMode="cover">
       <Layout>
@@ -80,17 +89,26 @@ const CouponCover = ({ background, date, title, companyName, couponsCount, coupo
           </TitleAndDateContainer>
         </Header>
 
-        <Footer>
-          <CompanyName small inverted>{upperCaseText(companyName)}</CompanyName>
+        <Footer catched={catched}>
+          {catched && (
+            <TicketsContainer>
+              <TicketHeaderCode small inverted>Codigo:</TicketHeaderCode>
+              <TicketCode inverted>{upperCaseText('carb1012')}</TicketCode>
+            </TicketsContainer>
+          )}
 
-          <TicketsContainer>
-            <TicketsNumber jumbo inverted>{couponsCount}</TicketsNumber>
+          <CompanyName catched={catched} small inverted>{upperCaseText(companyName)}</CompanyName>
 
-            <TicketsHeader small inverted>
-              <TicketsHeaderIcon name="md-wifi" size={15} color={Palette.white.css()}/>
-              {upperCaseText(couponsCountCaption)}
-            </TicketsHeader>
-          </TicketsContainer>
+          {!catched && (
+            <TicketsContainer>
+              <TicketsNumber jumbo inverted>{couponsCount}</TicketsNumber>
+
+              <TicketsHeader small inverted>
+                <TicketsHeaderIcon name="md-wifi" size={15} color={Palette.white.css()}/>
+                {upperCaseText(couponsCountCaption)}
+              </TicketsHeader>
+            </TicketsContainer>
+          )}
         </Footer>
       </Layout>
     </Container>

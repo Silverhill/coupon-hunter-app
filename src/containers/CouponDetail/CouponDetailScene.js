@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { View, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
-import { Button } from 'coupon-components-native';
+import { Button, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -11,6 +11,7 @@ import { removeAuthenticationAsync } from '../../services/auth';
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
+import QRCode from './QRCode';
 
 const ContainerScene = styled(View)`
   position: relative;
@@ -25,14 +26,27 @@ const CloseButton = styled(TouchableOpacity)`
 `;
 
 export default class CouponDetailScene extends Component {
+  catchCoupon = (catched) => {
+    const { navigation, onClose } = this.props;
+    if(!navigation) return;
+
+    if(onClose) {
+      if(catched) navigation.navigate('Profile');
+      else console.log('Atrapa cupon!');
+
+      onClose();
+    }
+  }
+
   render() {
     const campaign = this.props;
-    const { onClose = () => null } = campaign;
+    const { onClose = () => null, catched = false } = campaign;
 
     return (
       <ContainerScene>
         <ScrollView>
           <CouponCover
+            catched={catched}
             background={campaign.imageSource}
             date={campaign.date}
             title={campaign.title}
@@ -40,8 +54,9 @@ export default class CouponDetailScene extends Component {
             couponsCount={campaign.numberOfCoupons}
             couponsCountCaption="Disponibles"
           />
-          <CouponDescription>
-            {campaign.description}
+
+          <CouponDescription catched={catched} qrCode=''>
+            <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>
 
           <CompanyProfileRow
@@ -49,7 +64,8 @@ export default class CouponDetailScene extends Component {
             name={((campaign || {}).maker || {}).name}
             slogan={((campaign || {}).maker || {}).slogan}
             button={{
-              title: 'Obtener Cupon'
+              title: catched ? 'Ver Perfil' : 'Obtener Cupon',
+              onPress: () => this.catchCoupon(catched),
             }}
           />
         </ScrollView>

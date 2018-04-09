@@ -12,8 +12,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { compose } from 'react-apollo';
 import { LinearGradient } from 'expo';
-import { Input, Button, Card, Typo, ButtonGradient, NavBar } from 'coupon-components-native';
-
+import { Input, Button, Card, Typo, ButtonGradient, NavBar, Loader } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { colors } from 'coupon-components-native/styles/palette';
 import LoginForm from './LoginForm';

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StatusBar } from 'react-native';
-import { Form, Input, TopBar } from 'coupon-components-native';
+import { Form, Input, TopBar, Loader } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { compose, withApollo } from 'react-apollo';
 import { connect } from 'react-redux';
@@ -14,7 +14,9 @@ const Container = styled(View)`
   background-color: white;
 `;
 
-@connect(null, {
+@connect(state =>({
+  auth: state.user.auth,
+}),{
   logInAsync: userActions.loginAsync,
 })
 class RegisterScreen extends Component {
@@ -22,29 +24,39 @@ class RegisterScreen extends Component {
     title: 'Crear Cuenta',
   }
 
+  state = {
+    waitingSignUp: false,
+  }
+
+  showLoading = (showing = true) => {
+    this.setState({ waitingSignUp: showing });
+  }
+
   handleSubmit = async (form) => {
-    const { logInAsync, signUp, client, navigation } = this.props;
+    const { logInAsync, signUp, client, navigation, screenProps } = this.props;
+
+    // Show loading until request it's ok
+    this.showLoading();
 
     try {
       const signUpRes = await signUp(form);
-
       const { data: { signUp: signUpResponse } } = signUpRes;
 
-      console.log(signUpRes, this.props);
+      const signInRes = await client.query({
+        query: graphqlService.query.signIn,
+        variables: { email: form.email, password: form.password },
+      });
+      const { data: { signIn: { token } } } = signInRes;
+      await logInAsync(token);
 
-      // const signInRes = await client.query({
-      //   query: graphqlService.query.mutation,
-      //   variables: {
-      //     email: form.email,
-      //     name: fomr.name,
-      //     password: form.password,
-      //   }
-      // });
+      const { logged } = this.props.auth;
 
-      // const { data: { signIn: { token } } } = signInRes;
-      // const { logged } = await logInAsync(token);
+      if(logged) {
+        await screenProps.changeLoginState(logged, token);
 
-      // if(logged) navigation.navigate('App');
+        this.showLoading(false);
+        navigation.navigate('App');
+      }
     } catch (error) {
       console.log(error);
       return;
@@ -84,6 +96,8 @@ class RegisterScreen extends Component {
   }
 
   render() {
+    const { waitingSignUp } = this.state;
+
     return (
       <Container>
         <StatusBar barStyle="dark-content"/>
@@ -91,6 +105,8 @@ class RegisterScreen extends Component {
           steps={this._renderSteps}
           onSubmit={this.handleSubmit}
         />
+
+        <Loader visible={waitingSignUp} />
       </Container>
     )
   }
