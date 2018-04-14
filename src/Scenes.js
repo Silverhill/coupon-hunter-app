@@ -105,8 +105,8 @@ export default class Scenes extends Component {
       <Provider store={store}>
         <ApolloProvider client={client}>
           <IntlProvider
-            locale={'en'}
-            messages={intlService.flattenMessages(messages['en'])}
+            locale={locale}
+            messages={intlService.flattenMessages(messages[locale])}
             textComponent={Text}
           >
             <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>

@@ -82,21 +82,27 @@ export const query = {
         id
         status
         code
-        campaign {
-          endAt
-          startAt
-          city
-          title
-          id
-          address
-          country
-          city
-          image
-          totalCoupons
-          description
-          customMessage
-          deleted
-          status
+        ... on CouponHunted {
+          campaign {
+            endAt
+            startAt
+            city
+            title
+            id
+            address
+            country
+            city
+            image
+            totalCoupons
+            description
+            customMessage
+            deleted
+            status
+            maker {
+              id
+              name
+            }
+          }
         }
       }
     }
@@ -129,11 +135,6 @@ export const query = {
         name
         role
         email
-        coupons {
-          status
-          code
-          id
-        }
       }
 
       allCampaigns {
@@ -151,6 +152,10 @@ export const query = {
         customMessage
         deleted
         status
+        maker {
+          name
+          id
+        }
       }
     }
   `
