@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
+import { injectIntl } from 'react-intl';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
@@ -25,7 +26,7 @@ const CloseButton = styled(TouchableOpacity)`
   right: 10;
 `;
 
-export default class CouponDetailScene extends Component {
+class CouponDetailScene extends Component {
   catchCoupon = (catched) => {
     const { navigation, onClose } = this.props;
     if(!navigation) return;
@@ -40,22 +41,36 @@ export default class CouponDetailScene extends Component {
 
   render() {
     const campaign = this.props;
-    const { onClose = () => null, catched = false } = campaign;
+    const { onClose = () => null, intl, startAt = '', endAt = '', status } = campaign;
+
+    // Formated Date
+    const startDate = intl
+      .formatDate(startAt, { month: 'short', day: 'numeric' })
+      .toUpperCase();
+    const endDate = intl
+      .formatDate(endAt, { month: 'short', day: 'numeric', year: 'numeric' })
+      .toUpperCase();
+    const date = `${startDate} - ${endDate}`;
+
+    // TODO: Cambiar el estado al correcto cuando este definido.
+    let catched = false;
+    if(status === 'hunted') catched = true;
 
     return (
       <ContainerScene>
         <ScrollView>
           <CouponCover
             catched={catched}
-            background={campaign.imageSource}
-            date={campaign.date}
+            background={campaign.image}
+            date={date}
             title={campaign.title}
             companyName={((campaign || {}).maker || {}).name}
-            couponsCount={campaign.numberOfCoupons}
+            couponsCount={campaign.totalCoupons}
             couponsCountCaption="Disponibles"
           />
 
           <CouponDescription catched={catched} qrCode=''>
+            <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
             <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>
 
@@ -87,3 +102,5 @@ export default class CouponDetailScene extends Component {
 CouponDetailScene.propTypes = {
 
 };
+
+export default injectIntl(CouponDetailScene);

@@ -1,15 +1,4 @@
-export default {
-  es: {
-    commons: {
-      welcome: 'Hola',
-      text: 'Este es el primer componente',
-    },
-  },
+import en from './intl/en';
+import es from './intl/es';
 
-  en: {
-    commons: {
-      welcome: 'Hello',
-      text: 'This is a first component',
-    },
-  },
-};
+export default { es, en };

@@ -2,7 +2,6 @@ import { AsyncStorage } from 'react-native';
 import decode from 'jwt-decode';
 import moment from 'moment';
 import { HEADER_AUTHENTICATION_KEY } from '../constants';
-import store from '../store';
 
 const notAuthorized = false;
 const authorized = true;

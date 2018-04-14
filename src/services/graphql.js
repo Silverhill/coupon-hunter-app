@@ -36,6 +36,25 @@ export const mutation = {
       }
     })
   }),
+
+  captureCoupon: graphql(gql`
+    mutation huntCoupon($campaignId: String!){
+      captureCoupon(input: { campaignId: $campaignId }) {
+        id
+        status
+      }
+    }
+  `, {
+    props: ({ownProps, mutate}) => ({
+      captureCoupon(campaignId) {
+        return mutate({
+          variables: {
+            campaignId
+          },
+        })
+      }
+    })
+  }),
 }
 
 export const query = {
@@ -56,6 +75,85 @@ export const query = {
       }
     }
   `,
+
+  myCoupons: gql`
+    {
+      myCoupons {
+        id
+        status
+        code
+        campaign {
+          endAt
+          startAt
+          city
+          title
+          id
+          address
+          country
+          city
+          image
+          totalCoupons
+          description
+          customMessage
+          deleted
+          status
+        }
+      }
+    }
+  `,
+
+  allCampaigns: gql`
+    {
+      allCampaigns {
+        endAt
+        startAt
+        city
+        title
+        id
+        address
+        country
+        city
+        image
+        totalCoupons
+        description
+        customMessage
+        deleted
+        status
+      }
+    }
+  `,
+
+  composedMeAllCampaigns: gql`
+    {
+      me {
+        name
+        role
+        email
+        coupons {
+          status
+          code
+          id
+        }
+      }
+
+      allCampaigns {
+        endAt
+        startAt
+        city
+        title
+        id
+        address
+        country
+        city
+        image
+        totalCoupons
+        description
+        customMessage
+        deleted
+        status
+      }
+    }
+  `
 }
 
 export default {

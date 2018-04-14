@@ -7,10 +7,9 @@ import QRCode from './QRCode';
 
 const Container = styled(View)`
   padding: 20px 20px;
-  align-items: center;
+  align-items: flex-start;
   ${({ catched }) => catched && css`padding-top: 240`};
 `;
-
 
 const upperCaseText = (text = '') => text.toUpperCase();
 

@@ -16,6 +16,11 @@ export const setUserProfile = (profile) => ({
   payload: profile
 });
 
+export const setMyCoupons = (coupons) => ({
+  type: actionTypes.SET_MY_COUPONS,
+  payload: coupons
+});
+
 export const loginAsync = (token = '') => async (dispatch) => {
   if(token) {
     await AsyncStorage.setItem(HEADER_AUTHENTICATION_KEY, token);

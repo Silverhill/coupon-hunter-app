@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { View, Text, StatusBar } from 'react-native';
-import { Form, Input, TopBar, Loader } from 'coupon-components-native';
+import { Form, Input, TopBar, Loader, Typo } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { compose, withApollo } from 'react-apollo';
 import { connect } from 'react-redux';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { graphqlService } from '../../services';
 import * as userActions from '../../actions/userActions';
@@ -21,7 +22,7 @@ const Container = styled(View)`
 })
 class RegisterScreen extends Component {
   static navigationOptions = {
-    title: 'Crear Cuenta',
+    headerTitle: <Typo.TextBody bold><FormattedMessage id="commons.signIn" /></Typo.TextBody>,
   }
 
   state = {
@@ -64,31 +65,32 @@ class RegisterScreen extends Component {
   }
 
   get _renderSteps(){
-    const nextButtonTitle = 'Siguiente';
+    const { intl } = this.props;
+    const nextButtonTitle = intl.formatMessage({id: 'commons.next'});
     const steps = [
       {
         id: 0,
         name: 'email',
-        title: 'Escribe una dirección de email',
-        description: 'Necesitas registar una dirección de correo electronico para acceder más tarde a tu cuenta',
+        title: intl.formatMessage({id: 'registerScreen.form.fields.email.title'}),
+        description: intl.formatMessage({id: 'registerScreen.form.fields.email.message'}),
         button: { title: nextButtonTitle },
         input: { placeholder: 'hunter@coupon.com', autoCapitalize: 'none' }
       },
       {
         id: 1,
         name: 'name',
-        title: 'Cual es tu nombre?',
-        description: 'Escribe el nombre por el cual puedas ser reconocido',
+        title: intl.formatMessage({id: 'registerScreen.form.fields.name.title'}),
+        description: intl.formatMessage({id: 'registerScreen.form.fields.name.message'}),
         button: { title: nextButtonTitle },
         input: { placeholder: 'QPon Hunter' }
       },
       {
         id: 2,
         name: 'password',
-        title: 'Ingresa tu contraseña',
-        description: 'Crea una contraseña segura para tu cuenta',
-        button: { title: 'Crear Cuenta' },
-        input: { placeholder: 'Contraseña super segura', secureTextEntry: true }
+        title: intl.formatMessage({id: 'registerScreen.form.fields.password.title'}),
+        description: intl.formatMessage({id: 'registerScreen.form.fields.password.message'}),
+        button: { title: intl.formatMessage({id: 'commons.createAccount'}) },
+        input: { placeholder: intl.formatMessage({id: 'registerScreen.form.fields.password.placeholder'}), secureTextEntry: true }
       },
     ];
 
@@ -114,4 +116,4 @@ class RegisterScreen extends Component {
 
 export default withApollo(compose(
   graphqlService.mutation.signUp,
-)(RegisterScreen));
+)(injectIntl(RegisterScreen)));

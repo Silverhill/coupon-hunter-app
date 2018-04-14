@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
+import { defineMessages } from 'react-intl';
 
 import { TopBar } from 'coupon-components-native';
-import LoginScreen from './containers/Login/LoginScreen';
-import SignInScreen from './containers/SignIn/SignInScreen';
+import LoginScreen from './containers/LogIn/LoginScreen';
+import StartScreen from './containers/Welcome/StartScreen';
 import RegisterScreen from './containers/Register/RegisterScreen';
 import HomeScreen from './containers/Home/HomeScreen';
 import AuthLoadingScreen from './containers/AuthLoadingScreen/AuthLoadingScreen';
@@ -19,11 +20,11 @@ import ExploreScene from './containers/Explore/ExploreScene';
 import NotificationsScene from './containers/Notifications/NotificationsScene';
 
 const AuthStack = StackNavigator({
+  Welcome: { screen: StartScreen },
   Login: { screen: LoginScreen },
-  SignIn: { screen: SignInScreen },
   Register: { screen: RegisterScreen },
 },{
-  initialRouteName: 'Login',
+  initialRouteName: 'Welcome',
   navigationOptions: ({ navigation }) => ({
     headerStyle: {
       backgroundColor: 'white',
@@ -49,9 +50,19 @@ const HomeStack = StackNavigator({
   }
 })
 
+const WalletStack = StackNavigator({
+  Wallet: { screen: WalletScene },
+  Profile: { screen: ProfileScene },
+}, {
+  navigationOptions: {
+    header: null,
+    title: 'Wallet'
+  }
+})
+
 const AppStack = TabNavigator({
   Home: { screen: HomeStack },
-  Wallet: { screen: WalletScene },
+  Wallet: { screen: WalletStack },
   Explore: { screen: ExploreScene },
   Notifications: { screen: NotificationsScene },
 },

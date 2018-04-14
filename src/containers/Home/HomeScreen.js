@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { graphql } from 'react-apollo';
-import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal } from 'react-native';
+import { graphql, compose } from 'react-apollo';
+import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal, SectionList } from 'react-native';
 import { Button, HeaderBar, Coupon } from 'coupon-components-native';
 import styled from 'styled-components/native';
-import { FormattedDate, injectIntl } from 'react-intl';
+import { FormattedDate, injectIntl, FormattedMessage } from 'react-intl';
 import { withApollo } from 'react-apollo';
+import uuid from 'uuid/v4';
+import moment from 'moment';
+
 import { HEADER_AUTHENTICATION_KEY } from '../../constants';
 import { query } from '../../services/graphql';
-import * as userActions from '../../actions/userActions';
-import { graphqlService } from '../../services';
+import { graphqlService, authService, intl } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
+
+import * as userActions from '../../actions/userActions';
+import * as campaignsActions from '../../actions/campaignsActions';
 
 const TodayContainer = styled(ScrollView)`
   flex: 1;
@@ -24,8 +29,16 @@ const StyledCoupon = styled(Coupon)`
 const CampaignsContainer = styled(View)`
 `;
 
-@connect(state => ({ user: state.user }), {
+const HeaderBarContainer = styled(View)`
+  margin-bottom: 20;
+`;
+
+@connect(state => ({
+  user: state.user,
+  campaigns: state.campaigns,
+}), {
   setUserProfile: userActions.setUserProfile,
+  setCampaigns: campaignsActions.setCampaigns,
 })
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -40,19 +53,34 @@ class HomeScreen extends Component {
   }
 
   async componentDidMount() {
-    const { client: { query }, setUserProfile } = this.props;
+    const { client: { query }, setUserProfile, setCampaigns, navigation } = this.props;
 
     try {
-      const { data: { me }, loading } = await query({
-        query: graphqlService.query.getMyInfo,
+      const { data: { me, allCampaigns }, loading } = await query({
+        query: graphqlService.query.composedMeAllCampaigns,
       });
 
-      setUserProfile(me)
-      this.setState({ loading });
+      setUserProfile(me);
+      setCampaigns(allCampaigns);
 
+      this.setState({ loading });
     } catch (error) {
-      console.log(error)
-      return;
+      // console.log(a);
+      console.log('DEBUG ERROR', error.message);
+    }
+  }
+
+  captureCoupon = async (campaign) => {
+    const { captureCoupon: huntCoupon, intl } = this.props;
+    try {
+      const res = await huntCoupon(campaign.id);
+
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+    } catch (error) {
+      console.log(error.message);
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
     }
   }
 
@@ -69,78 +97,102 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: false, currentDetails: {} });
   }
 
-  get getCampaigns() {
-    return [
-      {
-        id: 0,
-        imageSource: { uri: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=82203e4d57fc0d3bdd8ffc0f66d09763&auto=format&fit=crop&w=1525&q=80" },
-        avatarSource: { uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
-        numberOfCoupons: 150,
-        title:"2x1 en Hamburguesas Mexicanas",
-        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
-        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
-        date:"11 de Marzo - 12 de Abril",
-        status:"available",
-        maker: {
-          name: "Carbon Burguer",
-          slogan: "Hamburguesa para el alma",
-        }
-      },
-      {
-        id: 1,
-        imageSource: { uri: "https://images.unsplash.com/photo-1485921198582-a55119c97421?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=c6d9cabdc7f046b490c67663caa3754e&auto=format&fit=crop&w=800&q=60" },
-        avatarSource: { uri: "https://images.unsplash.com/profile-1455100486911-21a209bba0cf?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
-        numberOfCoupons: 30,
-        title:"2x1 en Hamburguesas Mexicanas",
-        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
-        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
-        date:"11 de Marzo - 12 de Abril",
-        status:"available",
-        maker: {
-          name: "Carbon Burguer",
-          // slogan: "Hamburguesa para el alma",
-        }
-      },
-      {
-        id: 2,
-        imageSource: { uri: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=82203e4d57fc0d3bdd8ffc0f66d09763&auto=format&fit=crop&w=1525&q=80" },
-        avatarSource: { uri: "https://images.unsplash.com/profile-1481466571593-63d100a3cbd1?dpr=2&auto=format&fit=crop&w=64&h=64&q=60&cs=tinysrgb&crop=faces&bg=fff" },
-        numberOfCoupons: 1200,
-        title:"2x1 en Hamburguesas Mexicanas",
-        description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos natus, odit excepturi ex totam nulla aliquid mollitia, blanditiis iste esse velit consequatur labore culpa laborum ullam molestiae! Iure, eveniet nobis.",
-        direction:"24 de Mayo y segundo cueva celi, esq. Departamento 81",
-        date:"11 de Marzo - 12 de Abril",
-        status: "available",
-        maker: {
-          name: "Carbon Burguer",
-          slogan: "Hamburguesa para el alma",
-        }
+  _keyExtractor = (item, index) => uuid();
+  _renderSectionHeader = ({ title, hasProfile, date }) => {
+    const { intl } = this.props;
+
+    return (
+      <HeaderBarContainer>
+        <HeaderBar
+          title={title}
+          date={date}
+          avatarOptions={hasProfile && {
+            source: {uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png'},
+            onPress: this.goToProfile,
+          }}
+        />
+      </HeaderBarContainer>
+    );
+  }
+
+  renderCoupon = ({item: campaign, index, section}) => {
+    const { intl } = this.props;
+
+    const startAt = intl
+      .formatDate(campaign.startAt, { month: 'short', day: 'numeric' })
+      .toUpperCase();
+
+    const endAt = intl
+      .formatDate(campaign.endAt, { month: 'short', day: 'numeric', year: 'numeric' })
+      .toUpperCase();
+
+    return (
+      <StyledCoupon
+        {...campaign}
+        key={campaign.id}
+        onPress={() => this.pressCoupon(campaign)}
+        tagButton={{
+          onPress: () => this.captureCoupon(campaign)
+        }}
+        startAt={startAt}
+        endAt={endAt}
+      />
+    );
+  }
+
+  get campaigns() {
+    const { campaigns: { allCampaigns } } = this.props;
+
+    let today = [];
+    let restOfDays = [];
+
+    (allCampaigns || []).forEach(campaign => {
+      if(campaign.startAt >= moment().hour(0) && campaign.startAt <= moment().hour(23)) {
+        today = today.concat(campaign);
+      } else {
+        restOfDays = restOfDays.concat(campaign);
       }
-    ]
+    });
+
+    return { today, restOfDays };
+  }
+
+  get currentSections() {
+    const { intl } = this.props;
+
+    let sections = [];
+    const formattedToday = intl.formatDate(Date.now(), { year: 'numeric', month: 'long', day: '2-digit' });
+    const todayTitle = intl.formatMessage({ id: 'todayScreen.today' });
+    const restOfDaysTitle = intl.formatMessage({ id: 'todayScreen.otherDays' });
+
+    if(this.campaigns.today.length > 0) {
+      todaySection = { title: todayTitle, data: this.campaigns.today, hasProfile: true, date: formattedToday };
+      restSection = { title: restOfDaysTitle, data: this.campaigns.restOfDays };
+      sections = sections.concat(todaySection, restSection);
+    }else if (!this.campaigns.today.length) {
+      todaySection = { title: restOfDaysTitle, data: this.campaigns.restOfDays, hasProfile: true };
+      sections = sections.concat(todaySection);
+    }
+
+    return sections;
   }
 
   render() {
     const { loading } = this.state;
-    const { user: { profile }, intl } = this.props;
+    const { user: { profile }, intl, campaigns: { allCampaigns } } = this.props;
 
     if(loading) return <Text>Loading...</Text>
     // else if(error) return <Text>{error.message}</Text>
 
     return (
       <TodayContainer>
-        <HeaderBar
-          title='Hoy'
-          date={intl.formatDate(Date.now(), { year: 'numeric', month: 'long', day: '2-digit' })}
-          avatarOptions={{
-            source: {uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png'},
-            onPress: this.goToProfile,
-          }}
-        />
-
         <CampaignsContainer>
-          {(this.getCampaigns || []).map((campaign) =>
-            <StyledCoupon key={campaign.id} {...campaign} onPress={() => this.pressCoupon(campaign)}/>
-          )}
+          <SectionList
+            keyExtractor={this._keyExtractor}
+            renderItem={this.renderCoupon}
+            renderSectionHeader={({section}) => this._renderSectionHeader({ title: section.title, hasProfile: section.hasProfile, date: section.date })}
+            sections={this.currentSections}
+          />
         </CampaignsContainer>
 
         <Modal
@@ -148,11 +200,16 @@ class HomeScreen extends Component {
           transparent={false}
           visible={this.state.modalVisible}
         >
-          <CouponDetailScene {...this.props} {...this.state.currentDetails} onClose={this.handleCloseModal}/>
+          <CouponDetailScene
+            onClose={this.handleCloseModal}
+            {...this.state.currentDetails}
+          />
         </Modal>
       </TodayContainer>
     )
   }
 }
 
-export default withApollo(injectIntl(HomeScreen))
+export default withApollo(compose(
+  graphqlService.mutation.captureCoupon,
+)(injectIntl(HomeScreen)));
