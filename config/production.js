@@ -1,3 +1,7 @@
+import { NativeModules  } from 'react-native';
+import url from 'url'
+const { hostname } = url.parse(NativeModules.SourceCode.scriptURL);
+
 module.exports = {
-  graphqlEndpoint: 'http://locahost:3000/graphql',
+  graphqlEndpoint: `http://${hostname}:7001/graphql`,
 };
