@@ -10,11 +10,14 @@ export default {
     logOut: 'Log Out',
 
     messages: {
-
       alert: {
         couponHunted: 'Coupon Hunted!',
         onlyOneCoupon: 'You can only hunted a coupon for this campaign',
       }
+    },
+
+    titles: {
+      today: 'Today',
     }
   },
 
@@ -67,7 +70,11 @@ export default {
   },
 
   walletScreen: {
-    titlePage: 'My Wallet'
+    titlePage: 'My Wallet',
+    tabs: {
+      hunted: 'Hunted',
+      used: 'Used',
+    }
   },
 
   component: {

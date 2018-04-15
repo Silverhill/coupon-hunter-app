@@ -126,8 +126,6 @@ class HomeScreen extends Component {
       .formatDate(campaign.endAt, { month: 'short', day: 'numeric', year: 'numeric' })
       .toUpperCase();
 
-    console.log(campaign);
-
     return (
       <StyledCoupon
         {...campaign}

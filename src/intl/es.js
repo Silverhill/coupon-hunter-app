@@ -15,6 +15,10 @@ export default {
         couponHunted: 'Cupones Capturados!',
         onlyOneCoupon: 'Solo puedes capturar un cupón de esta campaña',
       }
+    },
+
+    titles: {
+      today: 'Hoy',
     }
   },
 
@@ -67,7 +71,11 @@ export default {
   },
 
   walletScreen: {
-    titlePage: 'Mi Wallet'
+    titlePage: 'Mi Wallet',
+    tabs: {
+      hunted: 'Capturados',
+      used: 'Usados',
+    }
   },
 
   component: {
@@ -78,7 +86,7 @@ export default {
 
   status: {
     'available': 'Disponible',
-    'hunted': 'Cazado',
+    'hunted': 'Capturado',
     'unavailable': 'No Disponible',
     'expired': 'Expirado',
   }

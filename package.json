@@ -46,6 +46,8 @@
     "react-apollo": "^2.0.4",
     "react-intl": "^2.4.0",
     "react-native": "0.52.0",
+    "react-native-gesture-handler": "^1.0.0-alpha.42",
+    "react-native-tab-view": "0.0.77",
     "react-navigation": "^1.5.9",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
