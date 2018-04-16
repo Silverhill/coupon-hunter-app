@@ -81,7 +81,7 @@ class LoginScreen extends Component {
         name: 'password',
         title: intl.formatMessage({ id: 'loginScreen.form.fields.password.title' }),
         description: intl.formatMessage({ id: 'loginScreen.form.fields.password.message' }),
-        button: { title: intl.formatMessage({ id: 'commons.login' }), rightIcon: 'md-log-in', iconColor: Palette.white },
+        button: { title: intl.formatMessage({ id: 'commons.login' }), rightIcon: 'md-log-in', iconColor: Palette.white.css() },
         input: { placeholder: intl.formatMessage({ id: 'loginScreen.form.fields.password.placeholder' }), secureTextEntry: true }
       },
     ];

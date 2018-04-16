@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Button, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { connect } from 'react-redux';
@@ -8,10 +8,12 @@ import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { injectIntl } from 'react-intl';
+import { compose } from 'react-apollo';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
+import { graphqlService } from '../../services';
 import QRCode from './QRCode';
 
 const ContainerScene = styled(View)`
@@ -27,13 +29,30 @@ const CloseButton = styled(TouchableOpacity)`
 `;
 
 class CouponDetailScene extends Component {
-  catchCoupon = (catched) => {
-    const { navigation, onClose } = this.props;
-    if(!navigation) return;
+  catchCoupon = async ({ campaign, hunted }) => {
+    const { navigation, onClose, maker = {}, captureCoupon, intl } = this.props;
 
     if(onClose) {
-      if(catched) navigation.navigate('Profile');
-      else console.log('Atrapa cupon!');
+      if(hunted) {
+        if(!navigation) {
+          console.warn(`We need pass navigation props in this component ${this.contructor.name}`)
+          return
+        };
+
+        navigation.navigate('Maker', { ...maker });
+      }
+      else {
+        try {
+          await captureCoupon(campaign.id);
+          //TODO: remover estas alertas por las alertar propias cuando estén creadas
+          Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+        } catch (error) {
+          console.log(error.message);
+          //TODO: remover estas alertas por las alertar propias cuando estén creadas
+          Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+        }
+
+      }
 
       onClose();
     }
@@ -43,7 +62,6 @@ class CouponDetailScene extends Component {
     const campaign = this.props;
     const { onClose = () => null, intl, startAt = '', endAt = '', status } = campaign;
 
-    // Formated Date
     const startDate = intl
       .formatDate(startAt, { month: 'short', day: 'numeric' })
       .toUpperCase();
@@ -53,14 +71,16 @@ class CouponDetailScene extends Component {
     const date = `${startDate} - ${endDate}`;
 
     // TODO: Cambiar el estado al correcto cuando este definido.
-    let catched = false;
-    if(status === 'hunted') catched = true;
+    let hunted = false;
+    if(status === 'hunted') hunted = true;
+
+    console.log(status);
 
     return (
       <ContainerScene>
         <ScrollView>
           <CouponCover
-            catched={catched}
+            catched={hunted}
             background={campaign.image}
             date={date}
             title={campaign.title}
@@ -69,7 +89,7 @@ class CouponDetailScene extends Component {
             couponsCountCaption="Disponibles"
           />
 
-          <CouponDescription catched={catched} qrCode=''>
+          <CouponDescription catched={hunted} qrCode=''>
             <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
             <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>
@@ -79,8 +99,8 @@ class CouponDetailScene extends Component {
             name={((campaign || {}).maker || {}).name}
             slogan={((campaign || {}).maker || {}).slogan}
             button={{
-              title: catched ? 'Ver Perfil' : 'Obtener Cupon',
-              onPress: () => this.catchCoupon(catched),
+              title: hunted ? 'Ver Perfil' : 'Obtener Cupon',
+              onPress: () => this.catchCoupon({ campaign, hunted }),
             }}
           />
         </ScrollView>
@@ -103,4 +123,6 @@ CouponDetailScene.propTypes = {
 
 };
 
-export default injectIntl(CouponDetailScene);
+export default compose(
+  graphqlService.mutation.captureCoupon,
+)(injectIntl(CouponDetailScene));

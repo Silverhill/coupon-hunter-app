@@ -10,6 +10,7 @@ import RegisterScreen from './containers/Register/RegisterScreen';
 import HomeScreen from './containers/Home/HomeScreen';
 import AuthLoadingScreen from './containers/AuthLoadingScreen/AuthLoadingScreen';
 import ProfileScene from './containers/Profile/ProfileScene';
+import ProfileMakerScene from './containers/Profile/ProfileMakerScene';
 import CouponDetailScene from './containers/CouponDetail/CouponDetailScene';
 import WalletScene from './containers/Wallet/WalletScene';
 import ExploreScene from './containers/Explore/ExploreScene';
@@ -17,6 +18,20 @@ import NotificationsScene from './containers/Notifications/NotificationsScene';
 
 // Assets
 import arrow_left_c from './assets/images/arrow-left-c.png'
+
+export const customBack = {
+  headerStyle: {
+    backgroundColor: 'white',
+  },
+  headerTitleStyle: {
+    fontWeight: '900',
+  },
+  headerBackImage: arrow_left_c,
+  headerBackTitleStyle: {
+    color: 'black',
+    fontSize: 14,
+  },
+}
 
 // Auth Stack
 const AuthStack = StackNavigator({
@@ -26,17 +41,7 @@ const AuthStack = StackNavigator({
 },{
   initialRouteName: 'Welcome',
   navigationOptions: ({ navigation }) => ({
-    headerStyle: {
-      backgroundColor: 'white',
-    },
-    headerTitleStyle: {
-      fontWeight: '900',
-    },
-    headerBackImage: arrow_left_c,
-    headerBackTitleStyle: {
-      color: 'black',
-      fontSize: 14,
-    },
+    ...customBack,
   })
 });
 
@@ -54,6 +59,7 @@ const HomeStack = StackNavigator({
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
   Profile: { screen: ProfileScene },
+  Maker: { screen: ProfileMakerScene },
 }, {
   navigationOptions: {
     header: null,

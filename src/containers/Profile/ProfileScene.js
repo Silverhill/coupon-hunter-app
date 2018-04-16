@@ -1,13 +1,87 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native';
-import { Button } from 'coupon-components-native';
-import { removeAuthenticationAsync } from '../../services/auth';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Button, HeaderBar, Avatar, Typo, ModalOptions } from 'coupon-components-native';
+import { Palette } from 'coupon-components-native/styles';
+import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import styled, { css } from 'styled-components/native';
+import { Entypo } from '@expo/vector-icons';
+import uuid from 'uuid/v4';
+
+import { removeAuthenticationAsync } from '../../services/auth';
+
+const ProfileContainer = styled(View)`
+  flex: 1;
+`;
+
+const HeaderBarContainer = styled(View)`
+`;
+
+const Content = styled(View)`
+`;
+
+const RowContent = styled(View)`
+  margin-bottom: 5;
+  padding-horizontal: 10;
+  margin-top: 5;
+  padding-vertical: 10;
+  flex-direction: row;
+  align-items: center;
+  background-color: ${Palette.white};
+
+  ${props => props.fullWidth && css`
+    width: 100%;
+  `};
+  ${props => props.verticalCenter && css`
+    align-items: center;
+  `};
+  ${props => props.horizontalCenter && css`
+    justify-content: center;
+  `};
+`;
+
+const ColumnGroup = styled(View)`
+  flex-direction: column;
+  margin-left: 20;
+
+  ${props => props.fullWidth && css`
+    flex: 1;
+  `};
+  ${props => props.verticalCenter && css`
+    align-items: center;
+  `};
+  ${props => props.horizontalCenter && css`
+    justify-content: center;
+  `};
+`;
+
+const RowGroup = styled(View)`
+  flex-direction: row;
+  ${props => props.fullWidth && css`
+    flex: 1;
+  `};
+`;
+
+const DividerVertical = styled(View)`
+  height: 100%;
+  width: 1;
+  background-color: ${Palette.neutral};
+  margin-left: 20;
+`;
 
 @connect((state) => ({
   auth: state.user.auth,
+  profile: state.user.profile,
 }))
 export default class ProfileScene extends Component {
+  state = {
+    openOptions: false
+  }
+
+  setModalVisible(visible) {
+    this.setState({openOptions: visible});
+  }
+
   signOut = async () => {
     const { navigation, auth } = this.props;
 
@@ -17,11 +91,90 @@ export default class ProfileScene extends Component {
     }
   }
 
+  goToBack = () => {
+    const { navigation } = this.props;
+    navigation.goBack();
+  }
+
+  onPressOptions = () => {
+    this.setModalVisible(true);
+  }
+
   render() {
+    const { openOptions } = this.state;
+    const { profile: { email, name } } = this.props;
+    const options = [
+      {label: <FormattedMessage id="commons.editProfile" />, id: uuid(), key: 'edit' },
+    ];
+
+    // TODO: add profile phrase o mini bio
     return (
-      <View>
-        <Button title="Cerrar Sesión" onPress={this.signOut} />
-      </View>
+      <ProfileContainer>
+        <HeaderBarContainer>
+          <FormattedMessage id="profileScene.titlePage">{(txt) => (
+            <HeaderBar backButton={this.goToBack} title={txt} />
+          )}</FormattedMessage>
+        </HeaderBarContainer>
+
+        <Content>
+          <RowContent>
+            <Avatar
+              size={70}
+              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
+            />
+
+            <ColumnGroup fullWidth>
+              <Typo.Header numberOfLines={1} normal>{name}</Typo.Header>
+              <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
+              <Typo.TextBody small secondary>{email}</Typo.TextBody>
+            </ColumnGroup>
+
+            <RowGroup>
+              <TouchableOpacity onPress={this.onPressOptions}>
+                <Entypo name="cog" size={30}/>
+              </TouchableOpacity>
+            </RowGroup>
+          </RowContent>
+
+          <RowContent fullWidth horizontalCenter>
+            <ColumnGroup>
+              <Typo.Header center small>410</Typo.Header>
+              <Typo.TextBody small secondary>capturados</Typo.TextBody>
+            </ColumnGroup>
+
+            <DividerVertical/>
+
+            <ColumnGroup>
+              <Typo.Header center small>200</Typo.Header>
+              <Typo.TextBody small secondary>canjeados</Typo.TextBody>
+            </ColumnGroup>
+
+            <DividerVertical/>
+
+            <ColumnGroup>
+              <Typo.Header center small>210</Typo.Header>
+              <Typo.TextBody small secondary>perdidos</Typo.TextBody>
+            </ColumnGroup>
+          </RowContent>
+
+          <RowContent fullWidth horizontalCenter>
+            <TouchableOpacity onPress={this.signOut}>
+              <Typo.Header highlight small>Cerrar Sesión</Typo.Header>
+            </TouchableOpacity>
+          </RowContent>
+
+        </Content>
+
+        <ModalOptions
+          isOpen={openOptions}
+          // opacity={0.7}
+          cancelLabel={<FormattedMessage id="commons.cancel" />}
+          options={options}
+          onClickOption={(option) => console.log('click', option)}
+          onCloseRequest={() => this.setModalVisible(false)}
+        />
+
+      </ProfileContainer>
     )
   }
 }

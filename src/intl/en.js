@@ -8,6 +8,9 @@ export default {
     signIn: 'Sign In',
     createAccount: 'Create Account',
     logOut: 'Log Out',
+    cancel: 'Cancel',
+    edit: 'Edit',
+    editProfile: 'Edit Profile',
 
     messages: {
       alert: {
@@ -75,6 +78,14 @@ export default {
       hunted: 'Hunted',
       used: 'Used',
     }
+  },
+
+  profileScene: {
+    titlePage: 'Profile',
+  },
+
+  makerProfileScene: {
+    titlePage: 'Maker Profile',
   },
 
   component: {

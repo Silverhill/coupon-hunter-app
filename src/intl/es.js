@@ -8,6 +8,9 @@ export default {
     signIn: 'Registrarse',
     createAccount: 'Crear Cuenta',
     logOut: 'Cerrar Sesión',
+    cancel: 'Cancelar',
+    edit: 'Editar',
+    editProfile: 'Editar Perfil',
 
     messages: {
 
@@ -76,6 +79,14 @@ export default {
       hunted: 'Capturados',
       used: 'Usados',
     }
+  },
+
+  profileScene: {
+    titlePage: 'Mi Perfil',
+  },
+
+  makerProfileScene: {
+    titlePage: 'Perfil Maker',
   },
 
   component: {

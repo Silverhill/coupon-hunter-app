@@ -68,6 +68,27 @@ export const query = {
     }
   `,
 
+  campaignsByMakerId: gql`
+    query campaignsByMakerId($makerId: String!){
+      campaignsByMakerId(makerId: $makerId){
+        endAt
+        startAt
+        city
+        title
+        id
+        address
+        country
+        city
+        image
+        totalCoupons
+        description
+        customMessage
+        deleted
+        status
+      }
+    }
+  `,
+
   signIn: gql`
     query signIn($email: String!, $password: String!) {
       signIn(email: $email, password: $password) {

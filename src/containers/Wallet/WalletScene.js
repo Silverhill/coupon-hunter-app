@@ -60,7 +60,7 @@ class WalletScene extends Component {
     />
   )
   _renderScene = SceneMap({
-    hunted: () => <MyCurrentCoupons />,
+    hunted: () => <MyCurrentCoupons navigation={this.props.navigation} />,
     used: () => <MyOldCoupons />,
   });
 

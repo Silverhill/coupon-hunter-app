@@ -67,7 +67,7 @@ class MyCurrentCoupons extends Component {
     this.setState({ currentDetails: campaign, modalVisible: true });
   }
 
-  renderCoupon = ({item: coupon, index, section}) => {
+  renderCoupon = ({item: coupon }) => {
     const { intl } = this.props;
     const { campaign: _campaign, code, id, status } = coupon;
 
@@ -121,7 +121,8 @@ class MyCurrentCoupons extends Component {
 
   render() {
     const { loading, error, modalVisible, currentDetails } = this.state;
-    const { myCoupons } = this.props;
+    const { myCoupons, navigation } = this.props;
+    if(!navigation) console.warn('Require pass navigation props to MyCurrentCoupons Component');
 
     let screenContent;
     if(loading) screenContent = this._loading();
@@ -142,6 +143,7 @@ class MyCurrentCoupons extends Component {
           visible={modalVisible}
         >
           <CouponDetailScene
+            navigation={navigation}
             onClose={this.handleCloseModal}
             {...currentDetails}
           />
