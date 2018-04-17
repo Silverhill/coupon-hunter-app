@@ -11,6 +11,7 @@ export default {
     cancel: 'Cancel',
     edit: 'Edit',
     editProfile: 'Edit Profile',
+    viewProfile: 'View Profile',
 
     messages: {
       alert: {
@@ -86,6 +87,10 @@ export default {
 
   makerProfileScene: {
     titlePage: 'Maker Profile',
+  },
+
+  couponDetailScene: {
+    couponAvailable: '{totalCoupons, plural, =0 {Not Available} one {# Available} other {# Available} }',
   },
 
   component: {

@@ -49,6 +49,7 @@ const AuthStack = StackNavigator({
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
   Profile: { screen: ProfileScene },
+  Maker: { screen: ProfileMakerScene },
 },{
   navigationOptions: {
     header: null,

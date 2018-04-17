@@ -91,12 +91,12 @@ class ProfileMakerScene extends Component {
   }
 
   async componentDidMount() {
-    const { client, navigation: { state: { params } } } = this.props
+    const { client, navigation: { state: { params: maker } } } = this.props
 
     try {
       const res = await client.query({
         query: graphqlService.query.campaignsByMakerId,
-        variables: { makerId: params.id },
+        variables: { makerId: maker.id },
       });
 
       const { data: { campaignsByMakerId }, loading } = res;
@@ -113,7 +113,13 @@ class ProfileMakerScene extends Component {
   }
 
   pressCoupon = (campaign) => {
-    this.setState({ currentDetails: campaign, modalVisible: true });
+    const { navigation: { state: { params: maker } } } = this.props
+    const campaignWithMaker = {
+      ...campaign,
+      maker,
+    };
+
+    this.setState({ currentDetails: campaignWithMaker, modalVisible: true });
   }
 
   _renderItem = ({item: campaign }) => {
@@ -161,7 +167,8 @@ class ProfileMakerScene extends Component {
 
   render() {
     const { loading, error, campaigns, modalVisible, currentDetails } = this.state;
-    const { navigation: { state: { params } } } = this.props
+    const { navigation: { state: { params: maker } } } = this.props
+
 
     let currentContent;
     if(loading) currentContent = this._loading()
@@ -185,9 +192,9 @@ class ProfileMakerScene extends Component {
             />
 
             <ColumnGroup fullWidth>
-              <Typo.Header numberOfLines={1} normal>{params.name}</Typo.Header>
+              <Typo.Header numberOfLines={1} normal>{maker.name}</Typo.Header>
               <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
-              <Typo.TextBody small secondary>{params.email}</Typo.TextBody>
+              <Typo.TextBody small secondary>{maker.email}</Typo.TextBody>
             </ColumnGroup>
           </RowContent>
 
@@ -208,6 +215,7 @@ class ProfileMakerScene extends Component {
           visible={modalVisible}
         >
           <CouponDetailScene
+            withoutMakerProfile
             onClose={this.handleCloseModal}
             {...currentDetails}
           />

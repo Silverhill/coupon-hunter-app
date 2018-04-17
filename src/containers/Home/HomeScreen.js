@@ -17,7 +17,7 @@ import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import * as userActions from '../../actions/userActions';
 import * as campaignsActions from '../../actions/campaignsActions';
 
-const TodayContainer = styled(ScrollView)`
+const TodayContainer = styled(View)`
   flex: 1;
   background-color: white;
 `;
@@ -50,30 +50,46 @@ class HomeScreen extends Component {
     loading: true,
     modalVisible: false,
     currentDetails: {},
+    refreshing: false,
+    error: null,
   }
 
   async componentDidMount() {
-    const { client: { query }, setUserProfile, setCampaigns, navigation } = this.props;
+    await this.remoteRequest();
+  }
+
+  remoteRequest = async () => {
+    const { client, setUserProfile, setCampaigns, navigation } = this.props;
+    this.setState({ loading: true });
 
     try {
-      const { data: { me, allCampaigns }, loading } = await query({
+      const response = await client.query({
         query: graphqlService.query.composedMeAllCampaigns,
       });
+      console.log(client);
+      const { data: { me, allCampaigns }, loading } = response;
 
       setUserProfile(me);
       setCampaigns(allCampaigns);
 
-      this.setState({ loading });
+      this.setState({ loading, refreshing: false });
     } catch (error) {
-      // console.log(a);
       console.log('DEBUG ERROR', error.message);
+      this.setState({ error, loading: false });
     }
+  }
+
+  handleRefresh = () => {
+    this.setState({ refreshing: true },
+      async () => {
+        await this.remoteRequest();
+      });
   }
 
   captureCoupon = async (campaign) => {
     const { captureCoupon: huntCoupon, intl } = this.props;
     try {
-      const res = await huntCoupon(campaign.id);
+      await huntCoupon(campaign.id);
 
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
       Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
@@ -178,8 +194,8 @@ class HomeScreen extends Component {
   }
 
   render() {
-    const { loading } = this.state;
-    const { user: { profile }, intl, campaigns: { allCampaigns } } = this.props;
+    const { loading, refreshing } = this.state;
+    const { intl, campaigns: { allCampaigns }, navigation } = this.props;
 
     if(loading) return <Text>Loading...</Text>
     // else if(error) return <Text>{error.message}</Text>
@@ -190,8 +206,17 @@ class HomeScreen extends Component {
           <SectionList
             keyExtractor={this._keyExtractor}
             renderItem={this.renderCoupon}
-            renderSectionHeader={({section}) => this._renderSectionHeader({ title: section.title, hasProfile: section.hasProfile, date: section.date })}
+            renderSectionHeader={({section}) =>
+              this._renderSectionHeader({
+                title: section.title,
+                hasProfile: section.hasProfile,
+                date: section.date
+              })
+            }
             sections={this.currentSections}
+            refreshing={refreshing}
+            onRefresh={this.handleRefresh}
+            stickySectionHeadersEnabled
           />
         </CampaignsContainer>
 
@@ -201,6 +226,7 @@ class HomeScreen extends Component {
           visible={this.state.modalVisible}
         >
           <CouponDetailScene
+            navigation={navigation}
             onClose={this.handleCloseModal}
             {...this.state.currentDetails}
           />

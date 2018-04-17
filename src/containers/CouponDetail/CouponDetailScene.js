@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'react-apollo';
 
 import CouponCover from './CouponCover';
@@ -29,38 +29,43 @@ const CloseButton = styled(TouchableOpacity)`
 `;
 
 class CouponDetailScene extends Component {
-  catchCoupon = async ({ campaign, hunted }) => {
-    const { navigation, onClose, maker = {}, captureCoupon, intl } = this.props;
+  goToMakerProfile = () => {
+    const { maker = {}, navigation, onClose } = this.props;
 
     if(onClose) {
-      if(hunted) {
-        if(!navigation) {
-          console.warn(`We need pass navigation props in this component ${this.contructor.name}`)
-          return
-        };
 
-        navigation.navigate('Maker', { ...maker });
-      }
-      else {
-        try {
-          await captureCoupon(campaign.id);
-          //TODO: remover estas alertas por las alertar propias cuando estén creadas
-          Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
-        } catch (error) {
-          console.log(error.message);
-          //TODO: remover estas alertas por las alertar propias cuando estén creadas
-          Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
-        }
+      if(!navigation) {
+        console.warn(`We need pass navigation props in this component ${CouponDetailScene.name}`)
+        return
+      };
 
-      }
-
+      navigation.navigate('Maker', { ...maker });
       onClose();
+    }
+  }
+
+  catchCoupon = async ({ campaign, hunted }) => {
+    const { captureCoupon, intl } = this.props;
+    try {
+      await captureCoupon(campaign.id);
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+    } catch (error) {
+      console.log(error.message);
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
     }
   }
 
   render() {
     const campaign = this.props;
-    const { onClose = () => null, intl, startAt = '', endAt = '', status } = campaign;
+    const { onClose = () => null, intl, startAt = '', endAt = '', status, withoutMakerProfile = false } = campaign;
+
+    const availableText = intl
+      .formatMessage(
+        { id: "couponDetailScene.couponAvailable"},
+        { totalCoupons: String(campaign.totalCoupons) })
+      .match(/([a-z])\w+/gi)[0];
 
     const startDate = intl
       .formatDate(startAt, { month: 'short', day: 'numeric' })
@@ -86,7 +91,7 @@ class CouponDetailScene extends Component {
             title={campaign.title}
             companyName={((campaign || {}).maker || {}).name}
             couponsCount={campaign.totalCoupons}
-            couponsCountCaption="Disponibles"
+            couponsCountCaption={availableText}
           />
 
           <CouponDescription catched={hunted} qrCode=''>
@@ -94,15 +99,18 @@ class CouponDetailScene extends Component {
             <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>
 
-          <CompanyProfileRow
-            avatar={campaign.avatarSource}
-            name={((campaign || {}).maker || {}).name}
-            slogan={((campaign || {}).maker || {}).slogan}
-            button={{
-              title: hunted ? 'Ver Perfil' : 'Obtener Cupon',
-              onPress: () => this.catchCoupon({ campaign, hunted }),
-            }}
-          />
+          {!withoutMakerProfile && (
+            <CompanyProfileRow
+              avatar={campaign.avatarSource}
+              name={((campaign || {}).maker || {}).name}
+              slogan={((campaign || {}).maker || {}).slogan}
+              button={{
+                title: <FormattedMessage id="commons.viewProfile" />,
+                onPress: this.goToMakerProfile,
+                big: true,
+              }}
+            />
+          )}
         </ScrollView>
 
         <CloseButton onPress={onClose}>
