@@ -48,15 +48,8 @@ export const mutation = {
     props: ({ownProps, mutate}) => ({
       captureCoupon(campaignId) {
         return mutate({
-          variables: {
-            campaignId
-          },
-          update: (store) => {
-            const data = store.readQuery({ query: query.myCoupons });
-            // console.log(data);
-            store.writeQuery({ query: query.myCoupons, data });
-            // refetchQueries: [query.myCoupons],
-          }
+          variables: { campaignId },
+          refetchQueries: [{ query: query.myCoupons }],
         })
       }
     })
@@ -174,7 +167,7 @@ export const query = {
         email
       }
 
-      allCampaigns(sortField: "startAt") {
+      allCampaigns(sortField: "startAt", limit: 20) {
         campaigns {
           id
           startAt
