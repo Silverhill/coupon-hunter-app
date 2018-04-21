@@ -4,7 +4,7 @@ import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import { FormattedMessage } from 'react-intl';
 import { injectIntl } from 'react-intl';
 import styled, { css } from 'styled-components/native';
-import { withApollo } from 'react-apollo';
+import { withApollo, Query } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
@@ -43,24 +43,9 @@ const Container = styled(View)`
 })
 class MyCurrentCoupons extends Component {
   state = {
-    loading: true,
     modalVisible: false,
     error: '',
     currentDetails: {},
-  }
-
-  async componentDidMount() {
-    const { client: { query }, setMyCoupons } = this.props
-    try {
-      const { data: { myCoupons }, loading } = await query({
-        query: graphqlService.query.myCoupons,
-      });
-
-      setMyCoupons(myCoupons);
-      this.setState({ loading });
-    } catch (error) {
-      console.log('DEBUG ERROR', error.message);
-    }
   }
 
   pressCoupon = (campaign) => {
@@ -120,21 +105,26 @@ class MyCurrentCoupons extends Component {
   }
 
   render() {
-    const { loading, error, modalVisible, currentDetails } = this.state;
-    const { myCoupons, navigation } = this.props;
+    const { modalVisible, currentDetails } = this.state;
+    const { navigation } = this.props;
     if(!navigation) console.warn('Require pass navigation props to MyCurrentCoupons Component');
-
-    let screenContent;
-    if(loading) screenContent = this._loading();
-    else if(error) screenContent = this._error(error);
-    else if(myCoupons.length > 0) screenContent = this._renderMyCoupons(myCoupons);
 
     return (
       <WalletContainer>
         <Container>
-          <ScreenContent center={!myCoupons.length}>
-            {screenContent}
-          </ScreenContent>
+        <Query query={graphqlService.query.myCoupons}>{({ data, loading, error }) => {
+
+          let screenContent;
+          if(loading) screenContent = this._loading();
+          else if(error) screenContent = this._error(error);
+          else if(data.myCoupons.length > 0) screenContent = this._renderMyCoupons(data.myCoupons);
+
+          return (
+            <ScreenContent>
+              {screenContent}
+            </ScreenContent>
+          )
+        }}</Query>
         </Container>
 
         <Modal

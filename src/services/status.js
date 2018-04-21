@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 export const UNAVAILABLE = 'unavailable';
 export const AVAILABLE = 'available';
 export const HUNTED = 'hunted';
+export const EXPIRED = 'expired';
 
 export const getCurrentStatus = (status) => {
   switch (status) {
@@ -23,6 +24,11 @@ export const getCurrentStatus = (status) => {
       return {
         label: <FormattedMessage id="status.hunted" />,
         color: Palette.secondaryAccent,
+      };
+    case EXPIRED:
+      return {
+        label: <FormattedMessage id="status.expired" />,
+        color: Palette.neutral,
       };
     default:
       return {

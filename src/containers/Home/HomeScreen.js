@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
+import { graphql, compose, Query } from 'react-apollo';
 import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal, SectionList } from 'react-native';
 import { Button, HeaderBar, Coupon } from 'coupon-components-native';
 import styled from 'styled-components/native';
@@ -27,6 +27,7 @@ const StyledCoupon = styled(Coupon)`
 `;
 
 const CampaignsContainer = styled(View)`
+  flex: 1;
 `;
 
 const HeaderBarContainer = styled(View)`
@@ -35,10 +36,10 @@ const HeaderBarContainer = styled(View)`
 
 @connect(state => ({
   user: state.user,
-  campaigns: state.campaigns,
+  // campaigns: state.campaigns,
 }), {
   setUserProfile: userActions.setUserProfile,
-  setCampaigns: campaignsActions.setCampaigns,
+  // setCampaigns: campaignsActions.setCampaigns,
 })
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -47,47 +48,15 @@ class HomeScreen extends Component {
   }
 
   state = {
-    loading: true,
     modalVisible: false,
     currentDetails: {},
     refreshing: false,
     error: null,
   }
 
-  async componentDidMount() {
-    await this.remoteRequest();
-  }
-
-  remoteRequest = async () => {
-    const { client, setUserProfile, setCampaigns, navigation } = this.props;
-    this.setState({ loading: true });
-
-    try {
-      const response = await client.query({
-        query: graphqlService.query.composedMeAllCampaigns,
-      });
-      console.log(client);
-      const { data: { me, allCampaigns }, loading } = response;
-
-      setUserProfile(me);
-      setCampaigns(allCampaigns);
-
-      this.setState({ loading, refreshing: false });
-    } catch (error) {
-      console.log('DEBUG ERROR', error.message);
-      this.setState({ error, loading: false });
-    }
-  }
-
-  handleRefresh = () => {
-    this.setState({ refreshing: true },
-      async () => {
-        await this.remoteRequest();
-      });
-  }
-
   captureCoupon = async (campaign) => {
     const { captureCoupon: huntCoupon, intl } = this.props;
+    // console.log(campaign)
     try {
       await huntCoupon(campaign.id);
 
@@ -147,18 +116,16 @@ class HomeScreen extends Component {
         {...campaign}
         key={campaign.id}
         onPress={() => this.pressCoupon(campaign)}
-        tagButton={{
-          onPress: () => this.captureCoupon(campaign)
-        }}
+        tagButton={{onPress: () => {
+          this.captureCoupon(campaign)
+        }}}
         startAt={startAt}
         endAt={endAt}
       />
     );
   }
 
-  get campaigns() {
-    const { campaigns: { allCampaigns } } = this.props;
-
+  campaigns(allCampaigns) {
     let today = [];
     let restOfDays = [];
 
@@ -173,7 +140,7 @@ class HomeScreen extends Component {
     return { today, restOfDays };
   }
 
-  get currentSections() {
+  currentSections(allCampaigns) {
     const { intl } = this.props;
 
     let sections = [];
@@ -181,12 +148,14 @@ class HomeScreen extends Component {
     const todayTitle = intl.formatMessage({ id: 'todayScreen.today' });
     const restOfDaysTitle = intl.formatMessage({ id: 'todayScreen.otherDays' });
 
-    if(this.campaigns.today.length > 0) {
-      todaySection = { title: todayTitle, data: this.campaigns.today, hasProfile: true, date: formattedToday };
-      restSection = { title: restOfDaysTitle, data: this.campaigns.restOfDays };
+    const campaigns = this.campaigns(allCampaigns);
+
+    if(campaigns.today.length > 0) {
+      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, date: formattedToday };
+      restSection = { title: restOfDaysTitle, data: campaigns.restOfDays };
       sections = sections.concat(todaySection, restSection);
-    }else if (!this.campaigns.today.length) {
-      todaySection = { title: restOfDaysTitle, data: this.campaigns.restOfDays, hasProfile: true };
+    }else if (!campaigns.today.length) {
+      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true };
       sections = sections.concat(todaySection);
     }
 
@@ -194,30 +163,54 @@ class HomeScreen extends Component {
   }
 
   render() {
-    const { loading, refreshing } = this.state;
-    const { intl, campaigns: { allCampaigns }, navigation } = this.props;
-
-    if(loading) return <Text>Loading...</Text>
-    // else if(error) return <Text>{error.message}</Text>
+    const { refreshing } = this.state;
+    const { intl, navigation, setUserProfile } = this.props;
 
     return (
       <TodayContainer>
-        <CampaignsContainer>
-          <SectionList
-            keyExtractor={this._keyExtractor}
-            renderItem={this.renderCoupon}
-            renderSectionHeader={({section}) =>
-              this._renderSectionHeader({
-                title: section.title,
-                hasProfile: section.hasProfile,
-                date: section.date
-              })
-            }
-            sections={this.currentSections}
-            refreshing={refreshing}
-            onRefresh={this.handleRefresh}
-            stickySectionHeadersEnabled
-          />
+      <CampaignsContainer>
+        <Query query={graphqlService.query.composedMeAllCampaigns}>{
+          ({ data, fetchMore, error, loading }) => {
+
+            if(loading) return <Text>Loading...</Text>
+            else if(error) return <Text>{error.message}</Text>
+            setUserProfile(data.me);
+
+            return (
+              <SectionList
+                keyExtractor={this._keyExtractor}
+                renderItem={this.renderCoupon}
+                renderSectionHeader={({section}) =>
+                  this._renderSectionHeader({
+                    title: section.title,
+                    hasProfile: section.hasProfile,
+                    date: section.date
+                  })
+                }
+                sections={this.currentSections(data.allCampaigns.campaigns)}
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  this.setState({ refreshing: true });
+
+                  await fetchMore({
+                    updateQuery: (prev, newResult) => {
+                      if(!newResult) return prev;
+
+                      const newData = {
+                        ...prev,
+                        ...newResult.fetchMoreResult,
+                      };
+
+                      return newData;
+                    }
+                  });
+
+                  this.setState({ refreshing: false });
+                }}
+                stickySectionHeadersEnabled
+              />
+            );
+          }}</Query>
         </CampaignsContainer>
 
         <Modal

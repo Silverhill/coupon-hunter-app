@@ -51,6 +51,12 @@ export const mutation = {
           variables: {
             campaignId
           },
+          update: (store) => {
+            const data = store.readQuery({ query: query.myCoupons });
+            // console.log(data);
+            store.writeQuery({ query: query.myCoupons, data });
+            // refetchQueries: [query.myCoupons],
+          }
         })
       }
     })
@@ -110,7 +116,6 @@ export const query = {
             city
             title
             id
-            address
             country
             city
             image
@@ -130,56 +135,74 @@ export const query = {
   `,
 
   allCampaigns: gql`
-    {
+    query {
       allCampaigns {
-        endAt
-        startAt
-        city
-        title
-        id
-        address
-        country
-        city
-        image
-        totalCoupons
-        description
-        customMessage
-        deleted
-        status
+        campaigns {
+          id
+          startAt
+          endAt
+          country
+          city
+          totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
+          description
+          customMessage
+          deleted
+          initialAgeRange
+          finalAgeRange
+          createdAt
+          couponsHuntedByMe
+          maker {
+            id
+            name
+            provider
+            role
+          }
+        }
       }
     }
   `,
 
   composedMeAllCampaigns: gql`
-    {
+    query {
       me {
         name
         role
         email
       }
 
-      allCampaigns {
-        endAt
-        startAt
-        city
-        title
-        id
-        address
-        country
-        city
-        image
-        totalCoupons
-        description
-        customMessage
-        deleted
-        status
-        maker {
-          name
+      allCampaigns(sortField: "startAt") {
+        campaigns {
           id
+          startAt
+          endAt
+          country
+          city
+          totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
+          description
+          customMessage
+          deleted
+          initialAgeRange
+          finalAgeRange
+          createdAt
+          couponsHuntedByMe
+          maker {
+            id
+            name
+            provider
+            role
+          }
         }
       }
     }
-  `
+  `,
 }
 
 export default {
