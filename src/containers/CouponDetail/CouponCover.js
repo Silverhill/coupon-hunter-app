@@ -105,7 +105,7 @@ const CouponCover = ({ background, date, title, companyName, couponsCount, coupo
 
               <TicketsHeader small inverted>
                 <TicketsHeaderIcon name="md-wifi" size={15} color={Palette.white.css()}/>
-                {upperCaseText(couponsCountCaption)}
+                {couponsCountCaption}
               </TicketsHeader>
             </TicketsContainer>
           )}

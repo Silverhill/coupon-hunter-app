@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
+import { graphql, compose, Query } from 'react-apollo';
 import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal, SectionList } from 'react-native';
 import { Button, HeaderBar, Coupon } from 'coupon-components-native';
 import styled from 'styled-components/native';
@@ -17,7 +17,7 @@ import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import * as userActions from '../../actions/userActions';
 import * as campaignsActions from '../../actions/campaignsActions';
 
-const TodayContainer = styled(ScrollView)`
+const TodayContainer = styled(View)`
   flex: 1;
   background-color: white;
 `;
@@ -27,6 +27,7 @@ const StyledCoupon = styled(Coupon)`
 `;
 
 const CampaignsContainer = styled(View)`
+  flex: 1;
 `;
 
 const HeaderBarContainer = styled(View)`
@@ -35,10 +36,10 @@ const HeaderBarContainer = styled(View)`
 
 @connect(state => ({
   user: state.user,
-  campaigns: state.campaigns,
+  // campaigns: state.campaigns,
 }), {
   setUserProfile: userActions.setUserProfile,
-  setCampaigns: campaignsActions.setCampaigns,
+  // setCampaigns: campaignsActions.setCampaigns,
 })
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -47,33 +48,17 @@ class HomeScreen extends Component {
   }
 
   state = {
-    loading: true,
     modalVisible: false,
     currentDetails: {},
-  }
-
-  async componentDidMount() {
-    const { client: { query }, setUserProfile, setCampaigns, navigation } = this.props;
-
-    try {
-      const { data: { me, allCampaigns }, loading } = await query({
-        query: graphqlService.query.composedMeAllCampaigns,
-      });
-
-      setUserProfile(me);
-      setCampaigns(allCampaigns);
-
-      this.setState({ loading });
-    } catch (error) {
-      // console.log(a);
-      console.log('DEBUG ERROR', error.message);
-    }
+    refreshing: false,
+    error: null,
   }
 
   captureCoupon = async (campaign) => {
     const { captureCoupon: huntCoupon, intl } = this.props;
+    // console.log(campaign)
     try {
-      const res = await huntCoupon(campaign.id);
+      await huntCoupon(campaign.id);
 
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
       Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
@@ -126,25 +111,21 @@ class HomeScreen extends Component {
       .formatDate(campaign.endAt, { month: 'short', day: 'numeric', year: 'numeric' })
       .toUpperCase();
 
-    console.log(campaign);
-
     return (
       <StyledCoupon
         {...campaign}
         key={campaign.id}
         onPress={() => this.pressCoupon(campaign)}
-        tagButton={{
-          onPress: () => this.captureCoupon(campaign)
-        }}
+        tagButton={{onPress: () => {
+          this.captureCoupon(campaign)
+        }}}
         startAt={startAt}
         endAt={endAt}
       />
     );
   }
 
-  get campaigns() {
-    const { campaigns: { allCampaigns } } = this.props;
-
+  campaigns(allCampaigns) {
     let today = [];
     let restOfDays = [];
 
@@ -159,7 +140,7 @@ class HomeScreen extends Component {
     return { today, restOfDays };
   }
 
-  get currentSections() {
+  currentSections(allCampaigns) {
     const { intl } = this.props;
 
     let sections = [];
@@ -167,12 +148,14 @@ class HomeScreen extends Component {
     const todayTitle = intl.formatMessage({ id: 'todayScreen.today' });
     const restOfDaysTitle = intl.formatMessage({ id: 'todayScreen.otherDays' });
 
-    if(this.campaigns.today.length > 0) {
-      todaySection = { title: todayTitle, data: this.campaigns.today, hasProfile: true, date: formattedToday };
-      restSection = { title: restOfDaysTitle, data: this.campaigns.restOfDays };
+    const campaigns = this.campaigns(allCampaigns);
+
+    if(campaigns.today.length > 0) {
+      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, date: formattedToday };
+      restSection = { title: restOfDaysTitle, data: campaigns.restOfDays };
       sections = sections.concat(todaySection, restSection);
-    }else if (!this.campaigns.today.length) {
-      todaySection = { title: restOfDaysTitle, data: this.campaigns.restOfDays, hasProfile: true };
+    }else if (!campaigns.today.length) {
+      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true };
       sections = sections.concat(todaySection);
     }
 
@@ -180,21 +163,54 @@ class HomeScreen extends Component {
   }
 
   render() {
-    const { loading } = this.state;
-    const { user: { profile }, intl, campaigns: { allCampaigns } } = this.props;
-
-    if(loading) return <Text>Loading...</Text>
-    // else if(error) return <Text>{error.message}</Text>
+    const { refreshing } = this.state;
+    const { intl, navigation, setUserProfile } = this.props;
 
     return (
       <TodayContainer>
-        <CampaignsContainer>
-          <SectionList
-            keyExtractor={this._keyExtractor}
-            renderItem={this.renderCoupon}
-            renderSectionHeader={({section}) => this._renderSectionHeader({ title: section.title, hasProfile: section.hasProfile, date: section.date })}
-            sections={this.currentSections}
-          />
+      <CampaignsContainer>
+        <Query query={graphqlService.query.composedMeAllCampaigns}>{
+          ({ data, fetchMore, error, loading }) => {
+
+            if(loading) return <Text>Loading...</Text>
+            else if(error) return <Text>{error.message}</Text>
+            setUserProfile(data.me);
+
+            return (
+              <SectionList
+                keyExtractor={this._keyExtractor}
+                renderItem={this.renderCoupon}
+                renderSectionHeader={({section}) =>
+                  this._renderSectionHeader({
+                    title: section.title,
+                    hasProfile: section.hasProfile,
+                    date: section.date
+                  })
+                }
+                sections={this.currentSections(data.allCampaigns.campaigns)}
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  this.setState({ refreshing: true });
+
+                  await fetchMore({
+                    updateQuery: (prev, newResult) => {
+                      if(!newResult) return prev;
+
+                      const newData = {
+                        ...prev,
+                        ...newResult.fetchMoreResult,
+                      };
+
+                      return newData;
+                    }
+                  });
+
+                  this.setState({ refreshing: false });
+                }}
+                stickySectionHeadersEnabled
+              />
+            );
+          }}</Query>
         </CampaignsContainer>
 
         <Modal
@@ -203,6 +219,7 @@ class HomeScreen extends Component {
           visible={this.state.modalVisible}
         >
           <CouponDetailScene
+            navigation={navigation}
             onClose={this.handleCloseModal}
             {...this.state.currentDetails}
           />

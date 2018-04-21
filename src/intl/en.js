@@ -8,13 +8,20 @@ export default {
     signIn: 'Sign In',
     createAccount: 'Create Account',
     logOut: 'Log Out',
+    cancel: 'Cancel',
+    edit: 'Edit',
+    editProfile: 'Edit Profile',
+    viewProfile: 'View Profile',
 
     messages: {
-
       alert: {
         couponHunted: 'Coupon Hunted!',
         onlyOneCoupon: 'You can only hunted a coupon for this campaign',
       }
+    },
+
+    titles: {
+      today: 'Today',
     }
   },
 
@@ -67,7 +74,23 @@ export default {
   },
 
   walletScreen: {
-    titlePage: 'My Wallet'
+    titlePage: 'My Wallet',
+    tabs: {
+      hunted: 'Hunted',
+      used: 'Used',
+    }
+  },
+
+  profileScene: {
+    titlePage: 'Profile',
+  },
+
+  makerProfileScene: {
+    titlePage: 'Maker Profile',
+  },
+
+  couponDetailScene: {
+    couponAvailable: '{totalCoupons, plural, =0 {Not Available} one {# Available} other {# Available} }',
   },
 
   component: {

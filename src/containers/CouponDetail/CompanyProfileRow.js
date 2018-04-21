@@ -46,10 +46,10 @@ const upperCaseText = (text = '') => text.toUpperCase();
 const CompanyProfileRow = ({ avatar, name, slogan, button }) => {
   return (
     <Container>
-      <Avatar resizeMode="cover" source={avatar}/>
+      {avatar && <Avatar resizeMode="cover" source={avatar}/>}
       <Info>
-        <Name small>{upperCaseText(name)}</Name>
-        <Slogan secondary small>{slogan}</Slogan>
+        {name && <Name small>{upperCaseText(name)}</Name>}
+        {slogan && <Slogan secondary small>{slogan}</Slogan>}
       </Info>
       <GetCouponButton {...button} />
     </Container>

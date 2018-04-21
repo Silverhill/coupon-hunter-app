@@ -48,9 +48,8 @@ export const mutation = {
     props: ({ownProps, mutate}) => ({
       captureCoupon(campaignId) {
         return mutate({
-          variables: {
-            campaignId
-          },
+          variables: { campaignId },
+          refetchQueries: [{ query: query.myCoupons }],
         })
       }
     })
@@ -64,6 +63,27 @@ export const query = {
         name
         role
         email
+      }
+    }
+  `,
+
+  campaignsByMakerId: gql`
+    query campaignsByMakerId($makerId: String!){
+      campaignsByMakerId(makerId: $makerId){
+        endAt
+        startAt
+        city
+        title
+        id
+        address
+        country
+        city
+        image
+        totalCoupons
+        description
+        customMessage
+        deleted
+        status
       }
     }
   `,
@@ -89,7 +109,6 @@ export const query = {
             city
             title
             id
-            address
             country
             city
             image
@@ -109,56 +128,74 @@ export const query = {
   `,
 
   allCampaigns: gql`
-    {
+    query {
       allCampaigns {
-        endAt
-        startAt
-        city
-        title
-        id
-        address
-        country
-        city
-        image
-        totalCoupons
-        description
-        customMessage
-        deleted
-        status
+        campaigns {
+          id
+          startAt
+          endAt
+          country
+          city
+          totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
+          description
+          customMessage
+          deleted
+          initialAgeRange
+          finalAgeRange
+          createdAt
+          couponsHuntedByMe
+          maker {
+            id
+            name
+            provider
+            role
+          }
+        }
       }
     }
   `,
 
   composedMeAllCampaigns: gql`
-    {
+    query {
       me {
         name
         role
         email
       }
 
-      allCampaigns {
-        endAt
-        startAt
-        city
-        title
-        id
-        address
-        country
-        city
-        image
-        totalCoupons
-        description
-        customMessage
-        deleted
-        status
-        maker {
-          name
+      allCampaigns(sortField: "startAt", limit: 20) {
+        campaigns {
           id
+          startAt
+          endAt
+          country
+          city
+          totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
+          description
+          customMessage
+          deleted
+          initialAgeRange
+          finalAgeRange
+          createdAt
+          couponsHuntedByMe
+          maker {
+            id
+            name
+            provider
+            role
+          }
         }
       }
     }
-  `
+  `,
 }
 
 export default {

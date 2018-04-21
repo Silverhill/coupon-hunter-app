@@ -8,6 +8,10 @@ export default {
     signIn: 'Registrarse',
     createAccount: 'Crear Cuenta',
     logOut: 'Cerrar Sesión',
+    cancel: 'Cancelar',
+    edit: 'Editar',
+    editProfile: 'Editar Perfil',
+    viewProfile: 'Ver Perfil',
 
     messages: {
 
@@ -15,6 +19,10 @@ export default {
         couponHunted: 'Cupones Capturados!',
         onlyOneCoupon: 'Solo puedes capturar un cupón de esta campaña',
       }
+    },
+
+    titles: {
+      today: 'Hoy',
     }
   },
 
@@ -67,7 +75,23 @@ export default {
   },
 
   walletScreen: {
-    titlePage: 'Mi Wallet'
+    titlePage: 'Mi Wallet',
+    tabs: {
+      hunted: 'Capturados',
+      used: 'Usados',
+    }
+  },
+
+  profileScene: {
+    titlePage: 'Mi Perfil',
+  },
+
+  makerProfileScene: {
+    titlePage: 'Perfil Maker',
+  },
+
+  couponDetailScene: {
+    couponAvailable: '{totalCoupons, plural, =0 {No Disponibles} one {# Disponible} other {# Disponibles} }',
   },
 
   component: {
@@ -78,7 +102,7 @@ export default {
 
   status: {
     'available': 'Disponible',
-    'hunted': 'Cazado',
+    'hunted': 'Capturado',
     'unavailable': 'No Disponible',
     'expired': 'Expirado',
   }
