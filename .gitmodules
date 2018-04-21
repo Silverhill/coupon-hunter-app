@@ -1,0 +1,3 @@
+[submodule "src/coupon-components-native"]
+	path = src/coupon-components-native
+	url = git@github.com:Silverhill/coupon-components-native.git

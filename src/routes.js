@@ -4,7 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
 import { FormattedMessage } from 'react-intl';
 
-import LoginScreen from './containers/LogIn/LoginScreen';
+import LoginScreen from './containers/Login/LoginScreen';
 import StartScreen from './containers/Welcome/StartScreen';
 import RegisterScreen from './containers/Register/RegisterScreen';
 import HomeScreen from './containers/Home/HomeScreen';

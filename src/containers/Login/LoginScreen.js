@@ -9,7 +9,6 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 
 import { graphqlService } from '../../services';
 import * as userActions from '../../actions/userActions';
-import { SCENE_KEY_TABBAR } from '../../constants';
 
 const Container = styled(View)`
   flex: 1;
