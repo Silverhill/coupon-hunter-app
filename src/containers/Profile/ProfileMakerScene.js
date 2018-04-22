@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, ScrollView, FlatList, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, ScrollView, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
 import { Button, HeaderBar, Avatar, Typo, Coupon } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
@@ -122,6 +122,23 @@ class ProfileMakerScene extends Component {
     this.setState({ currentDetails: campaignWithMaker, modalVisible: true });
   }
 
+  captureCoupon = async (campaign) => {
+    const { captureCoupon: huntCoupon, intl } = this.props;
+    if(campaign.huntedCoupons > 0) return;
+    console.log(campaign);
+
+    try {
+      await huntCoupon(campaign.id);
+
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+    } catch (error) {
+      console.log(error.message);
+      //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+    }
+  }
+
   _renderItem = ({item: campaign }) => {
     const { intl } = this.props;
 
@@ -139,7 +156,7 @@ class ProfileMakerScene extends Component {
         key={uuid()}
         onPress={() => this.pressCoupon(campaign)}
         tagButton={{
-          onPress: () => console.log('Obtener')
+          onPress: () => this.captureCoupon(campaign)
         }}
         startAt={startAt}
         endAt={endAt}

@@ -70,8 +70,8 @@ export default {
   },
 
   todayScreen: {
-    otherDays: 'Días Anteriores',
-    today: 'Hoy',
+    otherDays: 'Todos los Cupones',
+    today: 'Lo Nuevo',
   },
 
   walletScreen: {

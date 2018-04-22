@@ -11,7 +11,7 @@ import moment from 'moment';
 
 import { HEADER_AUTHENTICATION_KEY } from '../../constants';
 import { query } from '../../services/graphql';
-import { graphqlService, authService, intl } from '../../services';
+import { graphqlService, authService, intl, statusService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 
 import * as userActions from '../../actions/userActions';
@@ -56,7 +56,8 @@ class HomeScreen extends Component {
 
   captureCoupon = async (campaign) => {
     const { captureCoupon: huntCoupon, intl } = this.props;
-    // console.log(campaign)
+    if(campaign.huntedCoupons > 0) return;
+
     try {
       await huntCoupon(campaign.id);
 
@@ -116,9 +117,7 @@ class HomeScreen extends Component {
         {...campaign}
         key={campaign.id}
         onPress={() => this.pressCoupon(campaign)}
-        tagButton={{onPress: () => {
-          this.captureCoupon(campaign)
-        }}}
+        tagButton={{onPress: () => this.captureCoupon(campaign)}}
         startAt={startAt}
         endAt={endAt}
       />

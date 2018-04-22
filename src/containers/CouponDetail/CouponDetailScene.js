@@ -13,7 +13,7 @@ import { compose } from 'react-apollo';
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
-import { graphqlService } from '../../services';
+import { graphqlService, statusService } from '../../services';
 import QRCode from './QRCode';
 
 const ContainerScene = styled(View)`
@@ -26,6 +26,12 @@ const CloseButton = styled(TouchableOpacity)`
   position: absolute;
   top: 10;
   right: 10;
+`;
+
+const CaptureButton = styled(Button)`
+  margin-vertical: 30;
+  margin-horizontal: 50;
+  border-color: black;
 `;
 
 class CouponDetailScene extends Component {
@@ -44,11 +50,12 @@ class CouponDetailScene extends Component {
     }
   }
 
-  catchCoupon = async ({ campaign, hunted }) => {
-    const { captureCoupon, intl } = this.props;
+  catchCoupon = async (campaign) => {
+    const { captureCoupon, intl, onClose } = this.props;
     try {
       await captureCoupon(campaign.id);
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
+      onClose();
       Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
     } catch (error) {
       console.log(error.message);
@@ -59,7 +66,7 @@ class CouponDetailScene extends Component {
 
   render() {
     const campaign = this.props;
-    const { onClose = () => null, intl, startAt = '', endAt = '', status, withoutMakerProfile = false } = campaign;
+    const { onClose = () => null, intl, startAt = '', endAt = '', status, withoutMakerProfile = false, huntedCoupons } = campaign;
 
     const availableText = intl
       .formatMessage(
@@ -78,8 +85,6 @@ class CouponDetailScene extends Component {
     // TODO: Cambiar el estado al correcto cuando este definido.
     let hunted = false;
     if(status === 'hunted') hunted = true;
-
-    console.log(status);
 
     return (
       <ContainerScene>
@@ -100,16 +105,29 @@ class CouponDetailScene extends Component {
           </CouponDescription>
 
           {!withoutMakerProfile && (
-            <CompanyProfileRow
-              avatar={campaign.avatarSource}
-              name={((campaign || {}).maker || {}).name}
-              slogan={((campaign || {}).maker || {}).slogan}
-              button={{
-                title: <FormattedMessage id="commons.viewProfile" />,
-                onPress: this.goToMakerProfile,
-                big: true,
-              }}
-            />
+            <View>
+              <CompanyProfileRow
+                avatar={campaign.avatarSource}
+                name={((campaign || {}).maker || {}).name}
+                slogan={((campaign || {}).maker || {}).slogan}
+                button={{
+                  title: <FormattedMessage id="commons.viewProfile" />,
+                  onPress: this.goToMakerProfile,
+                  big: true,
+                  backgroundColor: Palette.secondaryAccent.css(),
+                }}
+              />
+              {!hunted && !(huntedCoupons > 0) && (
+                <CaptureButton
+                  title="Capturar Cupon"
+                  shadow={false}
+                  rightIcon="md-download"
+                  pill
+                  onPress={() => this.catchCoupon(campaign)}
+                  iconColor={Palette.white.css()}
+                />
+              )}
+            </View>
           )}
         </ScrollView>
 
