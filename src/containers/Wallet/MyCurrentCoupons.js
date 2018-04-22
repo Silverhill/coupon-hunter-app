@@ -4,7 +4,7 @@ import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import { FormattedMessage } from 'react-intl';
 import { injectIntl } from 'react-intl';
 import styled, { css } from 'styled-components/native';
-import { withApollo, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
@@ -36,11 +36,6 @@ const Container = styled(View)`
   height: 100%;
 `;
 
-@connect(state => ({
-  myCoupons: state.user.myCoupons,
-}),{
-  setMyCoupons: userActions.setMyCoupons,
-})
 class MyCurrentCoupons extends Component {
   state = {
     modalVisible: false,
@@ -143,4 +138,4 @@ class MyCurrentCoupons extends Component {
   }
 }
 
-export default withApollo(injectIntl(MyCurrentCoupons));
+export default injectIntl(MyCurrentCoupons);

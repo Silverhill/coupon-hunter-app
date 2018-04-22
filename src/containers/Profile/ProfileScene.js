@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Button, HeaderBar, Avatar, Typo, ModalOptions } from 'coupon-components-native';
+import { Button, HeaderBar, Avatar, Typo, ModalOptions, PhotoPicker } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -76,7 +76,8 @@ const DividerVertical = styled(View)`
 }))
 class ProfileScene extends Component {
   state = {
-    openOptions: false
+    openOptions: false,
+    currentAvatar: ''
   }
 
   setModalVisible(visible) {
@@ -103,11 +104,16 @@ class ProfileScene extends Component {
   }
 
   render() {
-    const { openOptions } = this.state;
+    const { openOptions, currentAvatar } = this.state;
 
     const options = [
       {label: <FormattedMessage id="commons.editProfile" />, id: uuid(), key: 'edit' },
     ];
+
+    let avatarProfile;
+    if(currentAvatar) {
+      avatarProfile = {source:{ uri: currentAvatar }}
+    }
 
     // TODO: add profile phrase o mini bio
     return (
@@ -120,10 +126,15 @@ class ProfileScene extends Component {
 
         <Content>
           <RowContent>
-            <Avatar
-              size={70}
-              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
-            />
+            <PhotoPicker
+              onPickerImage={(result) => this.setState({ currentAvatar: result.uri })}
+              cancelLabel={<FormattedMessage id="commons.cancel" />}
+            >
+              <Avatar
+                size={70}
+                {...avatarProfile}
+              />
+            </PhotoPicker>
 
             <Query query={graphqlService.query.getMyInfo}>{({ data: { me }, loading, error }) => {
               if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
