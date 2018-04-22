@@ -84,7 +84,7 @@ class HomeScreen extends Component {
   }
 
   _keyExtractor = (item, index) => uuid();
-  _renderSectionHeader = ({ title, hasProfile, date }) => {
+  _renderSectionHeader = ({ title, hasProfile, date, data }) => {
     const { intl } = this.props;
 
     return (
@@ -173,7 +173,6 @@ class HomeScreen extends Component {
 
             if(loading) return <Text>Loading...</Text>
             else if(error) return <Text>{error.message}</Text>
-            setUserProfile(data.me);
 
             return (
               <SectionList
@@ -183,7 +182,8 @@ class HomeScreen extends Component {
                   this._renderSectionHeader({
                     title: section.title,
                     hasProfile: section.hasProfile,
-                    date: section.date
+                    date: section.date,
+                    data: data.me,
                   })
                 }
                 sections={this.currentSections(data.allCampaigns.campaigns)}
