@@ -167,7 +167,7 @@ export const query = {
         email
       }
 
-      allCampaigns(sortField: "startAt", limit: 20) {
+      allCampaigns(sortField: "startAt", limit: 20, sortDirection: -1) {
         campaigns {
           id
           startAt
