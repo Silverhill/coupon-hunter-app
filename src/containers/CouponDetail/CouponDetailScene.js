@@ -99,7 +99,7 @@ class CouponDetailScene extends Component {
             couponsCountCaption={availableText}
           />
 
-          <CouponDescription catched={hunted} qrCode=''>
+          <CouponDescription catched={hunted} qrCode='CARB102'>
             <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
             <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>

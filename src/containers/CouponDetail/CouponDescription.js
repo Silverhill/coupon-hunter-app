@@ -16,7 +16,7 @@ const upperCaseText = (text = '') => text.toUpperCase();
 const CouponDescription = ({ children, qrCode = '', catched = false }) => {
   return (
     <Container catched={catched}>
-      {catched && <QRCode catched={catched} />}
+      {catched && (<QRCode value={qrCode} catched={catched} />)}
       {children}
     </Container>
   );

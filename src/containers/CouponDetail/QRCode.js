@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components/native';
 import { View } from 'react-native';
 import { Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
+import _QRCode from 'react-native-qrcode';
 
 const Container = styled(View)`
   box-shadow: 5px 5px 5px ${Palette.dark.alpha(0.4).css()};
@@ -11,18 +12,24 @@ const Container = styled(View)`
   background-color: white;
   position: absolute;
   height: 290;
+  width: 290;
+  align-self: center;
   border-radius: 10;
   top: -90;
   margin: 20px 20px;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
 `;
 
-const upperCaseText = (text = '') => text.toUpperCase();
-
-const QRCode = ({ children }) => {
+const QRCode = ({ children, value }) => {
   return (
     <Container>
-
+      <_QRCode
+        value={value}
+        size={260}
+        bgColor={Palette.accent.css()}
+        fgColor='white'
+      />
     </Container>
   );
 };
