@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Button, HeaderBar, Avatar, Typo, ModalOptions } from 'coupon-components-native';
+import { Button, HeaderBar, Avatar, Typo, ModalOptions, PhotoPicker } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
+import { withApollo, Query } from 'react-apollo';
 import uuid from 'uuid/v4';
 
 import { removeAuthenticationAsync } from '../../services/auth';
+import { graphqlService } from '../../services';
 
 const ProfileContainer = styled(View)`
   flex: 1;
@@ -71,11 +73,11 @@ const DividerVertical = styled(View)`
 
 @connect((state) => ({
   auth: state.user.auth,
-  profile: state.user.profile,
 }))
-export default class ProfileScene extends Component {
+class ProfileScene extends Component {
   state = {
-    openOptions: false
+    openOptions: false,
+    currentAvatar: ''
   }
 
   setModalVisible(visible) {
@@ -83,10 +85,11 @@ export default class ProfileScene extends Component {
   }
 
   signOut = async () => {
-    const { navigation, auth } = this.props;
+    const { navigation, auth, client } = this.props;
 
     if(auth.logged) {
       await removeAuthenticationAsync();
+      client.resetStore(); // TODO: necesitamos confirmar el reset store
       navigation.navigate('Auth');
     }
   }
@@ -101,11 +104,16 @@ export default class ProfileScene extends Component {
   }
 
   render() {
-    const { openOptions } = this.state;
-    const { profile: { email, name } } = this.props;
+    const { openOptions, currentAvatar } = this.state;
+
     const options = [
       {label: <FormattedMessage id="commons.editProfile" />, id: uuid(), key: 'edit' },
     ];
+
+    let avatarProfile;
+    if(currentAvatar) {
+      avatarProfile = {source:{ uri: currentAvatar }}
+    }
 
     // TODO: add profile phrase o mini bio
     return (
@@ -118,16 +126,28 @@ export default class ProfileScene extends Component {
 
         <Content>
           <RowContent>
-            <Avatar
-              size={70}
-              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
-            />
+            <PhotoPicker
+              onPickerImage={(result) => this.setState({ currentAvatar: result.uri })}
+              cancelLabel={<FormattedMessage id="commons.cancel" />}
+            >
+              <Avatar
+                size={70}
+                {...avatarProfile}
+              />
+            </PhotoPicker>
 
-            <ColumnGroup fullWidth>
-              <Typo.Header numberOfLines={1} normal>{name}</Typo.Header>
-              <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
-              <Typo.TextBody small secondary>{email}</Typo.TextBody>
-            </ColumnGroup>
+            <Query query={graphqlService.query.getMyInfo}>{({ data: { me }, loading, error }) => {
+              if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
+              else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
+
+              return (
+                <ColumnGroup fullWidth>
+                  <Typo.Header numberOfLines={1} normal>{me.name}</Typo.Header>
+                  <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
+                  <Typo.TextBody small secondary>{me.email}</Typo.TextBody>
+                </ColumnGroup>
+              )
+            }}</Query>
 
             <RowGroup>
               <TouchableOpacity onPress={this.onPressOptions}>
@@ -178,3 +198,5 @@ export default class ProfileScene extends Component {
     )
   }
 }
+
+export default withApollo(ProfileScene);

@@ -49,7 +49,7 @@ export const mutation = {
       captureCoupon(campaignId) {
         return mutate({
           variables: { campaignId },
-          refetchQueries: [{ query: query.myCoupons }],
+          refetchQueries: ['myCoupons', 'composedMeAllCampaigns'],
         })
       }
     })
@@ -58,7 +58,7 @@ export const mutation = {
 
 export const query = {
   getMyInfo: gql`
-    query getMyInfo {
+    query me {
       me {
         name
         role
@@ -97,8 +97,8 @@ export const query = {
   `,
 
   myCoupons: gql`
-    {
-      myCoupons {
+    query myCoupons{
+      myCoupons(sortField: "startAt", limit: 30) {
         id
         status
         code
@@ -128,7 +128,7 @@ export const query = {
   `,
 
   allCampaigns: gql`
-    query {
+    query allCampaigns {
       allCampaigns {
         campaigns {
           id
@@ -160,14 +160,14 @@ export const query = {
   `,
 
   composedMeAllCampaigns: gql`
-    query {
+    query composedMeAllCampaigns {
       me {
         name
         role
         email
       }
 
-      allCampaigns(sortField: "startAt", limit: 20, sortDirection: -1) {
+      allCampaigns(sortField: "startAt", sortDirection: -1) {
         campaigns {
           id
           startAt
