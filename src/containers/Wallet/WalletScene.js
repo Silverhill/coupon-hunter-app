@@ -5,6 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components/native';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
+import { Query } from 'react-apollo';
+import { graphqlService } from '../../services';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
@@ -69,13 +71,22 @@ class WalletScene extends Component {
       <WalletContainer>
         <HeaderBarContainer>
           <FormattedMessage id="walletScreen.titlePage">{(txt) => (
-            <HeaderBar
-              title={txt}
-              avatarOptions={{
-                source: {uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png'},
-                onPress: this.goToProfile,
-              }}
-            />
+            <Query query={graphqlService.query.getMyInfo}>{({ loading, data, error }) => {
+              let sourceImage;
+              if(((data || {}).me || {}).image) {
+                sourceImage = { source: { uri: data.me.image } };
+              }
+
+              return (
+                <HeaderBar
+                  title={txt}
+                  avatarOptions={{
+                    ...sourceImage,
+                    onPress: this.goToProfile,
+                  }}
+                />
+              )
+            }}</Query>
           )}</FormattedMessage>
         </HeaderBarContainer>
 

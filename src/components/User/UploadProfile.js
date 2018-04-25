@@ -20,52 +20,60 @@ const UPLOAD_FILE = gql`
   }
 `;
 
-const UploadProfile = ({ avatar, onPickerImage }) => {
-  return (
-    <Mutation
-      mutation={UPLOAD_FILE}
-      update={(cache, { data: { addImageToUser  } }) => {
-        const { allCampaigns, me } = cache.readQuery({ query: ALL_CAMPAIGNS_AND_ME });
+class UploadProfile extends Component{
+  state = {
+    stateImage: ''
+  }
 
-        cache.writeQuery({
-          query: ALL_CAMPAIGNS_AND_ME,
-          data: {
-            allCampaigns: { ...allCampaigns },
-            me: { ...me, image: addImageToUser.image },
-          },
-        })
-      }}
-    >{(addImageToUser, { data }) => {
+  render() {
+    const { avatar, onPickerImage } = this.props;
 
-      let avatarProfile;
-      if(avatar) avatarProfile = {source:{ uri: avatar }}
+    return (
+      <Mutation
+        mutation={UPLOAD_FILE}
+        update={(cache, { data: { addImageToUser  } }) => {
+          const { allCampaigns, me } = cache.readQuery({ query: ALL_CAMPAIGNS_AND_ME });
 
-      return(
-        <PhotoPicker
-          onPickerImage={async (result) => {
-            if(!result) return;
-            if(onPickerImage) onPickerImage(result);
+          cache.writeQuery({
+            query: ALL_CAMPAIGNS_AND_ME,
+            data: {
+              allCampaigns: { ...allCampaigns },
+              me: { ...me, image: addImageToUser.image },
+            },
+          })
+        }}
+      >{(addImageToUser, { data }) => {
 
-            const image = new ReactNativeFile({
-              uri: result.uri,
-              type: result.type,
-              name: `profile-${uuid()}.jpg`
-            })
+        let avatarProfile;
+        if(avatar) avatarProfile = {source:{ uri: avatar }}
 
-            try {
-              await addImageToUser({ variables: { upload: image } })
-              Alert.alert('Cool, new image profile is updated!')
-            } catch (error) {
-              console.log(error);
-              Alert.alert('Ups!')
-            }
-          }}
-          cancelLabel={<FormattedMessage id="commons.cancel" />}>
-          <Avatar size={70} {...avatarProfile}/>
-        </PhotoPicker>
-      );
-    }}</Mutation>
-  )
+        return(
+          <PhotoPicker
+            onPickerImage={async (result) => {
+              if(!result) return;
+              if(onPickerImage) onPickerImage(result);
+
+              const image = new ReactNativeFile({
+                uri: result.uri,
+                type: result.type,
+                name: `profile-${uuid()}.jpg`
+              })
+
+              try {
+                await addImageToUser({ variables: { upload: image } })
+                Alert.alert('Cool, new image profile is updated!')
+              } catch (error) {
+                console.log(error);
+                Alert.alert('Ups!')
+              }
+            }}
+            cancelLabel={<FormattedMessage id="commons.cancel" />}>
+            <Avatar size={70} {...avatarProfile}/>
+          </PhotoPicker>
+        );
+      }}</Mutation>
+    )
+  }
 }
 
 export default UploadProfile;
