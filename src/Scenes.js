@@ -8,6 +8,7 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat } from 'apollo-link';
+import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { getAuthenticationAsync, isAuthorized } from './services/auth';
@@ -58,7 +59,9 @@ export default class Scenes extends Component {
   }
 
   client = (token) => {
-    const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
+    // const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
+    const link = createUploadLink({ uri: config.graphqlEndpoint });
+
     const authMiddleware = new ApolloLink((operation, forward) => {
       operation.setContext(({headers = {} }) => {
         return {
@@ -72,7 +75,7 @@ export default class Scenes extends Component {
     });
 
     return new ApolloClient({
-      link: concat(authMiddleware, httpLink),
+      link: concat(authMiddleware, link),
       cache: new InMemoryCache(),
     });
   }

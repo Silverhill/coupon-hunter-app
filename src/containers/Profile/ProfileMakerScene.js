@@ -6,12 +6,96 @@ import { FormattedMessage } from 'react-intl';
 import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
 import uuid from 'uuid/v4';
-import { withApollo } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo';
 import { injectIntl } from 'react-intl';
 
 import { removeAuthenticationAsync } from '../../services/auth';
 import { graphqlService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
+import CampaignsByMakerId from '../../components/Campaigns/CampaignsByMakerId';
+
+class ProfileMakerScene extends Component {
+  state = {
+    modalVisible: false,
+    currentDetails: {},
+    error: '', //TODO: Manejar los errores y agregarlos
+  }
+
+  goToBack = () => {
+    const { navigation } = this.props;
+    navigation.goBack();
+  }
+
+  pressCoupon = (campaign) => {
+    const { navigation: { state: { params: maker } } } = this.props
+    const campaignWithMaker = {
+      ...campaign,
+      maker,
+    };
+
+    this.setState({ currentDetails: campaignWithMaker, modalVisible: true });
+  }
+
+  handleCloseModal = () => {
+    this.setState({ modalVisible: false, currentDetails: {} });
+  }
+
+  render() {
+    const { modalVisible, currentDetails } = this.state;
+    const { navigation: { state: { params: maker } } } = this.props
+
+    // TODO: add profile slogan
+    return (
+      <ProfileContainer>
+        <HeaderBarContainer>
+          <FormattedMessage id="makerProfileScene.titlePage">{(txt) => (
+            <HeaderBar backButton={this.goToBack} title={txt} />
+          )}</FormattedMessage>
+        </HeaderBarContainer>
+
+        <Content>
+          <RowContent>
+            <Avatar
+              size={70}
+              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
+            />
+
+            <ColumnGroup fullWidth>
+              <Typo.Header numberOfLines={1} normal>{maker.name}</Typo.Header>
+              <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
+              <Typo.TextBody small secondary>{maker.email}</Typo.TextBody>
+            </ColumnGroup>
+          </RowContent>
+
+          <RowContent>
+            <Typo.Header small bold>Campañas</Typo.Header>
+          </RowContent>
+
+          <ContainerScreen>
+            <CampaignsByMakerId
+              makerId={maker.id}
+              onPressCampaign={this.pressCoupon}
+            />
+          </ContainerScreen>
+
+        </Content>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+        >
+          <CouponDetailScene
+            withoutMakerProfile
+            onClose={this.handleCloseModal}
+            {...currentDetails}
+          />
+        </Modal>
+      </ProfileContainer>
+    )
+  }
+}
+
 
 const ProfileContainer = styled(View)`
   flex: 1;
@@ -73,173 +157,9 @@ const DividerVertical = styled(View)`
   margin-left: 20;
 `;
 
-const StyledCoupon = styled(Coupon)`
-  margin-bottom: 10;
-`;
 
 const ContainerScreen = styled(View)`
   flex: 1;
 `;
-
-class ProfileMakerScene extends Component {
-  state = {
-    campaigns: [],
-    modalVisible: false,
-    loading: true,
-    currentDetails: {},
-    error: '', //TODO: Manejar los errores y agregarlos
-  }
-
-  async componentDidMount() {
-    const { client, navigation: { state: { params: maker } } } = this.props
-
-    try {
-      const res = await client.query({
-        query: graphqlService.query.campaignsByMakerId,
-        variables: { makerId: maker.id },
-      });
-
-      const { data: { campaignsByMakerId }, loading } = res;
-
-      this.setState({ campaigns: campaignsByMakerId, loading })
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  goToBack = () => {
-    const { navigation } = this.props;
-    navigation.goBack();
-  }
-
-  pressCoupon = (campaign) => {
-    const { navigation: { state: { params: maker } } } = this.props
-    const campaignWithMaker = {
-      ...campaign,
-      maker,
-    };
-
-    this.setState({ currentDetails: campaignWithMaker, modalVisible: true });
-  }
-
-  captureCoupon = async (campaign) => {
-    const { captureCoupon: huntCoupon, intl } = this.props;
-    if(campaign.huntedCoupons > 0) return;
-    console.log(campaign);
-
-    try {
-      await huntCoupon(campaign.id);
-
-      //TODO: remover estas alertas por las alertar propias cuando estén creadas
-      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
-    } catch (error) {
-      console.log(error.message);
-      //TODO: remover estas alertas por las alertar propias cuando estén creadas
-      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
-    }
-  }
-
-  _renderItem = ({item: campaign }) => {
-    const { intl } = this.props;
-
-    const startAt = intl
-      .formatDate(campaign.startAt, { month: 'short', day: 'numeric' })
-      .toUpperCase();
-
-    const endAt = intl
-      .formatDate(campaign.endAt, { month: 'short', day: 'numeric', year: 'numeric' })
-      .toUpperCase();
-
-    return (
-      <StyledCoupon
-        {...campaign}
-        key={uuid()}
-        onPress={() => this.pressCoupon(campaign)}
-        tagButton={{
-          onPress: () => this.captureCoupon(campaign)
-        }}
-        startAt={startAt}
-        endAt={endAt}
-      />
-    );
-  }
-  _keyExtractor = (item, index) => uuid();
-  _renderCampaigns = (campaigns) => {
-    return (
-      <FlatList
-        keyExtractor={this._keyExtractor}
-        renderItem={this._renderItem}
-        data={campaigns}
-      />
-    );
-  }
-  _loading = () => (<ActivityIndicator size="large" color={Palette.accent} />);
-  _error = (error) => {
-    return <Typo.TextBody>{error.message}</Typo.TextBody>;
-  }
-
-  handleCloseModal = () => {
-    this.setState({ modalVisible: false, currentDetails: {} });
-  }
-
-  render() {
-    const { loading, error, campaigns, modalVisible, currentDetails } = this.state;
-    const { navigation: { state: { params: maker } } } = this.props
-
-
-    let currentContent;
-    if(loading) currentContent = this._loading()
-    else if(error) currentContent = this._error(error);
-    else if(campaigns.length > 0) currentContent = this._renderCampaigns(campaigns);
-
-    // TODO: add profile slogan
-    return (
-      <ProfileContainer>
-        <HeaderBarContainer>
-          <FormattedMessage id="makerProfileScene.titlePage">{(txt) => (
-            <HeaderBar backButton={this.goToBack} title={txt} />
-          )}</FormattedMessage>
-        </HeaderBarContainer>
-
-        <Content>
-          <RowContent>
-            <Avatar
-              size={70}
-              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
-            />
-
-            <ColumnGroup fullWidth>
-              <Typo.Header numberOfLines={1} normal>{maker.name}</Typo.Header>
-              <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
-              <Typo.TextBody small secondary>{maker.email}</Typo.TextBody>
-            </ColumnGroup>
-          </RowContent>
-
-
-          <RowContent>
-            <Typo.Header small bold>Campañas</Typo.Header>
-          </RowContent>
-
-          <ContainerScreen>
-            {currentContent}
-          </ContainerScreen>
-
-        </Content>
-
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={modalVisible}
-        >
-          <CouponDetailScene
-            withoutMakerProfile
-            onClose={this.handleCloseModal}
-            {...currentDetails}
-          />
-        </Modal>
-      </ProfileContainer>
-    )
-  }
-}
 
 export default withApollo(injectIntl(ProfileMakerScene));

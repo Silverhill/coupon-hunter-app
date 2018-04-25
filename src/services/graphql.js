@@ -61,6 +61,7 @@ export const query = {
     query me {
       me {
         name
+        image
         role
         email
       }

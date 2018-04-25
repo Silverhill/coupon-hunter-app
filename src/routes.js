@@ -45,11 +45,16 @@ const AuthStack = StackNavigator({
   })
 });
 
+// Common NavigationOptions
+const commonNavigationOptions = {
+  tabBarVisible: false
+}
+
 // Home Stack
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
-  Profile: { screen: ProfileScene },
-  Maker: { screen: ProfileMakerScene },
+  Profile: { screen: ProfileScene, navigationOptions: { ...commonNavigationOptions } },
+  Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 },{
   navigationOptions: {
     header: null,
@@ -59,8 +64,8 @@ const HomeStack = StackNavigator({
 
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
-  Profile: { screen: ProfileScene },
-  Maker: { screen: ProfileMakerScene },
+  Profile: { screen: ProfileScene, navigationOptions: { ...commonNavigationOptions } },
+  Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 }, {
   navigationOptions: {
     header: null,
