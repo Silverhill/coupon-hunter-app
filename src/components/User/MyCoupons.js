@@ -7,37 +7,7 @@ import gql from 'graphql-tag';
 import uuid from 'uuid/v4';
 
 import Campaign from '../Campaigns/Campaign';
-
-const MY_COUPONS = gql`
-query myCoupons{
-  myCoupons(sortField: "startAt", limit: 30) {
-    id
-    status
-    code
-    ... on CouponHunted {
-      campaign {
-        endAt
-        startAt
-        city
-        title
-        id
-        country
-        city
-        image
-        totalCoupons
-        description
-        customMessage
-        deleted
-        status
-        maker {
-          id
-          name
-        }
-      }
-    }
-  }
-}
-`;
+import { Queries } from '../../graphql';
 
 const MyCoupons = ({ onPressCampaign }) => {
   _keyExtractor = (item, index) => uuid();
@@ -46,6 +16,8 @@ const MyCoupons = ({ onPressCampaign }) => {
     const campaign = {
       ..._campaign,
       status,
+      code,
+      id,
     };
 
     return (
@@ -57,7 +29,7 @@ const MyCoupons = ({ onPressCampaign }) => {
   }
 
   return (
-    <Query query={MY_COUPONS}>
+    <Query query={Queries.MY_COUPONS}>
     {({ loading, data, error }) => {
       if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>;
       else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>

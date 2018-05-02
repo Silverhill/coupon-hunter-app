@@ -7,35 +7,52 @@ import { FormattedMessage } from 'react-intl';
 import gql from 'graphql-tag';
 import uuid from 'uuid/v4';
 import { ReactNativeFile } from 'apollo-upload-client';
-import { ALL_CAMPAIGNS_AND_ME } from '../Campaigns/AllCampaigns';
-
-const UPLOAD_FILE = gql`
-  mutation addImageToUser($upload: Upload!) {
-    addImageToUser(upload: $upload) {
-      image
-      email
-      role
-      name
-    }
-  }
-`;
+import { Queries, Mutations } from '../../graphql';
 
 class UploadProfile extends Component{
   state = {
     stateImage: ''
   }
 
+  _onPickerImage = async (result, mutation) => {
+    const { onPickerImage } = this.props;
+
+    if(!result) return;
+    if(onPickerImage) onPickerImage(result);
+
+    const image = new ReactNativeFile({
+      uri: result.uri,
+      type: result.type,
+      name: `profile-${uuid()}.jpg`
+    })
+
+    try {
+      await this.setState({ stateImage: result.uri });
+
+      await mutation.addImageToUser({ variables: { upload: image } })
+
+      Alert.alert('Cool, new image profile is updated!')
+      await this.setState({ stateImage: '' });
+    } catch (error) {
+      console.log(error);
+
+      this.setState({ stateImage: '' });
+      Alert.alert('Ups!')
+    }
+  }
+
   render() {
     const { avatar, onPickerImage } = this.props;
+    const { stateImage } = this.state;
 
     return (
       <Mutation
-        mutation={UPLOAD_FILE}
+        mutation={Mutations.UPLOAD_IMAGE_USER}
         update={(cache, { data: { addImageToUser  } }) => {
-          const { allCampaigns, me } = cache.readQuery({ query: ALL_CAMPAIGNS_AND_ME });
+          const { allCampaigns, me } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS_AND_ME });
 
           cache.writeQuery({
-            query: ALL_CAMPAIGNS_AND_ME,
+            query: Queries.ALL_CAMPAIGNS_AND_ME,
             data: {
               allCampaigns: { ...allCampaigns },
               me: { ...me, image: addImageToUser.image },
@@ -44,29 +61,13 @@ class UploadProfile extends Component{
         }}
       >{(addImageToUser, { data }) => {
 
-        let avatarProfile;
+        let avatarProfile
         if(avatar) avatarProfile = {source:{ uri: avatar }}
+        if(stateImage) avatarProfile = {source:{ uri: stateImage }};
 
         return(
           <PhotoPicker
-            onPickerImage={async (result) => {
-              if(!result) return;
-              if(onPickerImage) onPickerImage(result);
-
-              const image = new ReactNativeFile({
-                uri: result.uri,
-                type: result.type,
-                name: `profile-${uuid()}.jpg`
-              })
-
-              try {
-                await addImageToUser({ variables: { upload: image } })
-                Alert.alert('Cool, new image profile is updated!')
-              } catch (error) {
-                console.log(error);
-                Alert.alert('Ups!')
-              }
-            }}
+            onPickerImage={(result) => this._onPickerImage(result, {addImageToUser})}
             cancelLabel={<FormattedMessage id="commons.cancel" />}>
             <Avatar size={70} {...avatarProfile}/>
           </PhotoPicker>

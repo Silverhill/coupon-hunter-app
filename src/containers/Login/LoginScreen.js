@@ -60,6 +60,7 @@ class LoginScreen extends Component {
       }
     } catch (error) {
       console.log(error);
+      this.showLoading(false);
       return;
     }
   }

@@ -11,7 +11,7 @@ import uuid from 'uuid/v4';
 import UploadProfile from '../../components/User/UploadProfile';
 
 import { removeAuthenticationAsync } from '../../services/auth';
-import { graphqlService } from '../../services';
+import { Queries } from '../../graphql';
 
 @connect((state) => ({
   auth: state.user.auth,
@@ -67,7 +67,7 @@ class ProfileScene extends Component {
         </HeaderBarContainer>
 
         <Content>
-          <Query query={graphqlService.query.getMyInfo}>{({ data: { me }, loading, error }) => {
+          <Query query={Queries.ME}>{({ data: { me }, loading, error }) => {
             if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
             else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
 

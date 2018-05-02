@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View, SectionList } from 'react-native';
 import styled from 'styled-components/native';
 import { Typo, HeaderBar } from 'coupon-components-native';
@@ -10,47 +10,10 @@ import { injectIntl } from 'react-intl';
 
 import Campaign from './Campaign';
 
-// graphql
-export const ALL_CAMPAIGNS_AND_ME = gql`
-  query allCampaignsAndMe($withMe: Boolean = true) {
-    me @include(if: $withMe){
-      name
-      role
-      email
-      image
-    }
+// graphq
+import { Queries } from '../../graphql';
 
-    allCampaigns(sortField: "startAt", sortDirection: -1) {
-      campaigns {
-        id
-        startAt
-        endAt
-        country
-        city
-        totalCoupons
-        huntedCoupons
-        redeemedCoupons
-        status
-        title
-        description
-        customMessage
-        deleted
-        initialAgeRange
-        finalAgeRange
-        createdAt
-        couponsHuntedByMe
-        maker {
-          id
-          name
-          provider
-          role
-        }
-      }
-    }
-  }
-`;
-
-class AllCampaigns extends Component {
+class AllCampaigns extends PureComponent {
   state = {
     refreshing: false,
   }
@@ -129,17 +92,18 @@ class AllCampaigns extends Component {
     const { refreshing } = this.state;
 
     return (
-      <Query query={ALL_CAMPAIGNS_AND_ME}>{
+      <Query query={Queries.ALL_CAMPAIGNS_AND_ME} variables={{ limit: 30 }}>{
         ({ data, fetchMore, error, loading }) => {
 
           if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>
           else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>
 
+          const { allCampaigns: { campaigns } } = data;
           return (
             <SectionList
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
-              sections={this._currentSections(data.allCampaigns.campaigns)}
+              sections={this._currentSections(campaigns)}
               renderSectionHeader={({section}) =>
                 this._renderSectionHeader({
                   title: section.title,
@@ -148,17 +112,38 @@ class AllCampaigns extends Component {
                   data: data.me,
                 })
               }
+              onEndReachedThreshold={0.2}
+              onEndReached={async () => {
+                try {
+                  await fetchMore({
+                    variables: { skip: campaigns.length },
+                    updateQuery: (prev, { fetchMoreResult }) => {
+                      if (!fetchMoreResult || fetchMoreResult.allCampaigns.totalCount === data.length) return prev;
+
+                      const newData = { ...prev, allCampaigns: {
+                          ...fetchMoreResult.allCampaigns,
+                          campaigns: [...prev.allCampaigns.campaigns, ...fetchMoreResult.allCampaigns.campaigns]
+                        },
+                      };
+                      return newData;
+                    }
+                  });
+                } catch (error) {
+                  return;
+                }
+              }
+              }
               refreshing={refreshing}
               onRefresh={async () => {
                 this.setState({ refreshing: true });
 
                 await fetchMore({
-                  updateQuery: (prev, newResult) => {
-                    if(!newResult) return prev;
+                  updateQuery: (prev, { fetchMoreResult }) => {
+                    if(!fetchMoreResult) return prev;
 
                     const newData = {
                       ...prev,
-                      ...newResult.fetchMoreResult,
+                      ...fetchMoreResult,
                     };
 
                     return newData;

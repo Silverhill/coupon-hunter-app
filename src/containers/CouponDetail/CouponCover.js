@@ -78,7 +78,7 @@ const TicketCode = styled(Typo.Title)`
 
 const upperCaseText = (text = '') => text.toUpperCase();
 
-const CouponCover = ({ background, date, title, companyName, couponsCount, couponsCountCaption, catched = false }) => {
+const CouponCover = ({ background, date, title, companyName, couponsCount, couponsCountCaption, catched = false, code = '' }) => {
   return (
     <Container source={background} resizeMode="cover">
       <Layout>
@@ -93,7 +93,7 @@ const CouponCover = ({ background, date, title, companyName, couponsCount, coupo
           {catched && (
             <TicketsContainer>
               <TicketHeaderCode small inverted>Codigo:</TicketHeaderCode>
-              <TicketCode inverted>{upperCaseText('carb1012')}</TicketCode>
+              <TicketCode inverted>{code}</TicketCode>
             </TicketsContainer>
           )}
 

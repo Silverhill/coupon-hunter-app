@@ -18,23 +18,6 @@ import AllCampaigns from '../../components/Campaigns/AllCampaigns';
 import * as userActions from '../../actions/userActions';
 import * as campaignsActions from '../../actions/campaignsActions';
 
-const TodayContainer = styled(View)`
-  flex: 1;
-  background-color: white;
-`;
-
-const StyledCoupon = styled(Coupon)`
-  margin-bottom: 10;
-`;
-
-const CampaignsContainer = styled(View)`
-  flex: 1;
-`;
-
-const HeaderBarContainer = styled(View)`
-  margin-bottom: 20;
-`;
-
 @connect(state => ({
   user: state.user,
   // campaigns: state.campaigns,
@@ -95,6 +78,21 @@ class HomeScreen extends Component {
   }
 }
 
-export default withApollo(compose(
-  graphqlService.mutation.captureCoupon,
-)(injectIntl(HomeScreen)));
+const TodayContainer = styled(View)`
+  flex: 1;
+  background-color: white;
+`;
+
+const StyledCoupon = styled(Coupon)`
+  margin-bottom: 10;
+`;
+
+const CampaignsContainer = styled(View)`
+  flex: 1;
+`;
+
+const HeaderBarContainer = styled(View)`
+  margin-bottom: 20;
+`;
+
+export default injectIntl(HomeScreen);
