@@ -64,10 +64,11 @@ class AllCampaigns extends PureComponent {
     return { today, restOfDays };
   }
 
-  _currentSections = (allCampaigns) => {
+  _currentSections = (allCampaigns, me) => {
     const { intl } = this.props;
 
     let sections = [];
+    // TODO: remover formato innecesario
     const formattedToday = intl.formatDate(Date.now(), { year: 'numeric', month: 'long', day: '2-digit' });
     const todayTitle = intl.formatMessage({ id: 'todayScreen.today' });
     const restOfDaysTitle = intl.formatMessage({ id: 'todayScreen.otherDays' });
@@ -77,11 +78,12 @@ class AllCampaigns extends PureComponent {
     let todaySection;
     let restSection;
     if(campaigns.today.length > 0) {
-      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, date: formattedToday };
+      // TODO: cambiar HI! [name] con mensage intl
+      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, date: `Hi! ${me.name}` };
       restSection = { title: restOfDaysTitle, data: campaigns.restOfDays };
       sections = sections.concat(todaySection, restSection);
     }else if (!campaigns.today.length) {
-      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true, date: formattedToday };
+      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true, date: `Hi!, ${me.name}` };
       sections = sections.concat(todaySection);
     }
 
@@ -98,12 +100,12 @@ class AllCampaigns extends PureComponent {
           if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>
           else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>
 
-          const { allCampaigns: { campaigns } } = data;
+          const { allCampaigns: { campaigns }, me } = data;
           return (
             <SectionList
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
-              sections={this._currentSections(campaigns)}
+              sections={this._currentSections(campaigns, me)}
               renderSectionHeader={({section}) =>
                 this._renderSectionHeader({
                   title: section.title,

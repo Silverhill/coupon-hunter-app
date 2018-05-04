@@ -9,18 +9,13 @@ import { injectIntl } from 'react-intl';
 import { Mutations, Queries } from '../../graphql';
 
 class Campaign extends Component{
-  state = {
-    capturedCampaign: {},
-  }
-
-  updateCampaigns = (cache, { data }) => {
-    const { capturedCampaign } = this.state;
+  updateCampaigns = (cache, { data: { captureCoupon: { campaign } } }) => {
     const { allCampaigns, me } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS_AND_ME });
 
     const campaigns = ((allCampaigns || {}).campaigns || []).map((item, i) => {
-      if(capturedCampaign.id === item.id) {
+      if(campaign.id === item.id) {
         return {
-          ...capturedCampaign,
+          ...item,
           huntedCoupons: 1,
         };
       }
@@ -34,17 +29,10 @@ class Campaign extends Component{
           ...allCampaigns,
           campaigns,
         },
-        me: { ...me },
+        me,
       }
     });
   }
-
-  updateMyCoupons = (cache, { data }) => {
-    const { capturedCampaign } = this.state;
-    const d = cache.readQuery({ query: Queries.MY_COUPONS });
-
-    console.log(d);
-  };
 
   render(){
     const { campaign, onPress = () => null, onHunt, intl } = this.props;
@@ -64,44 +52,46 @@ class Campaign extends Component{
     return (
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
-        // refetchQueries={['allCampaignsAndMe', 'myCoupons', 'campaignsByMakerId']}
-        update={(cache, data) => {
-          // this.updateCampaigns(cache, data);
-          // this.updateMyCoupons(cache, data);
-        }}
-      >{(captureCoupon) => (
+        // refetchQueries={['myCoupons']}
+        variables={{ campaignId: campaign.id }}
+        update={this.updateCampaigns}
+        key={campaign.id}
+      >{(captureCoupon, { loading, error }) => {
+        return (
+          <StyledCoupon
+            {...campaign}
+            key={uuid()}
+            onPress={() => onPress(campaign)}
+            tagButton={{
+              onPress: async () => {
+                if(campaign.huntedCoupons > 0) return;
+                if(onHunt) onHunt();
 
-        <StyledCoupon
-          {...campaign}
-          key={uuid()}
-          onPress={() => onPress(campaign)}
-          tagButton={{
-            onPress: async () => {
-              if(campaign.huntedCoupons > 0) return;
-              if(onHunt) onHunt();
-
-              // this.setState({ capturedCampaign: campaign });
-
-              try {
-                await captureCoupon({
-                  variables: { campaignId: campaign.id },
-                  optimisticResponse: {
-                    __typename: 'Mutation',
-                    allCampaigns: {
-                      //FIXME: solucionar esto que tienen que ver con el intl
-                    }
-                  },
-                });
-                Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
-              } catch (error) {
-                Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
-              }
-            }
-          }}
-          startAt={startAt}
-          endAt={endAt}
-        />
-      )}</Mutation>
+                try {
+                  await captureCoupon({
+                    optimisticResponse: {
+                      __typename: 'Mutation',
+                      captureCoupon: {
+                        id: -1,
+                        status: 'hunted',
+                        code: -1,
+                        campaign,
+                        __typename: 'CouponHunted',
+                      },
+                    },
+                  });
+                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+                } catch (err) {
+                  console.log(err);
+                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+                }
+              },
+            }}
+            startAt={startAt}
+            endAt={endAt}
+          />
+        );
+      }}</Mutation>
     );
   }
 }

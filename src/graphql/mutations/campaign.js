@@ -6,6 +6,9 @@ export const CAPTURE_COUPON = gql`
       id
       status
       code
+      campaign {
+        id
+      }
     }
   }
 `;
