@@ -6,13 +6,14 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
 import { Query, Mutation } from 'react-apollo';
+import { ReactNativeFile } from 'apollo-upload-client';
 import uuid from 'uuid/v4';
 
 import { Queries, Mutations } from '../../graphql';
 
 class ProfileEditScene extends Component {
   state = {
-    currentAvatar: '',
+    currentAvatar: null,
     user: {},
   }
 
@@ -29,12 +30,27 @@ class ProfileEditScene extends Component {
   }
 
   render() {
-    const { currentAvatar, user } = this.state;
+    let { currentAvatar, user } = this.state;
     const { intl } = this.props;
 
     const RightButtonText = (
       <Typo.TextBody>{intl.formatMessage({ id: 'commons.done' })}</Typo.TextBody>
     );
+
+    if(Object.keys(currentAvatar || {}).length > 0) {
+      const imageUpload = new ReactNativeFile({
+        uri: currentAvatar.uri,
+        type: currentAvatar.type,
+        name: `profile-${uuid()}.jpg`
+      })
+
+      user = {
+        ...user,
+        image: imageUpload,
+      }
+    }
+
+    console.log('USER', user);
 
     return (
       <ProfileContainer>
@@ -45,7 +61,10 @@ class ProfileEditScene extends Component {
 
             cache.writeQuery({
               query: Queries.ME,
-              data: { me: { ...data.me, ...updateUser } }
+              data: { me: {
+                ...data.me,
+                ...updateUser
+              } }
             });
           }}
           mutation={Mutations.UPDATE_USER}>{(updateUser, { loading }) => (
@@ -74,6 +93,12 @@ class ProfileEditScene extends Component {
             if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
             else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
 
+            let avatar;
+            if(me.image) avatar = me.image;
+            if(Object.keys(currentAvatar || {}).length > 0) {
+              avatar = currentAvatar.uri;
+            }
+
             return (
               <Content>
                 <RowGroup>
@@ -82,9 +107,12 @@ class ProfileEditScene extends Component {
 
                 <RowContent horizontalCenter verticalCenter>
                   <ColumnGroup verticalCenter>
-                    <Avatar size={100} source={{uri: me.image}} />
+                    <Avatar size={100} source={{uri: avatar}} />
 
-                    <LinkChangePhoto cancelLabel='Cancelar'>
+                    <LinkChangePhoto
+                      onPickerImage={(result) => this.setState({ currentAvatar: result })}
+                      cancelLabel='Cancelar'
+                    >
                       <Typo.TextBody  color={Palette.secondaryAccent.css()}>Cambiar foto de perfil</Typo.TextBody>
                     </LinkChangePhoto>
                   </ColumnGroup>
