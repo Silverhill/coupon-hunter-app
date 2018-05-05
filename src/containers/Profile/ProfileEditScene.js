@@ -32,7 +32,6 @@ class ProfileEditScene extends Component {
     const { currentAvatar, user } = this.state;
     const { intl } = this.props;
 
-    // FIXME: solucionar el problema del activity loading
     const RightButtonText = (
       <Typo.TextBody>{intl.formatMessage({ id: 'commons.done' })}</Typo.TextBody>
     );

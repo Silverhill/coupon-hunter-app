@@ -4,4 +4,5 @@ module.exports = [
   require('./inputs.stories'),
   require('./coupon.stories'),
   require('./avatar.stories'),
+  require('./photoPicker.stories'),
 ];

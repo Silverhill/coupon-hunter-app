@@ -101,7 +101,7 @@ class AllCampaigns extends PureComponent {
 
           if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>
           else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>
-
+          console.log(data);
           const { allCampaigns: { campaigns }, me } = data;
           return (
             <SectionList

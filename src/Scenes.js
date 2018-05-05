@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
-import { Util, AppLoading } from 'expo';
+import { AppLoading, DangerZone } from 'expo';
 import { connect, Provider } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
@@ -31,6 +31,8 @@ import 'intl';
 import en from 'react-intl/locale-data/en';
 import es from 'react-intl/locale-data/es';
 addLocaleData([...en, ...es]);
+
+const { Localization } = DangerZone;
 
 export default class Scenes extends Component {
   state = {
@@ -81,7 +83,7 @@ export default class Scenes extends Component {
   }
 
   async getCurrentLocale() {
-    const currentLocale = await Util.getCurrentLocaleAsync();
+    const currentLocale = await Localization.getCurrentLocaleAsync();
     let locale;
     if (/^es/.test(currentLocale)) locale = 'es';
     else if (/^en/.test(currentLocale)) locale = 'en';
