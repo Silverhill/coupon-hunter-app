@@ -29,15 +29,13 @@ export default class AuthLoadingScreen extends Component {
 
   _bootstrapAsync = async() => {
     const { loginAsync, navigation } = this.props;
-
     const { authorized, token } = await isAuthorized();
     try {
       await loginAsync(token);
-      navigation.navigate(authorized ? 'App' : 'Auth');
+      navigation.navigate(authorized ? 'App' : 'Onboarding');
     } catch (error) {
       console.log('DEBUG ERROR',error);
     }
-
   }
 
   render() {

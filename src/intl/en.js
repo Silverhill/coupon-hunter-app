@@ -1,6 +1,6 @@
 export default {
   commons: {
-    welcome: 'Hello',
+    greetings: 'Hello, { name }',
     text: 'This is a first component',
     next: 'Next',
     login: 'Login',
@@ -17,6 +17,7 @@ export default {
     avatar: 'Image Profile',
     personalInfo: 'Personal Information',
     done: 'Done',
+    skip: 'Skip',
 
     messages: {
       alert: {

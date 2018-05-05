@@ -50,6 +50,7 @@
     "react-native": "0.52.0",
     "react-native-gesture-handler": "^1.0.0-alpha.42",
     "react-native-qrcode": "^0.2.6",
+    "react-native-swiper": "^1.5.13",
     "react-native-tab-view": "0.0.77",
     "react-navigation": "^1.5.9",
     "react-redux": "^5.0.7",

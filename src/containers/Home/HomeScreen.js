@@ -10,8 +10,7 @@ import uuid from 'uuid/v4';
 import moment from 'moment';
 
 import { HEADER_AUTHENTICATION_KEY } from '../../constants';
-import { query } from '../../services/graphql';
-import { graphqlService, authService, intl, statusService } from '../../services';
+import { authService, intl, statusService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import AllCampaigns from '../../components/Campaigns/AllCampaigns';
 

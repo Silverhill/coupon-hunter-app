@@ -16,6 +16,7 @@ import CouponDetailScene from './containers/CouponDetail/CouponDetailScene';
 import WalletScene from './containers/Wallet/WalletScene';
 import ExploreScene from './containers/Explore/ExploreScene';
 import NotificationsScene from './containers/Notifications/NotificationsScene';
+import OnboardingScene from './containers/Onboarding/OnboardingScene';
 
 // Assets
 import arrow_left_c from './assets/images/arrow-left-c.png'
@@ -132,12 +133,22 @@ const ModalStack = StackNavigator({
   headerMode: 'none',
 })
 
+// Onboarding Stack
+const OnboardingStack = StackNavigator({
+  Onboarding: { screen: OnboardingScene }
+}, {
+  navigationOptions: {
+    header: null,
+  }
+})
+
+
 export default SwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
-    Modal: ModalStack,
+    Onboarding: OnboardingStack,
   },
   {
     initialRouteName: 'AuthLoading',

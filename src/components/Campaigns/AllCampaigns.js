@@ -29,7 +29,7 @@ class AllCampaigns extends PureComponent {
     return <Campaign campaign={item} onPress={onPressCampaign}/>
   }
 
-  _renderSectionHeader = ({ title, hasProfile, date, data }) => {
+  _renderSectionHeader = ({ title, hasProfile, subTitle, data }) => {
     let sourceImage;
     if((data || {}).image) {
       sourceImage = { source: { uri: data.image } };
@@ -39,7 +39,7 @@ class AllCampaigns extends PureComponent {
       <HeaderBarContainer>
         <HeaderBar
           title={title}
-          date={date}
+          subTitle={subTitle}
           avatarOptions={hasProfile && {
             ...sourceImage,
             onPress: this.goToProfile,
@@ -69,7 +69,9 @@ class AllCampaigns extends PureComponent {
 
     let sections = [];
     // TODO: remover formato innecesario
-    const formattedToday = intl.formatDate(Date.now(), { year: 'numeric', month: 'long', day: '2-digit' });
+    // const formattedToday = intl.formatDate(Date.now(), { year: 'numeric', month: 'long', day: '2-digit' });
+
+    const greetings = intl.formatMessage({ id: 'commons.greetings'}, { name: me.name });
     const todayTitle = intl.formatMessage({ id: 'todayScreen.today' });
     const restOfDaysTitle = intl.formatMessage({ id: 'todayScreen.otherDays' });
 
@@ -79,11 +81,11 @@ class AllCampaigns extends PureComponent {
     let restSection;
     if(campaigns.today.length > 0) {
       // TODO: cambiar HI! [name] con mensage intl
-      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, date: `Hi! ${me.name}` };
+      todaySection = { title: todayTitle, data: campaigns.today, hasProfile: true, subTitle: greetings };
       restSection = { title: restOfDaysTitle, data: campaigns.restOfDays };
       sections = sections.concat(todaySection, restSection);
     }else if (!campaigns.today.length) {
-      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true, date: `Hi!, ${me.name}` };
+      todaySection = { title: restOfDaysTitle, data: campaigns.restOfDays, hasProfile: true, subTitle: greetings };
       sections = sections.concat(todaySection);
     }
 
@@ -110,7 +112,7 @@ class AllCampaigns extends PureComponent {
                 this._renderSectionHeader({
                   title: section.title,
                   hasProfile: section.hasProfile,
-                  date: section.date,
+                  subTitle: section.subTitle,
                   data: data.me,
                 })
               }
