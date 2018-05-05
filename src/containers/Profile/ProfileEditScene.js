@@ -50,8 +50,6 @@ class ProfileEditScene extends Component {
       }
     }
 
-    console.log('USER', user);
-
     return (
       <ProfileContainer>
         <Mutation
