@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Button, HeaderBar, Typo, ModalOptions, Input } from 'coupon-components-native';
+import { Button, HeaderBar, Typo, ModalOptions, Input, Avatar, PhotoPicker } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
 import { Query, Mutation } from 'react-apollo';
 import uuid from 'uuid/v4';
-import UploadProfile from '../../components/User/UploadProfile';
 
 import { Queries, Mutations } from '../../graphql';
 
@@ -82,8 +81,14 @@ class ProfileEditScene extends Component {
                   <DividerText><FormattedMessage id="commons.avatar"/></DividerText>
                 </RowGroup>
 
-                <RowContent horizontalCenter>
-                  <UploadProfile avatar={me.image} />
+                <RowContent horizontalCenter verticalCenter>
+                  <ColumnGroup verticalCenter>
+                    <Avatar size={100} source={{uri: me.image}} />
+
+                    <LinkChangePhoto cancelLabel='Cancelar'>
+                      <Typo.TextBody  color={Palette.secondaryAccent.css()}>Cambiar foto de perfil</Typo.TextBody>
+                    </LinkChangePhoto>
+                  </ColumnGroup>
                 </RowContent>
 
                 <RowGroup>
@@ -180,6 +185,10 @@ const DividerText = styled(Typo.TextBody)`
 
 const InfoInputs = styled(Input)`
   margin-bottom: 10;
+`;
+
+const LinkChangePhoto = styled(PhotoPicker)`
+  margin-top: 10;
 `;
 
 export default injectIntl(ProfileEditScene);

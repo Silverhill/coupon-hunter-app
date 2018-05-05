@@ -57,7 +57,7 @@ class ProfileMakerScene extends Component {
           <RowContent>
             <Avatar
               size={70}
-              source={{ uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png' }}
+              source={{ uri: maker.image }}
             />
 
             <ColumnGroup fullWidth>

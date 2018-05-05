@@ -61,6 +61,7 @@ class UploadProfile extends Component{
         }}
       >{(addImageToUser, { data }) => {
 
+        // FIXME: reemplazar esta metodología del stado por optimising reponse de graphql
         let avatarProfile
         if(avatar) avatarProfile = {source:{ uri: avatar }}
         if(stateImage) avatarProfile = {source:{ uri: stateImage }};
