@@ -10,3 +10,14 @@ export const UPLOAD_IMAGE_USER = gql`
     }
   }
 `;
+
+export const UPDATE_USER = gql`
+mutation updateUser($name: String, $email: String, $upload: Upload) {
+  updateUser(input : { name: $name, email: $email, upload: $upload }) {
+    id
+    email
+    name
+    image
+  }
+}
+`;

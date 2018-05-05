@@ -12,6 +12,11 @@ export default {
     edit: 'Edit',
     editProfile: 'Edit Profile',
     viewProfile: 'View Profile',
+    name: 'Name',
+    email: 'Email',
+    avatar: 'Image Profile',
+    personalInfo: 'Personal Information',
+    done: 'Done',
 
     messages: {
       alert: {
@@ -83,6 +88,10 @@ export default {
 
   profileScene: {
     titlePage: 'Profile',
+
+    edit: {
+      titlePage: 'Edit Profile'
+    }
   },
 
   makerProfileScene: {

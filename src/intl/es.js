@@ -12,6 +12,11 @@ export default {
     edit: 'Editar',
     editProfile: 'Editar Perfil',
     viewProfile: 'Ver Perfil',
+    name: 'Nombre',
+    email: 'Email',
+    avatar: 'Imagen de Perfil',
+    personalInfo: 'Información Personal',
+    done: 'Listo',
 
     messages: {
 
@@ -84,6 +89,10 @@ export default {
 
   profileScene: {
     titlePage: 'Mi Perfil',
+
+    edit: {
+      titlePage: 'Editar Perfil'
+    }
   },
 
   makerProfileScene: {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Button, HeaderBar, Typo, ModalOptions } from 'coupon-components-native';
+import { Button, HeaderBar, Typo, ModalOptions, Avatar } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components/native';
 import { Entypo } from '@expo/vector-icons';
 import { withApollo, Query } from 'react-apollo';
 import uuid from 'uuid/v4';
-import UploadProfile from '../../components/User/UploadProfile';
+import { NavigationActions } from 'react-navigation';
 
 import { removeAuthenticationAsync } from '../../services/auth';
 import { Queries } from '../../graphql';
@@ -38,7 +38,7 @@ class ProfileScene extends Component {
 
   goToBack = () => {
     const { navigation } = this.props;
-    navigation.goBack();
+    navigation.dispatch(NavigationActions.back());
   }
 
   onPressOptions = () => {
@@ -47,6 +47,7 @@ class ProfileScene extends Component {
 
   render() {
     const { openOptions, currentAvatar } = this.state;
+    const { navigation } = this.props;
 
     const options = [
       {label: <FormattedMessage id="commons.editProfile" />, id: uuid(), key: 'edit' },
@@ -73,7 +74,7 @@ class ProfileScene extends Component {
 
             return (
               <RowContent>
-                <UploadProfile avatar={me.image} />
+                <Avatar source={{uri: me.image }} />
 
                 <ColumnGroup fullWidth>
                   <Typo.Header numberOfLines={1} normal>{me.name}</Typo.Header>
@@ -124,7 +125,12 @@ class ProfileScene extends Component {
           // opacity={0.7}
           cancelLabel={<FormattedMessage id="commons.cancel" />}
           options={options}
-          onClickOption={(option) => console.log('click', option)}
+          onClickOption={(option) => {
+            if(option.key === 'edit') {
+              navigation.navigate('ProfileEdit');
+              this.setModalVisible(false);
+            }
+          }}
           onCloseRequest={() => this.setModalVisible(false)}
         />
 

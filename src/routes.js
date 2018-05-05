@@ -10,6 +10,7 @@ import RegisterScreen from './containers/Register/RegisterScreen';
 import HomeScreen from './containers/Home/HomeScreen';
 import AuthLoadingScreen from './containers/AuthLoadingScreen/AuthLoadingScreen';
 import ProfileScene from './containers/Profile/ProfileScene';
+import ProfileEditScene from './containers/Profile/ProfileEditScene';
 import ProfileMakerScene from './containers/Profile/ProfileMakerScene';
 import CouponDetailScene from './containers/CouponDetail/CouponDetailScene';
 import WalletScene from './containers/Wallet/WalletScene';
@@ -50,10 +51,23 @@ const commonNavigationOptions = {
   tabBarVisible: false
 }
 
+// Profile Stack
+const ProfileStack = StackNavigator({
+  Profile: { screen: ProfileScene },
+  ProfileEdit: { screen: ProfileEditScene },
+}, {
+  initialRouteName: 'Profile',
+  navigationOptions: {
+    header: null,
+    ...commonNavigationOptions,
+    gesturesEnabled: false,
+   },
+})
+
 // Home Stack
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
-  Profile: { screen: ProfileScene, navigationOptions: { ...commonNavigationOptions } },
+  Profile: { screen: ProfileStack },
   Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 },{
   navigationOptions: {
@@ -64,7 +78,7 @@ const HomeStack = StackNavigator({
 
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
-  Profile: { screen: ProfileScene, navigationOptions: { ...commonNavigationOptions } },
+  Profile: { screen: ProfileStack },
   Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 }, {
   navigationOptions: {
