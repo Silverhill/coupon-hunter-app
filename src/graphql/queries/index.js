@@ -1,4 +1,4 @@
-import { ALL_CAMPAIGNS_AND_ME, CAMPAIGNS_BY_MAKER_ID, MY_COUPONS } from './campaign';
+import { ALL_CAMPAIGNS_AND_ME, CAMPAIGNS_BY_MAKER_ID, MY_COUPONS, MY_REDEEMED_COUPONS } from './campaign';
 import { ME } from './user';
 
 export default {
@@ -6,4 +6,5 @@ export default {
   ALL_CAMPAIGNS_AND_ME,
   CAMPAIGNS_BY_MAKER_ID,
   MY_COUPONS,
+  MY_REDEEMED_COUPONS,
 }

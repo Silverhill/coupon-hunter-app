@@ -62,8 +62,9 @@ class WalletScene extends Component {
     />
   )
   _renderScene = SceneMap({
+    // FIXME: unificar myCurrentCoupons y myOldCoupons en un solo componente génerico que haga una sola llamada de ambos queries unificados myCoupons y myRedeemedCoupons
     hunted: () => <MyCurrentCoupons navigation={this.props.navigation} />,
-    used: () => <MyOldCoupons />,
+    used: () => <MyOldCoupons navigation={this.props.navigation} />,
   });
 
   render() {

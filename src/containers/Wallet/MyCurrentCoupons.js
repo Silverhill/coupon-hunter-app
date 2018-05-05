@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
 
-import { graphqlService } from '../../services';
-import * as userActions from '../../actions/userActions';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import MyCoupons from '../../components/User/MyCoupons';
 

@@ -93,3 +93,34 @@ export const MY_COUPONS = gql`
     }
   }
 `;
+
+export const MY_REDEEMED_COUPONS = gql`
+  query myRedeemedCoupons{
+    myRedeemedCoupons(sortField: "startAt", limit: 30) {
+      id
+      status
+      code
+      ... on CouponHunted {
+        campaign {
+          endAt
+          startAt
+          city
+          title
+          id
+          country
+          city
+          image
+          totalCoupons
+          description
+          customMessage
+          deleted
+          status
+          maker {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
