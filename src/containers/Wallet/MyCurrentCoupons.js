@@ -8,7 +8,7 @@ import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
-import MyRedeemedCoupons from '../../components/User/MyRedeemedCoupons';
+import MyCoupons from '../../components/User/MyCoupons';
 
 const WalletContainer = styled(ScrollView)`
   flex: 1;
@@ -20,7 +20,7 @@ const Container = styled(View)`
   height: 100%;
 `;
 
-class MyOldCoupons extends Component {
+class MyCurrentCoupons extends Component {
   state = {
     modalVisible: false,
     error: '',
@@ -43,7 +43,7 @@ class MyOldCoupons extends Component {
     return (
       <WalletContainer>
         <Container>
-          <MyRedeemedCoupons onPressCampaign={this.pressCoupon}/>
+          <MyCoupons onPressCampaign={this.pressCoupon}/>
         </Container>
 
         <Modal
@@ -62,4 +62,4 @@ class MyOldCoupons extends Component {
   }
 }
 
-export default MyOldCoupons;
+export default MyCurrentCoupons;
