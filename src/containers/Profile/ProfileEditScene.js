@@ -75,7 +75,7 @@ class ProfileEditScene extends Component {
                 rightButton={RightButtonText}
                 onPressRightButton={async () => {
                   try {
-                    await updateUser();
+                    if(Object.keys(user).length > 0) await updateUser();
                   } catch (err) {
                     console.log(err);
                   }

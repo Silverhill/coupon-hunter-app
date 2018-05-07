@@ -107,8 +107,8 @@ export default class Scenes extends Component {
 
     const client = this.client(token);
     return (
-      <Provider store={store}>
-        <ApolloProvider client={client}>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
           <IntlProvider
             locale={locale}
             messages={intlService.flattenMessages(messages[locale])}
@@ -116,8 +116,8 @@ export default class Scenes extends Component {
           >
             <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
           </IntlProvider>
-        </ApolloProvider>
-      </Provider>
+        </Provider>
+      </ApolloProvider>
     );
   }
 }

@@ -1,29 +1,14 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { graphql, compose, Query } from 'react-apollo';
-import { Text, ScrollView, AsyncStorage, StatusBar, View, Alert, Modal, SectionList } from 'react-native';
+import { Text, ScrollView, AsyncStorage, StatusBar, View,  Modal } from 'react-native';
 import { Button, HeaderBar, Coupon } from 'coupon-components-native';
 import styled from 'styled-components/native';
-import { FormattedDate, injectIntl, FormattedMessage } from 'react-intl';
-import { withApollo } from 'react-apollo';
+import { FormattedMessage } from 'react-intl';
 import uuid from 'uuid/v4';
-import moment from 'moment';
 
-import { HEADER_AUTHENTICATION_KEY } from '../../constants';
-import { authService, intl, statusService } from '../../services';
+import { authService, statusService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import AllCampaigns from '../../components/Campaigns/AllCampaigns';
 
-import * as userActions from '../../actions/userActions';
-import * as campaignsActions from '../../actions/campaignsActions';
-
-@connect(state => ({
-  user: state.user,
-  // campaigns: state.campaigns,
-}), {
-  setUserProfile: userActions.setUserProfile,
-  // setCampaigns: campaignsActions.setCampaigns,
-})
 class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Home',
@@ -94,4 +79,4 @@ const HeaderBarContainer = styled(View)`
   margin-bottom: 20;
 `;
 
-export default injectIntl(HomeScreen);
+export default HomeScreen;

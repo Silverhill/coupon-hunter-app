@@ -76,7 +76,7 @@ const HomeStack = StackNavigator({
   }
 })
 
-
+// Wallet Stack
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
   Profile: { screen: ProfileStack },
@@ -122,7 +122,7 @@ const AppStack = TabNavigator({
       return <Entypo name={iconName} size={25} color={tintColor} />;
     },
     header: null
-  })
+  }),
 });
 
 // Modal Stack
