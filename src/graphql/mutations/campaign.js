@@ -8,6 +8,23 @@ export const CAPTURE_COUPON = gql`
       code
       campaign {
         id
+        startAt
+        endAt
+        country
+        city
+        totalCoupons
+        huntedCoupons
+        redeemedCoupons
+        status
+        title
+        description
+        customMessage
+        deleted
+        image
+        maker {
+          id
+          name
+        }
       }
     }
   }

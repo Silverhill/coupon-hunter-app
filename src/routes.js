@@ -20,6 +20,7 @@ import OnboardingScene from './containers/Onboarding/OnboardingScene';
 
 // Assets
 import arrow_left_c from './assets/images/arrow-left-c.png'
+import MyRedeemCoupons from './components/User/MyRedeemedCoupons';
 
 export const customBack = {
   headerStyle: {
@@ -55,12 +56,11 @@ const commonNavigationOptions = {
 // Profile Stack
 const ProfileStack = StackNavigator({
   Profile: { screen: ProfileScene },
-  ProfileEdit: { screen: ProfileEditScene },
+  ProfileEdit: { screen: ProfileEditScene, navigationOptions: { ...commonNavigationOptions } },
 }, {
   initialRouteName: 'Profile',
   navigationOptions: {
     header: null,
-    ...commonNavigationOptions,
     gesturesEnabled: false,
    },
 })
@@ -68,7 +68,6 @@ const ProfileStack = StackNavigator({
 // Home Stack
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
-  Profile: { screen: ProfileStack },
   Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 },{
   navigationOptions: {
@@ -79,7 +78,6 @@ const HomeStack = StackNavigator({
 // Wallet Stack
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
-  Profile: { screen: ProfileStack },
   Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 }, {
   navigationOptions: {
@@ -92,25 +90,30 @@ const WalletStack = StackNavigator({
 const AppStack = TabNavigator({
   Home: { screen: HomeStack, navigationOptions: { title: <FormattedMessage id="commons.titles.today" /> }  },
   Wallet: { screen: WalletStack },
-  Explore: { screen: ExploreScene },
   Notifications: { screen: NotificationsScene },
+  Profile: { screen: ProfileStack },
 },
 {
   initialRouteName: 'Home',
+  swipeEnabled: false,
+  lazyLoad: true,
+  animationEnabled: false,
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
 
+      // console.log(navigation.state)
+
       let iconName;
       switch (routeName) {
         case 'Home':
-          iconName = 'calendar';
+          iconName = 'compass';
           break;
         case 'Wallet':
           iconName = 'wallet';
           break;
-        case 'Explore':
-          iconName = 'compass';
+        case 'Profile':
+          iconName = 'user';
           break;
         case 'Notifications':
           iconName = 'bell';

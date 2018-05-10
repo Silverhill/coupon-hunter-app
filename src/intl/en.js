@@ -76,11 +76,12 @@ export default {
 
   todayScreen: {
     otherDays: 'All Coupons',
-    today: 'New Coupons',
+    header: 'Coupons',
   },
 
   walletScreen: {
     titlePage: 'My Wallet',
+    subTitle: 'Mis Coupons',
     tabs: {
       hunted: 'Hunted',
       used: 'Used',

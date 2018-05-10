@@ -40,10 +40,7 @@ class HomeScreen extends Component {
     return (
       <TodayContainer>
         <CampaignsContainer>
-          <AllCampaigns
-            onPressProfile={this.goToProfile}
-            onPressCampaign={this.pressCoupon}
-          />
+          <AllCampaigns onPressCampaign={this.pressCoupon} />
         </CampaignsContainer>
 
         <Modal

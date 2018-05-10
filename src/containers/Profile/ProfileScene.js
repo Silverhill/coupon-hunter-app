@@ -36,11 +36,6 @@ class ProfileScene extends Component {
     }
   }
 
-  goToBack = () => {
-    const { navigation } = this.props;
-    navigation.dispatch(NavigationActions.back());
-  }
-
   onPressOptions = () => {
     this.setModalVisible(true);
   }
@@ -63,7 +58,7 @@ class ProfileScene extends Component {
       <ProfileContainer>
         <HeaderBarContainer>
           <FormattedMessage id="profileScene.titlePage">{(txt) => (
-            <HeaderBar backButton={this.goToBack} title={txt} />
+            <HeaderBar title={txt} />
           )}</FormattedMessage>
         </HeaderBarContainer>
 

@@ -9,29 +9,35 @@ import { injectIntl } from 'react-intl';
 import { Mutations, Queries } from '../../graphql';
 
 class Campaign extends Component{
-  updateCampaigns = (cache, { data: { captureCoupon: { campaign } } }) => {
-    const { allCampaigns, me } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS_AND_ME });
+  updateCampaigns = (cache, { data: { captureCoupon: { campaign, ...coupon } } }) => {
+    const { allCampaigns } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS });
 
-    const campaigns = ((allCampaigns || {}).campaigns || []).map((item, i) => {
-      if(campaign.id === item.id) {
+    try {
+      const { myCoupons } = cache.readQuery({ query: Queries.MY_COUPONS });
+      const newCoupon = { ...coupon, campaign }
+      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: [...myCoupons, newCoupon] } });
+    } catch (err) {/*console.log(err);*/}
+
+    const campaigns = ((allCampaigns || {}).campaigns || []).map((_campaign, i) => {
+      if(campaign.id === _campaign.id) {
         return {
-          ...item,
-          huntedCoupons: 1,
+          ..._campaign,
+          canHunt: false,
+          totalCoupons: (_campaign.totalCoupons - _campaign.huntedCoupons),
         };
       }
-      return item;
+
+      return _campaign;
     });
 
-    cache.writeQuery({
-      query: Queries.ALL_CAMPAIGNS_AND_ME,
-      data: {
-        allCampaigns: {
-          ...allCampaigns,
-          campaigns,
-        },
-        me,
-      }
-    });
+    const newDataAllCampaigns = {
+      allCampaigns: {
+        ...allCampaigns,
+        campaigns,
+      },
+    };
+
+    cache.writeQuery({ query: Queries.ALL_CAMPAIGNS, data: newDataAllCampaigns });
   }
 
   render(){
@@ -39,20 +45,19 @@ class Campaign extends Component{
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
-    if(intl) {
+    if(intl && startAt && endAt) {
       startAt = intl
-        .formatDate(campaign.startAt, { month: 'short', day: 'numeric' })
+        .formatDate(startAt, { month: 'short', day: 'numeric' })
         .toUpperCase();
 
       endAt = intl
-        .formatDate(campaign.endAt, { month: 'short', day: 'numeric', year: 'numeric' })
+        .formatDate(endAt, { month: 'short', day: 'numeric', year: 'numeric' })
         .toUpperCase();
     }
 
     return (
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
-        // refetchQueries={['myCoupons']}
         variables={{ campaignId: campaign.id }}
         update={this.updateCampaigns}
         key={campaign.id}
@@ -64,7 +69,7 @@ class Campaign extends Component{
             onPress={() => onPress(campaign)}
             tagButton={{
               onPress: async () => {
-                if(campaign.huntedCoupons > 0) return;
+                if(!campaign.canHunt) return;
                 if(onHunt) onHunt();
 
                 try {
@@ -75,7 +80,11 @@ class Campaign extends Component{
                         id: -1,
                         status: 'hunted',
                         code: -1,
-                        campaign,
+                        campaign: {
+                          ...campaign,
+                          canHunt: false,
+                          totalCoupons: (campaign.totalCoupons - campaign.huntedCoupons) - 1,
+                        },
                         __typename: 'CouponHunted',
                       },
                     },

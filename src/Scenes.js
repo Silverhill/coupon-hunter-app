@@ -5,7 +5,11 @@ import { connect, Provider } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
 import { ApolloClient } from 'apollo-client';
+import { onError } from 'apollo-link-error';
+import { withClientState } from 'apollo-link-state';
+import { BatchHttpLink } from "apollo-link-batch-http";
 import { ApolloProvider } from 'react-apollo';
+import { toIdValue } from 'apollo-utilities';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client'
@@ -76,9 +80,34 @@ export default class Scenes extends Component {
       return forward(operation);
     });
 
+    const cache = new InMemoryCache({
+      cacheRedirects: {
+        Query: {
+          allCampaigns: (_, { id }) => toIdValue(cache.config.dataIdFromObject({ __typename: 'PaginatedCampaigns', id })),
+        },
+      },
+      dataIdFromObject: object => object.key || null,
+    });
+
+    const stateLink = withClientState({ cache })
+
     return new ApolloClient({
-      link: concat(authMiddleware, link),
-      cache: new InMemoryCache(),
+      // link: concat(authMiddleware, link),
+      link: ApolloLink.from([
+        onError(({ graphQLErrors, networkError }) => {
+          if (graphQLErrors)
+            graphQLErrors.map(({ message, locations, path }) =>
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+              ),
+            );
+          if (networkError) console.log(`[Network error]: ${networkError}`);
+        }),
+        authMiddleware,
+        stateLink,
+        link,
+      ]),
+      cache,
     });
   }
 

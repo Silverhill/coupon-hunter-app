@@ -1,15 +1,8 @@
 import gql from 'graphql-tag';
 
-export const ALL_CAMPAIGNS_AND_ME = gql`
-  query allCampaignsAndMe($withMe: Boolean = true, $limit: Int = 30, $skip: Int = 0) {
-    me @include(if: $withMe){
-      name
-      role
-      email
-      image
-    }
-
-    allCampaigns(sortField: "startAt", sortDirection: -1, limit: $limit, skip: $skip) {
+export const ALL_CAMPAIGNS = gql`
+  query allCampaigns($limit: Int = 30, $skip: Int = 0) {
+    allCampaigns(sortField: "startAt", sortDirection: -1, limit: $limit, skip: $skip) @connection(key: "allCampaigns"){
       totalCount
       campaigns {
         id
@@ -20,15 +13,17 @@ export const ALL_CAMPAIGNS_AND_ME = gql`
         totalCoupons
         huntedCoupons
         redeemedCoupons
+        couponsRedeemedByMe
+        couponsHuntedByMe
+        canHunt
         status
         title
         description
         customMessage
         deleted
+        image
         initialAgeRange
         finalAgeRange
-        createdAt
-        couponsHuntedByMe
         maker {
           id
           name
@@ -65,25 +60,26 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
 
 export const MY_COUPONS = gql`
   query myCoupons{
-    myCoupons(sortField: "startAt", limit: 30) {
+    myCoupons(sortField: "startAt", limit: 30, sortDirection: -1) {
       id
       status
       code
       ... on CouponHunted {
         campaign {
-          endAt
-          startAt
-          city
-          title
           id
+          startAt
+          endAt
           country
           city
-          image
           totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
           description
           customMessage
           deleted
-          status
+          image
           maker {
             id
             name
@@ -96,25 +92,26 @@ export const MY_COUPONS = gql`
 
 export const MY_REDEEMED_COUPONS = gql`
   query myRedeemedCoupons{
-    myRedeemedCoupons(sortField: "startAt", limit: 30) {
+    myRedeemedCoupons(sortField: "startAt", limit: 30, sortDirection: -1) {
       id
       status
       code
       ... on CouponHunted {
         campaign {
-          endAt
-          startAt
-          city
-          title
           id
+          startAt
+          endAt
           country
           city
-          image
           totalCoupons
+          huntedCoupons
+          redeemedCoupons
+          status
+          title
           description
           customMessage
           deleted
-          status
+          image
           maker {
             id
             name
