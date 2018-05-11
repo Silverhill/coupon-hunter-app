@@ -7,13 +7,15 @@ export const UNAVAILABLE = 'unavailable';
 export const AVAILABLE = 'available';
 export const HUNTED = 'hunted';
 export const EXPIRED = 'expired';
+export const REDEEMED = 'redeemed';
 
 const constants = {
   UNAVAILABLE: 'unavailable',
   AVAILABLE: 'available',
   HUNTED: 'hunted',
-  EXPIRED: 'expired'
-}
+  EXPIRED: 'expired',
+  REDEEMED: 'redeemed',
+};
 
 export const getCurrentStatus = (status) => {
   switch (status) {
@@ -36,6 +38,11 @@ export const getCurrentStatus = (status) => {
       return {
         label: <FormattedMessage id="status.expired" />,
         color: Palette.neutral,
+      };
+    case constants.REDEEMED:
+      return {
+        label: <FormattedMessage id="status.redeemed" />,
+        color: Palette.colors.aquamarine,
       };
     default:
       return {

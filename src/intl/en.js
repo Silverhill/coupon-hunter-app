@@ -88,6 +88,10 @@ export default {
     }
   },
 
+  notifications: {
+    titlePage: 'Notifications',
+  },
+
   profileScene: {
     titlePage: 'Profile',
 
@@ -115,5 +119,6 @@ export default {
     'hunted': 'Hunted',
     'unavailable': 'Unavailable',
     'expired': 'Expired',
+    'redeemed': 'Redeemed',
   }
 }
