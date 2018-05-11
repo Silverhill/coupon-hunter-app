@@ -41,7 +41,7 @@ class Campaign extends Component{
   }
 
   render(){
-    const { campaign, onPress = () => null, onHunt, intl } = this.props;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -66,6 +66,8 @@ class Campaign extends Component{
           <StyledCoupon
             {...campaign}
             key={uuid()}
+            hideTag={hideTag}
+            hideTotalCoupons={hideTotalCoupons}
             onPress={() => onPress(campaign)}
             tagButton={{
               onPress: async () => {
