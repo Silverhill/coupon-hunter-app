@@ -120,7 +120,6 @@ class CouponDetailScene extends Component {
               >{(captureCoupon) => (
                 <CaptureButton
                   title="Capturar Cupon"
-                  rightIcon="md-download"
                   pill
                   onPress={() => this.catchCoupon(campaign.id, {captureCoupon})}
                   iconColor={Palette.white.css()}
