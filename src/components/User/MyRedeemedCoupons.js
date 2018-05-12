@@ -25,6 +25,7 @@ const MyRedeemCoupons = ({ onPressCampaign }) => {
     return (
       <Campaign
         campaign={campaign}
+        hideTotalCoupons
         onPress={onPressCampaign}
       />
     );

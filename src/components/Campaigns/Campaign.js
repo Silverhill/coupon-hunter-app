@@ -7,6 +7,7 @@ import uuid from 'uuid/v4';
 import gql from 'graphql-tag';
 import { injectIntl } from 'react-intl';
 import { Mutations, Queries } from '../../graphql';
+import { statusService } from '../../services';
 
 class Campaign extends Component{
   updateCampaigns = (cache, { data: { captureCoupon: { campaign, ...coupon } } }) => {
@@ -55,6 +56,13 @@ class Campaign extends Component{
         .toUpperCase();
     }
 
+    let currentStatus = statusService.getCurrentStatus(campaign.status);
+    if(!campaign.canHunt) {
+      currentStatus = statusService.getCurrentStatus(statusService.constants.HUNTED);
+    }
+
+    console.log(campaign);
+
     return (
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
@@ -65,12 +73,13 @@ class Campaign extends Component{
         return (
           <StyledCoupon
             {...campaign}
+            status={currentStatus}
             key={uuid()}
             hideTag={hideTag}
             hideTotalCoupons={hideTotalCoupons}
             onPress={() => onPress(campaign)}
             tagButton={{
-              onPress: async () => {
+              onPress: currenStatus.label === 'available' && (async () => {
                 if(!campaign.canHunt) return;
                 if(onHunt) onHunt();
 
@@ -96,7 +105,7 @@ class Campaign extends Component{
                   console.log(err);
                   Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
                 }
-              },
+              }),
             }}
             startAt={startAt}
             endAt={endAt}

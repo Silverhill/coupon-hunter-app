@@ -51,12 +51,6 @@ class AllCampaigns extends PureComponent {
         else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>
 
         const { allCampaigns: { campaigns } } = data;
-
-        // console.log('====================================');
-        // // console.log(' campaigns', campaigns);
-        // console.log(' data', data, networkStatus);
-        // console.log('====================================');
-
         return (
           <ScreenContent>
             <FlatList
