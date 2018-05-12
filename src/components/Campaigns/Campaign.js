@@ -67,7 +67,9 @@ class Campaign extends Component{
       currentStatus = statusService.getCurrentStatus(statusService.constants.HUNTED);
     }
 
-    let intlFormattedStatus = this._getTranslatedStatus(currentStatus)
+    let intlFormattedStatus = this._getTranslatedStatus(currentStatus);
+
+    // console.log(campaign);
 
     return (
       <Mutation

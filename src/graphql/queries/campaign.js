@@ -46,14 +46,15 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       totalCoupons
       huntedCoupons
       redeemedCoupons
+      canHunt
       status
       title
       description
       customMessage
       deleted
+      image
       initialAgeRange
       finalAgeRange
-      createdAt
     }
   }
 `;

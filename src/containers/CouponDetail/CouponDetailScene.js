@@ -79,8 +79,6 @@ class CouponDetailScene extends Component {
     let hunted = false;
     if(status === 'hunted') hunted = true;
 
-    console.log(campaign);
-
     return (
       <ContainerScene>
         <ScrollView>
