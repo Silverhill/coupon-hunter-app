@@ -1,66 +1,16 @@
 import React, { Component } from 'react';
-import { AsyncStorage, View, TouchableOpacity } from 'react-native';
-import { Typo, Button } from 'coupon-components-native';
+import { AsyncStorage, View, TouchableOpacity, StatusBar } from 'react-native';
 import { Palette } from 'coupon-components-native/styles';
 import styled from 'styled-components/native';
 import Swiper from 'react-native-swiper';
-import { FormattedMessage } from 'react-intl';
-
-const Page = ({ onDone, onSkip, backgroundColor }) => {
-  return (
-    <PageContainer bgColor={backgroundColor}>
-      {onSkip && (
-        <OnSkip onPress={onSkip}>
-          <Typo.TextBody color={Palette.secondaryAccent.css()}><FormattedMessage id="commons.skip" /></Typo.TextBody>
-        </OnSkip>
-      )}
-
-      {onDone && (
-        <FormattedMessage id="commons.done">{(txt) => (
-          <PhantomButton
-            pill
-            onPress={onDone}
-            title={txt}
-            backgroundColor={Palette.neutralLight.css()}
-            textColor={Palette.dark.css()}
-            shadow={false}
-            borderColor={Palette.dark.css()}
-            borderWidth={1}
-          />
-        )}
-        </FormattedMessage>
-      )}
-    </PageContainer>
-  )
-}
-
-const PageContainer = styled(View)`
-  flex: 1;
-  background-color: ${props => props.bgColor || Palette.neutralLight };
-  position: relative;
-  justify-content: center;
-  align-items: center;
-`;
-
-const OnSkip = styled(TouchableOpacity)`
-  position: absolute;
-  top: 40;
-  right: 30;
-`;
-
-const PhantomButton = styled(Button)`
-  width: 200;
-  position: absolute;
-  bottom: 80;
-`;
-
+import OnboardingPage from './OnboardingPage';
 
 class OnboardingScene extends Component {
 
   async componentWillMount() {
     const { navigation } = this.props;
     const followedOnboarding = await AsyncStorage.getItem('@followedOnboarding');
-    if(followedOnboarding) { navigation.navigate('Auth'); }
+    // if(followedOnboarding) { navigation.navigate('Auth'); }
   }
 
   onSkip = async () => {
@@ -73,15 +23,29 @@ class OnboardingScene extends Component {
   render() {
     return (
       <Container>
+        <StatusBar barStyle='light-content' />
         <Swiper
           loop={false}
-          dotColor={Palette.neutral.css()}
-          activeDotColor={Palette.accent.css()}
+          activeDot={<View style={{backgroundColor: 'white', width: 8, height: 15, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
           onIndexChanged={(index) => console.log(index)}
+          dotStyle={{ alignSelf: 'flex-end', 'backgroundColor': Palette.white.alpha(0.5).css() }}
         >
-          <Page onSkip={this.onSkip}/>
-          <Page backgroundColor={Palette.dark} onSkip={this.onSkip}/>
-          <Page onDone={this.onSkip}/>
+          <OnboardingPage
+            onSkip={this.onSkip}
+            title='Bienvenido Hunter!'
+            uri='https://images.unsplash.com/photo-1522204605090-c9a2ae146cb3?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0147eeb73ae17cd12d9f3d9523ba01a6&auto=format&fit=crop&w=2091&q=80'
+            message='Diviertete capturando coupones'/>
+          <OnboardingPage
+            backgroundColor={Palette.dark}
+            onSkip={this.onSkip}
+            uri='https://images.unsplash.com/photo-1507412306066-2977c0e91a68?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=aba7f52648017e9500343100cea8baee&auto=format&fit=crop&w=2000&q=80'
+            title='Bienvenido Hunter!'
+            message='Diviertete capturando coupones'/>
+          <OnboardingPage
+            title='Bienvenido Hunter!'
+            uri='https://images.unsplash.com/photo-1493807742375-fbc46d996e8f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6f0038573a81b1169576b6674a3ce202&auto=format&fit=crop&w=1076&q=80'
+            message='Diviertete capturando coupones'
+            onDone={this.onSkip}/>
         </Swiper>
       </Container>
     );

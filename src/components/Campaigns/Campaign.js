@@ -79,7 +79,7 @@ class Campaign extends Component{
             hideTotalCoupons={hideTotalCoupons}
             onPress={() => onPress(campaign)}
             tagButton={{
-              onPress: currenStatus.label === 'available' && (async () => {
+              onPress: currentStatus.label === 'available' && (async () => {
                 if(!campaign.canHunt) return;
                 if(onHunt) onHunt();
 

@@ -16,7 +16,7 @@ export default {
     email: 'Email',
     avatar: 'Imagen de Perfil',
     personalInfo: 'Información Personal',
-    done: 'Listo',
+    done: 'Listo!',
     skip: 'Saltar',
 
     messages: {
