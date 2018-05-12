@@ -41,6 +41,12 @@ class Campaign extends Component{
     cache.writeQuery({ query: Queries.ALL_CAMPAIGNS, data: newDataAllCampaigns });
   }
 
+  _getTranslatedStatus = (status) => {
+    const { intl } = this.props;
+    const labelTranslated = intl.formatMessage({ id: status.id });
+    return { ...status, label: labelTranslated }
+  }
+
   render(){
     const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons } = this.props;
     let startAt = (campaign || {}).startAt;
@@ -57,11 +63,11 @@ class Campaign extends Component{
     }
 
     let currentStatus = statusService.getCurrentStatus(campaign.status);
-    if(!campaign.canHunt) {
+    if(!campaign.canHunt && currentStatus.key !== 'expired') {
       currentStatus = statusService.getCurrentStatus(statusService.constants.HUNTED);
     }
 
-    console.log(campaign);
+    let intlFormattedStatus = this._getTranslatedStatus(currentStatus)
 
     return (
       <Mutation
@@ -73,13 +79,13 @@ class Campaign extends Component{
         return (
           <StyledCoupon
             {...campaign}
-            status={currentStatus}
+            status={intlFormattedStatus}
             key={uuid()}
             hideTag={hideTag}
             hideTotalCoupons={hideTotalCoupons}
             onPress={() => onPress(campaign)}
             tagButton={{
-              onPress: currentStatus.label === 'available' && (async () => {
+              onPress: currentStatus.key === 'available' && currentStatus.key !== 'hunted' && (async () => {
                 if(!campaign.canHunt) return;
                 if(onHunt) onHunt();
 
@@ -105,7 +111,7 @@ class Campaign extends Component{
                   console.log(err);
                   Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
                 }
-              }),
+              })
             }}
             startAt={startAt}
             endAt={endAt}

@@ -17,7 +17,7 @@ class OnboardingScene extends Component {
     const { navigation } = this.props;
 
     await AsyncStorage.setItem('@followedOnboarding', 'true');
-    navigation.navigate('Auth');
+    // navigation.navigate('Auth');
   }
 
   render() {
@@ -27,7 +27,6 @@ class OnboardingScene extends Component {
         <Swiper
           loop={false}
           activeDot={<View style={{backgroundColor: 'white', width: 8, height: 15, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
-          onIndexChanged={(index) => console.log(index)}
           dotStyle={{ alignSelf: 'flex-end', 'backgroundColor': Palette.white.alpha(0.5).css() }}
         >
           <OnboardingPage

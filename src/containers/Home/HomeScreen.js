@@ -51,7 +51,7 @@ class HomeScreen extends Component {
           <CouponDetailScene
             navigation={navigation}
             onClose={this.handleCloseModal}
-            {...this.state.currentDetails}
+            campaign={this.state.currentDetails}
           />
         </Modal>
       </TodayContainer>

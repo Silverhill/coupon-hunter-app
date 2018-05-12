@@ -115,7 +115,7 @@ export default {
   },
 
   status: {
-    'available': 'Available',
+    'available': 'Get Coupon',
     'hunted': 'Hunted',
     'unavailable': 'Unavailable',
     'expired': 'Expired',

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components/native';
 import { View, ImageBackground } from 'react-native';
 import { Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo';
 
 const Container = styled(ImageBackground)`
@@ -65,8 +65,8 @@ const TicketsHeader = styled(Typo.TextBody)`
   text-align: right;
 `;
 
-const TicketsHeaderIcon = styled(Ionicons)`
-  margin-right: 10;
+const TicketsHeaderIcon = styled(MaterialCommunityIcons)`
+  margin-right: 20;
 `;
 
 const TicketHeaderCode = styled(Typo.TextBody)`
@@ -104,7 +104,7 @@ const CouponCover = ({ background, date, title, companyName, couponsCount, coupo
               <TicketsNumber jumbo inverted>{couponsCount}</TicketsNumber>
 
               <TicketsHeader small inverted>
-                <TicketsHeaderIcon name="md-wifi" size={15} color={Palette.white.css()}/>
+                <TicketsHeaderIcon name="ticket-confirmation" size={15} color={Palette.white.css()}/>
                 {couponsCountCaption}
               </TicketsHeader>
             </TicketsContainer>

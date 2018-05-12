@@ -28,7 +28,7 @@ export const removeAuthenticationAsync = async () => {
 
 export const isAuthorized = async () => {
   const token = await getAuthenticationAsync();
-  await removeAuthenticationAsync()
+  // await removeAuthenticationAsync()
 
   if(!token) {
     await removeAuthenticationAsync();

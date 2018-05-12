@@ -21,10 +21,9 @@ import { Mutations } from '../../graphql';
 
 class CouponDetailScene extends Component {
   goToMakerProfile = () => {
-    const { maker = {}, navigation, onClose } = this.props;
+    const { campaign: { maker = {} }, navigation, onClose } = this.props;
 
     if(onClose) {
-
       if(!navigation) {
         console.warn(`We need pass navigation props in this component ${CouponDetailScene.name}`)
         return
@@ -49,16 +48,24 @@ class CouponDetailScene extends Component {
     }
   }
 
-
-
   render() {
-    const campaign = this.props;
-    const { onClose = () => null, intl, startAt = '', endAt = '', status, withoutMakerProfile = false, huntedCoupons, code = '' } = campaign;
+    const { campaign, intl, onClose = () => null, withoutMakerProfile = false } = this.props;
+    const {
+      startAt = '',
+      endAt = '',
+      status,
+      huntedCoupons,
+      totalCoupons,
+      code = '',
+      canHunt,
+    } = campaign;
+
+    const availableCoupons = totalCoupons - huntedCoupons;
 
     const availableText = intl
       .formatMessage(
         { id: "couponDetailScene.couponAvailable"},
-        { totalCoupons: String(campaign.totalCoupons) })
+        { totalCoupons: String(availableCoupons) })
       .match(/([a-z])\w+/gi)[0];
 
     const startDate = intl
@@ -69,9 +76,10 @@ class CouponDetailScene extends Component {
       .toUpperCase();
     const date = `${startDate} - ${endDate}`;
 
-    // FIXME: Cambiar el estado al correcto cuando este definido.
     let hunted = false;
     if(status === 'hunted') hunted = true;
+
+    console.log(campaign);
 
     return (
       <ContainerScene>
@@ -82,7 +90,7 @@ class CouponDetailScene extends Component {
             date={date}
             title={campaign.title}
             companyName={((campaign || {}).maker || {}).name}
-            couponsCount={campaign.totalCoupons}
+            couponsCount={availableCoupons}
             couponsCountCaption={availableText}
             code={code}
           />
@@ -107,10 +115,10 @@ class CouponDetailScene extends Component {
               />
               </View>
             )}
-            {!hunted && !(huntedCoupons > 0) && (
+            {canHunt && (
               <Mutation
                 mutation={Mutations.CAPTURE_COUPON}
-                refetchQueries={['allCampaignsAndMe', 'myCoupons', 'campaignsByMakerId']}
+                refetchQueries={['allCampaigns', 'myCoupons', 'campaignsByMakerId']}
               >{(captureCoupon) => (
                 <CaptureButton
                   title="Capturar Cupon"

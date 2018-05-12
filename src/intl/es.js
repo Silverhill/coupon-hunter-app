@@ -116,7 +116,7 @@ export default {
   },
 
   status: {
-    'available': 'Disponible',
+    'available': 'Obtener',
     'hunted': 'Capturado',
     'unavailable': 'No Disponible',
     'expired': 'Expirado',
