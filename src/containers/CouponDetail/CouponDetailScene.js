@@ -77,7 +77,7 @@ class CouponDetailScene extends Component {
     const date = `${startDate} - ${endDate}`;
 
     let hunted = false;
-    if(status === 'hunted') hunted = true;
+    if(status === 'hunted' || status === 'redeemed') hunted = true;
 
     return (
       <ContainerScene>
@@ -166,6 +166,4 @@ const CaptureButton = styled(ButtonGradient)`
   border-color: black;
 `;
 
-export default compose(
-  graphqlService.mutation.captureCoupon,
-)(injectIntl(CouponDetailScene));
+export default injectIntl(CouponDetailScene);

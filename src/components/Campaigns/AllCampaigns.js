@@ -4,14 +4,13 @@ import styled from 'styled-components/native';
 import { Typo } from 'coupon-components-native';
 import { Query } from 'react-apollo';
 import { injectIntl } from 'react-intl';
-import uuid from 'uuid/v4';
 
 import Campaign from '../Campaigns/Campaign';
 import { HeaderBar } from 'coupon-components-native';
 import { Queries } from '../../graphql';
 
 class AllCampaigns extends PureComponent {
-  _keyExtractor = (item, index) => uuid();
+  _keyExtractor = (item, index) => item.id;
   _renderItem = ({ item }) => {
     const { onPressCampaign } = this.props;
 
@@ -57,6 +56,7 @@ class AllCampaigns extends PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
               data={campaigns}
+              extraData={campaigns}
               ListHeaderComponent={this._renderHeader}
               refreshing={networkStatus === 4}
               onRefresh={() => refetch()}

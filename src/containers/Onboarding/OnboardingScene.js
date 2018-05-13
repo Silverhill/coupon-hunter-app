@@ -10,14 +10,14 @@ class OnboardingScene extends Component {
   async componentWillMount() {
     const { navigation } = this.props;
     const followedOnboarding = await AsyncStorage.getItem('@followedOnboarding');
-    // if(followedOnboarding) { navigation.navigate('Auth'); }
+    if(followedOnboarding) { navigation.navigate('Auth'); }
   }
 
   onSkip = async () => {
     const { navigation } = this.props;
 
     await AsyncStorage.setItem('@followedOnboarding', 'true');
-    // navigation.navigate('Auth');
+    navigation.navigate('Auth');
   }
 
   render() {

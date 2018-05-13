@@ -54,7 +54,7 @@ class MyOldCoupons extends Component {
           <CouponDetailScene
             navigation={navigation}
             onClose={this.handleCloseModal}
-            {...currentDetails}
+            campaign={currentDetails}
           />
         </Modal>
       </WalletContainer>

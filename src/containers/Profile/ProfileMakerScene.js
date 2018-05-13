@@ -44,7 +44,7 @@ class ProfileMakerScene extends Component {
     const { modalVisible, currentDetails } = this.state;
     const { navigation: { state: { params: maker } } } = this.props
 
-    // TODO: add profile slogan
+    // TODO: add profile slogan & bio
     return (
       <ProfileContainer>
         <HeaderBarContainer>
@@ -88,7 +88,7 @@ class ProfileMakerScene extends Component {
           <CouponDetailScene
             withoutMakerProfile
             onClose={this.handleCloseModal}
-            {...currentDetails}
+            campaign={currentDetails}
           />
         </Modal>
       </ProfileContainer>

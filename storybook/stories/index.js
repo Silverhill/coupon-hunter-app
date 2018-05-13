@@ -5,4 +5,5 @@ module.exports = [
   require('./coupon.stories'),
   require('./avatar.stories'),
   require('./photoPicker.stories'),
+  require('./custom-alert.stories'),
 ];
