@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { View, ActivityIndicator, ScrollView, FlatList, Modal } from 'react-native';
 import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import styled, { css } from 'styled-components/native';
-import { Query } from 'react-apollo';
-import { connect } from 'react-redux';
+import { Query, Subscription } from 'react-apollo';
 import { Palette } from 'coupon-components-native/styles';
-import uuid from 'uuid/v4';
+import { Subscriptions } from '../../graphql';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import MyRedeemedCoupons from '../../components/User/MyRedeemedCoupons';

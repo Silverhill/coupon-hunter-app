@@ -9,11 +9,12 @@ import { onError } from 'apollo-link-error';
 import { withClientState } from 'apollo-link-state';
 import { BatchHttpLink } from "apollo-link-batch-http";
 import { ApolloProvider } from 'react-apollo';
-import { toIdValue } from 'apollo-utilities';
+import { toIdValue, getMainDefinition } from 'apollo-utilities';
 import { HttpLink } from 'apollo-link-http';
-import { ApolloLink, concat } from 'apollo-link';
+import { ApolloLink, concat, split } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { WebSocketLink } from 'apollo-link-ws';
 
 import { getAuthenticationAsync, isAuthorized } from './services/auth';
 
@@ -66,7 +67,24 @@ export default class Scenes extends Component {
 
   client = (token) => {
     // const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
-    const link = createUploadLink({ uri: config.graphqlEndpoint });
+    const uploadLink = createUploadLink({ uri: config.graphqlEndpoint });
+
+    const wsLink = new WebSocketLink({
+      uri: config.wsEndpoint,
+      options: {
+        reconnect: true
+      }
+    });
+
+    const link = split(
+      // split based on operation type
+      ({ query }) => {
+        const { kind, operation } = getMainDefinition(query);
+        return kind === 'OperationDefinition' && operation === 'subscription';
+      },
+      wsLink,
+      uploadLink,
+    );
 
     const authMiddleware = new ApolloLink((operation, forward) => {
       operation.setContext(({headers = {} }) => {
