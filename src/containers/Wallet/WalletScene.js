@@ -6,7 +6,6 @@ import styled from 'styled-components/native';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
 import { Query } from 'react-apollo';
-import { graphqlService } from '../../services';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';

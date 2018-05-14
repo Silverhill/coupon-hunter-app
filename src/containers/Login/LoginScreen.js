@@ -3,11 +3,11 @@ import { View, Text, StatusBar } from 'react-native';
 import { Form, Input, Loader, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import styled from 'styled-components/native';
-import { withApollo } from 'react-apollo';
+import { ApolloConsumer, Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 
-import { graphqlService } from '../../services';
+import { Queries } from '../../graphql';
 import * as userActions from '../../actions/userActions';
 
 const Container = styled(View)`
@@ -34,13 +34,14 @@ class LoginScreen extends Component {
     this.setState({ waitingSignIn: showing });
   }
 
-  handleSubmit = async (form) => {
-    const { client: { query }, logInAsync, navigation } = this.props;
-    this.showLoading();
+  handleSubmit = async (form, client) => {
+    const { logInAsync, navigation } = this.props;
+    const { query } = client;
 
+    this.showLoading();
     try {
       const res = await query({
-        query: graphqlService.query.signIn,
+        query: Queries.SIGN_IN,
         variables: { email: form.email, password: form.password },
       });
 
@@ -51,18 +52,20 @@ class LoginScreen extends Component {
 
       if(auth.logged) {
         await screenProps.changeLoginState(auth.logged, signIn.token);
-
-        // TODO: remove in production
-        setTimeout(() => {
-          this.showLoading(false);
-          navigation.navigate('App');
-        }, 2000)
       }
+
+      // TODO: remove in production
+      setTimeout(() => {
+        this.showLoading(false);
+        navigation.navigate('App');
+      }, 2000);
+
     } catch (error) {
       console.log(error);
       this.showLoading(false);
-      return;
     }
+
+
   }
 
   get _renderFormSteps() {
@@ -90,21 +93,23 @@ class LoginScreen extends Component {
   }
 
   render() {
-    const { client } = this.props;
     const { waitingSignIn } = this.state;
 
     return (
-      <Container>
-        <StatusBar barStyle="dark-content"/>
-        <Form
-          steps={this._renderFormSteps}
-          onSubmit={this.handleSubmit}
-        />
-
-        <Loader visible={waitingSignIn} />
-      </Container>
+      <ApolloConsumer>{client => {
+        return (
+          <Container>
+            <StatusBar barStyle="dark-content"/>
+            <Form
+              steps={this._renderFormSteps}
+              onSubmit={(form) => this.handleSubmit(form, client)}
+            />
+            <Loader visible={waitingSignIn} />
+          </Container>
+        );
+      }}</ApolloConsumer>
     )
   }
 }
 
-export default withApollo(injectIntl(LoginScreen));
+export default injectIntl(LoginScreen);

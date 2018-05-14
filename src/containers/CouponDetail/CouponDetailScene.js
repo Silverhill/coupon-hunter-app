@@ -13,7 +13,7 @@ import { compose, Mutation } from 'react-apollo';
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
-import { graphqlService, statusService } from '../../services';
+import { statusService } from '../../services';
 import QRCode from './QRCode';
 
 // Graphql

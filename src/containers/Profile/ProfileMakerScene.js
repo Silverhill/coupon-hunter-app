@@ -10,7 +10,6 @@ import { Query, withApollo } from 'react-apollo';
 import { injectIntl } from 'react-intl';
 
 import { removeAuthenticationAsync } from '../../services/auth';
-import { graphqlService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import CampaignsByMakerId from '../../components/Campaigns/CampaignsByMakerId';
 

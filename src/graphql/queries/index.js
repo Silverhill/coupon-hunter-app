@@ -1,8 +1,9 @@
 import { ALL_CAMPAIGNS, CAMPAIGNS_BY_MAKER_ID, MY_COUPONS, MY_REDEEMED_COUPONS } from './campaign';
-import { ME } from './user';
+import { ME, SIGN_IN } from './user';
 
 export default {
   ME,
+  SIGN_IN,
   ALL_CAMPAIGNS,
   CAMPAIGNS_BY_MAKER_ID,
   MY_COUPONS,

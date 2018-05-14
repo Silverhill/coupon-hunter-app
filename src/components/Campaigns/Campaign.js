@@ -102,7 +102,7 @@ class Campaign extends Component{
                         campaign: {
                           ...campaign,
                           canHunt: false,
-                          totalCoupons: (campaign.totalCoupons - campaign.huntedCoupons) - 1,
+                          totalCoupons: (campaign.totalCoupons - campaign.huntedCoupons),
                         },
                         __typename: 'CouponHunted',
                       },

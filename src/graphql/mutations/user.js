@@ -21,3 +21,19 @@ mutation updateUser($name: String, $email: String, $image: Upload) {
   }
 }
 `;
+
+export const SIGN_UP = gql`
+  mutation signUp( $email: String!, $password: String!, $company: String, $name: String!){
+    signUp(input: { email: $email, password: $password, company: $company, name: $name, role: "hunter" }) {
+      id
+      name
+      email
+      role
+      company {
+        id
+        businessName
+        slogan
+      }
+    }
+  }
+`;
