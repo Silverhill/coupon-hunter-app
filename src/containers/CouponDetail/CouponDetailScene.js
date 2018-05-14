@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { compose, Mutation } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
