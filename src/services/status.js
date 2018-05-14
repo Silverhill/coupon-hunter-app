@@ -1,46 +1,51 @@
 import React from 'react';
 import { Palette } from 'coupon-components-native/styles';
-import { FormattedMessage } from 'react-intl';
-
-// Status
-export const UNAVAILABLE = 'unavailable';
-export const AVAILABLE = 'available';
-export const HUNTED = 'hunted';
-export const EXPIRED = 'expired';
 
 const constants = {
   UNAVAILABLE: 'unavailable',
   AVAILABLE: 'available',
   HUNTED: 'hunted',
-  EXPIRED: 'expired'
-}
+  EXPIRED: 'expired',
+  REDEEMED: 'redeemed',
+};
 
 export const getCurrentStatus = (status) => {
   switch (status) {
     case constants.AVAILABLE:
       return {
-        label: <FormattedMessage id="status.available" />,
+        id: "status.available",
         color: Palette.accent,
+        key: constants.AVAILABLE
       };
     case constants.UNAVAILABLE:
       return {
-        label: <FormattedMessage id="status.unavailable" />,
+        id: "status.unavailable",
         color: Palette.neutral,
+        key: constants.UNAVAILABLE
       };
     case constants.HUNTED:
       return {
-        label: <FormattedMessage id="status.hunted" />,
+        id: "status.hunted",
         color: Palette.secondaryAccent,
+        key: constants.HUNTED
       };
     case constants.EXPIRED:
       return {
-        label: <FormattedMessage id="status.expired" />,
+        id: "status.expired",
         color: Palette.neutral,
+        key: constants.EXPIRED
+      };
+    case constants.REDEEMED:
+      return {
+        id: "status.redeemed",
+        color: Palette.colors.aquamarine,
+        key: constants.REDEEMED
       };
     default:
       return {
-        label: '-',
+        id: 'status.unavailable',
         color: Palette.neutral,
+        key: constants.UNAVAILABLE
       };
   }
 }

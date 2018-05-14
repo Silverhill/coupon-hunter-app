@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { View, Text, StatusBar } from 'react-native';
 import { Form, Input, TopBar, Loader, Typo } from 'coupon-components-native';
 import styled from 'styled-components/native';
-import { compose, withApollo } from 'react-apollo';
+import { withApollo, Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
-import { graphqlService } from '../../services';
+import { Queries, Mutations } from '../../graphql';
 import * as userActions from '../../actions/userActions';
 import { SCENE_KEY_TABBAR } from '../../constants';
 
@@ -33,18 +33,20 @@ class RegisterScreen extends Component {
     this.setState({ waitingSignUp: showing });
   }
 
-  handleSubmit = async (form) => {
-    const { logInAsync, signUp, client, navigation, screenProps } = this.props;
+  handleSubmit = async (form, signUp) => {
+    const { logInAsync, client, navigation, screenProps } = this.props;
 
     // Show loading until request it's ok
     this.showLoading();
-
     try {
-      const signUpRes = await signUp(form);
-      const { data: { signUp: signUpResponse } } = signUpRes;
+      const signUpRes = await signUp({
+        variables: {
+          ...form
+        }
+      });
 
       const signInRes = await client.query({
-        query: graphqlService.query.signIn,
+        query: Queries.SIGN_IN,
         variables: { email: form.email, password: form.password },
       });
       const { data: { signIn: { token } } } = signInRes;
@@ -54,14 +56,13 @@ class RegisterScreen extends Component {
 
       if(logged) {
         await screenProps.changeLoginState(logged, token);
-
-        this.showLoading(false);
         navigation.navigate('App');
       }
     } catch (error) {
       console.log(error);
-      return;
     }
+
+    this.showLoading(false);
   }
 
   get _renderSteps(){
@@ -103,10 +104,14 @@ class RegisterScreen extends Component {
     return (
       <Container>
         <StatusBar barStyle="dark-content"/>
-        <Form
-          steps={this._renderSteps}
-          onSubmit={this.handleSubmit}
-        />
+        <Mutation mutation={Mutations.SIGN_UP}>{(signUp, { data }) => {
+          return (
+            <Form
+              steps={this._renderSteps}
+              onSubmit={(form) => this.handleSubmit(form, signUp)}
+            />
+          );
+        }}</Mutation>
 
         <Loader visible={waitingSignUp} />
       </Container>
@@ -114,6 +119,4 @@ class RegisterScreen extends Component {
   }
 }
 
-export default withApollo(compose(
-  graphqlService.mutation.signUp,
-)(injectIntl(RegisterScreen)));
+export default withApollo(injectIntl(RegisterScreen));

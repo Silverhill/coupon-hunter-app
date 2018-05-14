@@ -1,45 +1,29 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { View, Text, StatusBar, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { Button, Typo } from 'coupon-components-native';
+import { ButtonGradient, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { compose } from 'react-apollo';
+import { compose, Mutation } from 'react-apollo';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
-import { graphqlService, statusService } from '../../services';
+import { statusService } from '../../services';
 import QRCode from './QRCode';
 
-const ContainerScene = styled(View)`
-  position: relative;
-  background-color: white;
-  flex: 1;
-`;
-
-const CloseButton = styled(TouchableOpacity)`
-  position: absolute;
-  top: 10;
-  right: 10;
-`;
-
-const CaptureButton = styled(Button)`
-  margin-vertical: 30;
-  margin-horizontal: 50;
-  border-color: black;
-`;
+// Graphql
+import { Mutations } from '../../graphql';
 
 class CouponDetailScene extends Component {
   goToMakerProfile = () => {
-    const { maker = {}, navigation, onClose } = this.props;
+    const { campaign: { maker = {} }, navigation, onClose } = this.props;
 
     if(onClose) {
-
       if(!navigation) {
         console.warn(`We need pass navigation props in this component ${CouponDetailScene.name}`)
         return
@@ -50,10 +34,10 @@ class CouponDetailScene extends Component {
     }
   }
 
-  catchCoupon = async (campaign) => {
-    const { captureCoupon, intl, onClose } = this.props;
+  catchCoupon = async (campaignId, mutation) => {
+    const { intl, onClose } = this.props;
     try {
-      await captureCoupon(campaign.id);
+      await mutation.captureCoupon({ variables: { campaignId } });
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
       onClose();
       Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
@@ -65,13 +49,23 @@ class CouponDetailScene extends Component {
   }
 
   render() {
-    const campaign = this.props;
-    const { onClose = () => null, intl, startAt = '', endAt = '', status, withoutMakerProfile = false, huntedCoupons } = campaign;
+    const { campaign, intl, onClose = () => null, withoutMakerProfile = false } = this.props;
+    const {
+      startAt = '',
+      endAt = '',
+      status,
+      huntedCoupons,
+      totalCoupons,
+      code = '',
+      canHunt,
+    } = campaign;
+
+    const availableCoupons = totalCoupons - huntedCoupons;
 
     const availableText = intl
       .formatMessage(
         { id: "couponDetailScene.couponAvailable"},
-        { totalCoupons: String(campaign.totalCoupons) })
+        { totalCoupons: String(availableCoupons) })
       .match(/([a-z])\w+/gi)[0];
 
     const startDate = intl
@@ -82,9 +76,8 @@ class CouponDetailScene extends Component {
       .toUpperCase();
     const date = `${startDate} - ${endDate}`;
 
-    // TODO: Cambiar el estado al correcto cuando este definido.
     let hunted = false;
-    if(status === 'hunted') hunted = true;
+    if(status === 'hunted' || status === 'redeemed') hunted = true;
 
     return (
       <ContainerScene>
@@ -95,11 +88,12 @@ class CouponDetailScene extends Component {
             date={date}
             title={campaign.title}
             companyName={((campaign || {}).maker || {}).name}
-            couponsCount={campaign.totalCoupons}
+            couponsCount={availableCoupons}
             couponsCountCaption={availableText}
+            code={code}
           />
 
-          <CouponDescription catched={hunted} qrCode='CARB102'>
+          <CouponDescription catched={hunted} qrCode={hunted ? code : ''}>
             <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
             <Typo.TextBody>{campaign.description}</Typo.TextBody>
           </CouponDescription>
@@ -117,18 +111,22 @@ class CouponDetailScene extends Component {
                   backgroundColor: Palette.secondaryAccent.css(),
                 }}
               />
-              {!hunted && !(huntedCoupons > 0) && (
+              </View>
+            )}
+            {canHunt && (
+              <Mutation
+                mutation={Mutations.CAPTURE_COUPON}
+                refetchQueries={['allCampaigns', 'myCoupons', 'campaignsByMakerId']}
+              >{(captureCoupon) => (
                 <CaptureButton
                   title="Capturar Cupon"
-                  shadow={false}
-                  rightIcon="md-download"
                   pill
-                  onPress={() => this.catchCoupon(campaign)}
+                  onPress={() => this.catchCoupon(campaign.id, {captureCoupon})}
                   iconColor={Palette.white.css()}
                 />
               )}
-            </View>
-          )}
+              </Mutation>
+            )}
         </ScrollView>
 
         <CloseButton onPress={onClose}>
@@ -149,6 +147,23 @@ CouponDetailScene.propTypes = {
 
 };
 
-export default compose(
-  graphqlService.mutation.captureCoupon,
-)(injectIntl(CouponDetailScene));
+
+const ContainerScene = styled(View)`
+  position: relative;
+  background-color: white;
+  flex: 1;
+`;
+
+const CloseButton = styled(TouchableOpacity)`
+  position: absolute;
+  top: 10;
+  right: 10;
+`;
+
+const CaptureButton = styled(ButtonGradient)`
+  margin-vertical: 30;
+  margin-horizontal: 50;
+  border-color: black;
+`;
+
+export default injectIntl(CouponDetailScene);

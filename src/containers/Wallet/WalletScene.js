@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { View, Dimensions, Animated, TouchableOpacity } from 'react-native';
 import { Typo, HeaderBar } from 'coupon-components-native';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import styled from 'styled-components/native';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
+import { Query } from 'react-apollo';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
@@ -48,35 +49,39 @@ class WalletScene extends Component {
   }
 
   _handleIndexChange = index => this.setState({ index });
-  _renderHeader = props => (
-    <TabBar
-      {...props}
-      style={{ backgroundColor: Palette.white }}
-      renderLabel={({ route, focused  }) => {
-        const title = `walletScreen.tabs.${route.key}`;
-        return <LabelTab bold highlight={focused}><FormattedMessage id={title}/></LabelTab>
-      }}
-      indicatorStyle={{ backgroundColor: Palette.accent, height: 5 }}
-    />
-  )
+  _renderHeader = props => {
+    const { intl } = this.props;
+    return (
+      <TabBar
+        {...props}
+        style={{ backgroundColor: Palette.white }}
+        renderLabel={({ route, focused  }) => {
+          const title = `walletScreen.tabs.${route.key}`;
+          return <LabelTab bold highlight={focused}>{intl.formatMessage({ id: title })}</LabelTab>
+        }}
+        indicatorStyle={{ backgroundColor: Palette.accent, height: 5 }}
+      />
+    )
+  }
+
   _renderScene = SceneMap({
     hunted: () => <MyCurrentCoupons navigation={this.props.navigation} />,
-    used: () => <MyOldCoupons />,
+    used: () => <MyOldCoupons navigation={this.props.navigation} />,
   });
 
   render() {
+    const { intl } = this.props;
+    const title = intl.formatMessage({ id: 'walletScreen.titlePage' });
+    const subTitle = intl.formatMessage({ id: 'walletScreen.subTitle' });
+
+    // let sourceImage;
+    // if(((data || {}).me || {}).image) {
+    //   sourceImage = { source: { uri: data.me.image } };
+    // }
     return (
       <WalletContainer>
         <HeaderBarContainer>
-          <FormattedMessage id="walletScreen.titlePage">{(txt) => (
-            <HeaderBar
-              title={txt}
-              avatarOptions={{
-                source: {uri: 'https://i.pinimg.com/originals/11/0f/00/110f0057f178a5f1357925aad67a9dd4.png'},
-                onPress: this.goToProfile,
-              }}
-            />
-          )}</FormattedMessage>
+          <HeaderBar title={title} subTitle={subTitle}/>
         </HeaderBarContainer>
 
         <TabViewAnimated
@@ -93,4 +98,4 @@ class WalletScene extends Component {
   }
 }
 
-export default WalletScene;
+export default injectIntl(WalletScene);

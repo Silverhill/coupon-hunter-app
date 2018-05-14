@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
-import { Util, AppLoading } from 'expo';
+import { AppLoading, DangerZone } from 'expo';
 import { connect, Provider } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
 import { ApolloClient } from 'apollo-client';
+import { onError } from 'apollo-link-error';
+import { withClientState } from 'apollo-link-state';
+import { BatchHttpLink } from "apollo-link-batch-http";
 import { ApolloProvider } from 'react-apollo';
+import { toIdValue } from 'apollo-utilities';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat } from 'apollo-link';
+import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { getAuthenticationAsync, isAuthorized } from './services/auth';
@@ -30,6 +35,8 @@ import 'intl';
 import en from 'react-intl/locale-data/en';
 import es from 'react-intl/locale-data/es';
 addLocaleData([...en, ...es]);
+
+const { Localization } = DangerZone;
 
 export default class Scenes extends Component {
   state = {
@@ -58,7 +65,9 @@ export default class Scenes extends Component {
   }
 
   client = (token) => {
-    const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
+    // const httpLink = new HttpLink({ uri: config.graphqlEndpoint });
+    const link = createUploadLink({ uri: config.graphqlEndpoint });
+
     const authMiddleware = new ApolloLink((operation, forward) => {
       operation.setContext(({headers = {} }) => {
         return {
@@ -71,14 +80,39 @@ export default class Scenes extends Component {
       return forward(operation);
     });
 
+    const cache = new InMemoryCache({
+      cacheRedirects: {
+        Query: {
+          allCampaigns: (_, { id }) => toIdValue(cache.config.dataIdFromObject({ __typename: 'PaginatedCampaigns', id })),
+        },
+      },
+      dataIdFromObject: object => object.key || null,
+    });
+
+    const stateLink = withClientState({ cache })
+
     return new ApolloClient({
-      link: concat(authMiddleware, httpLink),
-      cache: new InMemoryCache(),
+      // link: concat(authMiddleware, link),
+      link: ApolloLink.from([
+        onError(({ graphQLErrors, networkError }) => {
+          if (graphQLErrors)
+            graphQLErrors.map(({ message, locations, path }) =>
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+              ),
+            );
+          if (networkError) console.log(`[Network error]: ${networkError}`);
+        }),
+        authMiddleware,
+        stateLink,
+        link,
+      ]),
+      cache,
     });
   }
 
   async getCurrentLocale() {
-    const currentLocale = await Util.getCurrentLocaleAsync();
+    const currentLocale = await Localization.getCurrentLocaleAsync();
     let locale;
     if (/^es/.test(currentLocale)) locale = 'es';
     else if (/^en/.test(currentLocale)) locale = 'en';
@@ -102,8 +136,8 @@ export default class Scenes extends Component {
 
     const client = this.client(token);
     return (
-      <Provider store={store}>
-        <ApolloProvider client={client}>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
           <IntlProvider
             locale={locale}
             messages={intlService.flattenMessages(messages[locale])}
@@ -111,8 +145,8 @@ export default class Scenes extends Component {
           >
             <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
           </IntlProvider>
-        </ApolloProvider>
-      </Provider>
+        </Provider>
+      </ApolloProvider>
     );
   }
 }

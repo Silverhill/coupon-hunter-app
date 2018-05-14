@@ -1,6 +1,6 @@
 export default {
   commons: {
-    welcome: 'Hello',
+    greetings: 'Hello, { name }',
     text: 'This is a first component',
     next: 'Next',
     login: 'Login',
@@ -12,6 +12,12 @@ export default {
     edit: 'Edit',
     editProfile: 'Edit Profile',
     viewProfile: 'View Profile',
+    name: 'Name',
+    email: 'Email',
+    avatar: 'Image Profile',
+    personalInfo: 'Personal Information',
+    done: 'Done',
+    skip: 'Skip',
 
     messages: {
       alert: {
@@ -70,19 +76,28 @@ export default {
 
   todayScreen: {
     otherDays: 'All Coupons',
-    today: 'New Coupons',
+    header: 'Coupons',
   },
 
   walletScreen: {
     titlePage: 'My Wallet',
+    subTitle: 'Mis Coupons',
     tabs: {
       hunted: 'Hunted',
       used: 'Used',
     }
   },
 
+  notifications: {
+    titlePage: 'Notifications',
+  },
+
   profileScene: {
     titlePage: 'Profile',
+
+    edit: {
+      titlePage: 'Edit Profile'
+    }
   },
 
   makerProfileScene: {
@@ -100,9 +115,10 @@ export default {
   },
 
   status: {
-    'available': 'Available',
+    'available': 'Get Coupon',
     'hunted': 'Hunted',
     'unavailable': 'Unavailable',
     'expired': 'Expired',
+    'redeemed': 'Redeemed',
   }
 }

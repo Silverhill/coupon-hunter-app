@@ -10,14 +10,17 @@ import RegisterScreen from './containers/Register/RegisterScreen';
 import HomeScreen from './containers/Home/HomeScreen';
 import AuthLoadingScreen from './containers/AuthLoadingScreen/AuthLoadingScreen';
 import ProfileScene from './containers/Profile/ProfileScene';
+import ProfileEditScene from './containers/Profile/ProfileEditScene';
 import ProfileMakerScene from './containers/Profile/ProfileMakerScene';
 import CouponDetailScene from './containers/CouponDetail/CouponDetailScene';
 import WalletScene from './containers/Wallet/WalletScene';
 import ExploreScene from './containers/Explore/ExploreScene';
 import NotificationsScene from './containers/Notifications/NotificationsScene';
+import OnboardingScene from './containers/Onboarding/OnboardingScene';
 
 // Assets
 import arrow_left_c from './assets/images/arrow-left-c.png'
+import MyRedeemCoupons from './components/User/MyRedeemedCoupons';
 
 export const customBack = {
   headerStyle: {
@@ -45,22 +48,37 @@ const AuthStack = StackNavigator({
   })
 });
 
+// Common NavigationOptions
+const commonNavigationOptions = {
+  tabBarVisible: false
+}
+
+// Profile Stack
+const ProfileStack = StackNavigator({
+  Profile: { screen: ProfileScene },
+  ProfileEdit: { screen: ProfileEditScene, navigationOptions: { ...commonNavigationOptions } },
+}, {
+  initialRouteName: 'Profile',
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+   },
+})
+
 // Home Stack
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
-  Profile: { screen: ProfileScene },
-  Maker: { screen: ProfileMakerScene },
+  Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 },{
   navigationOptions: {
     header: null,
   }
 })
 
-
+// Wallet Stack
 const WalletStack = StackNavigator({
   Wallet: { screen: WalletScene },
-  Profile: { screen: ProfileScene },
-  Maker: { screen: ProfileMakerScene },
+  Maker: { screen: ProfileMakerScene, navigationOptions: { ...commonNavigationOptions } },
 }, {
   navigationOptions: {
     header: null,
@@ -72,25 +90,30 @@ const WalletStack = StackNavigator({
 const AppStack = TabNavigator({
   Home: { screen: HomeStack, navigationOptions: { title: <FormattedMessage id="commons.titles.today" /> }  },
   Wallet: { screen: WalletStack },
-  Explore: { screen: ExploreScene },
   Notifications: { screen: NotificationsScene },
+  Profile: { screen: ProfileStack },
 },
 {
   initialRouteName: 'Home',
+  swipeEnabled: false,
+  lazyLoad: true,
+  animationEnabled: false,
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
 
+      // console.log(navigation.state)
+
       let iconName;
       switch (routeName) {
         case 'Home':
-          iconName = 'calendar';
+          iconName = 'compass';
           break;
         case 'Wallet':
           iconName = 'wallet';
           break;
-        case 'Explore':
-          iconName = 'compass';
+        case 'Profile':
+          iconName = 'user';
           break;
         case 'Notifications':
           iconName = 'bell';
@@ -102,7 +125,7 @@ const AppStack = TabNavigator({
       return <Entypo name={iconName} size={25} color={tintColor} />;
     },
     header: null
-  })
+  }),
 });
 
 // Modal Stack
@@ -113,12 +136,22 @@ const ModalStack = StackNavigator({
   headerMode: 'none',
 })
 
+// Onboarding Stack
+const OnboardingStack = StackNavigator({
+  Onboarding: { screen: OnboardingScene }
+}, {
+  navigationOptions: {
+    header: null,
+  }
+})
+
+
 export default SwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
-    Modal: ModalStack,
+    Onboarding: OnboardingStack,
   },
   {
     initialRouteName: 'AuthLoading',

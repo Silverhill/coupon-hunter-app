@@ -1,6 +1,6 @@
 export default {
   commons: {
-    welcome: 'Hola',
+    greetings: 'Hola, { name }',
     text: 'Este es el primer componente',
     next: 'Siguiente',
     login: 'Iniciar Sesión',
@@ -12,6 +12,12 @@ export default {
     edit: 'Editar',
     editProfile: 'Editar Perfil',
     viewProfile: 'Ver Perfil',
+    name: 'Nombre',
+    email: 'Email',
+    avatar: 'Imagen de Perfil',
+    personalInfo: 'Información Personal',
+    done: 'Listo!',
+    skip: 'Saltar',
 
     messages: {
 
@@ -71,19 +77,28 @@ export default {
 
   todayScreen: {
     otherDays: 'Todos los Cupones',
-    today: 'Lo Nuevo',
+    header: 'Cupones',
   },
 
   walletScreen: {
     titlePage: 'Mi Wallet',
+    subTitle: 'Mis Cupones',
     tabs: {
       hunted: 'Capturados',
       used: 'Usados',
     }
   },
 
+  notifications: {
+    titlePage: 'Notificaciones',
+  },
+
   profileScene: {
     titlePage: 'Mi Perfil',
+
+    edit: {
+      titlePage: 'Editar Perfil'
+    }
   },
 
   makerProfileScene: {
@@ -101,9 +116,10 @@ export default {
   },
 
   status: {
-    'available': 'Disponible',
+    'available': 'Obtener',
     'hunted': 'Capturado',
     'unavailable': 'No Disponible',
     'expired': 'Expirado',
+    'redeemed': 'Entregado',
   }
 }

@@ -16,7 +16,6 @@ import { Input, Button, Card, Typo, ButtonGradient, NavBar, Loader } from 'coupo
 import { Palette } from 'coupon-components-native/styles';
 import { colors } from 'coupon-components-native/styles/palette';
 import { FormattedMessage } from 'react-intl';
-import { login } from '../../services/graphql';
 import * as userActions from '../../actions/userActions';
 import * as CONSTANTS from '../../constants';
 
@@ -136,4 +135,4 @@ class StartScreen extends Component {
   }
 }
 
-export default compose(login)(StartScreen);
+export default StartScreen;
