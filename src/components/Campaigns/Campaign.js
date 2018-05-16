@@ -53,7 +53,7 @@ class Campaign extends Component{
 
   render(){
     const { alertVisible } = this.state;
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, catched } = this.props;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, hasBeenCatched } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -115,12 +115,12 @@ class Campaign extends Component{
                   });
 
                   setTimeout(() => {
-                    catched(true);
-                  }, 500)
+                    hasBeenCatched(true);
+                  }, 300)
                   // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
                 } catch (err) {
                   console.log(err);
-                  catched(false, err);
+                  hasBeenCatched(false, err);
                   // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
                 }
               })

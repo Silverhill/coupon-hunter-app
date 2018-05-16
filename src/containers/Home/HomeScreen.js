@@ -81,6 +81,9 @@ class HomeScreen extends Component {
             navigation={navigation}
             onClose={this.handleCloseModal}
             campaign={this.state.currentDetails}
+            hasBeenCatched={(isCapture) => {
+              if(isCapture) this.alert.show();
+            }}
           />
         </Modal>
       </TodayContainer>

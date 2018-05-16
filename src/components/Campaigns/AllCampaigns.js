@@ -18,7 +18,7 @@ class AllCampaigns extends PureComponent {
       <Campaign
         campaign={item}
         onPress={onPressCampaign}
-        catched={onCatchCampaign}
+        hasBeenCatched={onCatchCampaign}
       />
     );
   }
