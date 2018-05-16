@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, Button } from 'react-native';
 
 import { storiesOf } from '@storybook/react-native';
@@ -10,13 +10,9 @@ import CenterView from './CenterView'
 const story = storiesOf('Alerts', module)
 story.addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
 
-class CustomAlertClass extends Component {
-  state = {
-    visible: false,
-  }
-
-  visibleModal = (visible = true) => {
-    this.setState({ visible });
+class CustomAlertClass extends PureComponent {
+  visibleModal = () => {
+    this.alert.show();
   }
 
   render() {
@@ -27,7 +23,7 @@ class CustomAlertClass extends Component {
       },
       {
         text: 'Close',
-        onPress: () => this.visibleModal(false),
+        onPress: () => this.alert.close(),
       },
       {
         text: 'No, thanks',
@@ -44,9 +40,9 @@ class CustomAlertClass extends Component {
 
     return (
       <View>
-        <Button title='Show Alert' onPress={() => this.setState({ visible: !this.state.visible })} />
+        <Button title='Show Alert' onPress={this.visibleModal} />
         <CustomAlert
-          open={this.state.visible}
+          ref={ref => (this.alert = ref)}
           actions={actionsAlert}
           alertContent={AlertContent}
         />

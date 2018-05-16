@@ -45,6 +45,7 @@ const MyRedeemCoupons = ({ onPressCampaign }) => {
             if(!subscriptionData.data) return prev;
             const { redeemedCoupon } = subscriptionData.data;
 
+            // console.log('REDEEMED COUPON', redeemedCoupon)
             return {
               ...prev,
               myRedeemedCoupons: [...prev.myRedeemedCoupons, redeemedCoupon],

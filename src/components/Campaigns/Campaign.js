@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { Coupon } from 'coupon-components-native';
 import { Mutation } from 'react-apollo';
@@ -10,6 +10,10 @@ import { Mutations, Queries } from '../../graphql';
 import { statusService } from '../../services';
 
 class Campaign extends Component{
+  state = {
+    alertVisible: false,
+  }
+
   updateCampaigns = (cache, { data: { captureCoupon: { campaign, ...coupon } } }) => {
     const { allCampaigns } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS });
 
@@ -48,7 +52,8 @@ class Campaign extends Component{
   }
 
   render(){
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons } = this.props;
+    const { alertVisible } = this.state;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, catched } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -69,7 +74,7 @@ class Campaign extends Component{
 
     let intlFormattedStatus = this._getTranslatedStatus(currentStatus);
 
-    // console.log(campaign);
+    // console.log('FORMATED STATUS', intlFormattedStatus);
 
     return (
       <Mutation
@@ -85,7 +90,7 @@ class Campaign extends Component{
             key={uuid()}
             hideTag={hideTag}
             hideTotalCoupons={hideTotalCoupons}
-            onPress={() => onPress(campaign)}
+            onPress={() => {onPress(campaign)}}
             tagButton={{
               onPress: currentStatus.key === 'available' && currentStatus.key !== 'hunted' && (async () => {
                 if(!campaign.canHunt) return;
@@ -108,10 +113,15 @@ class Campaign extends Component{
                       },
                     },
                   });
-                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+
+                  setTimeout(() => {
+                    catched(true);
+                  }, 500)
+                  // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
                 } catch (err) {
                   console.log(err);
-                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+                  catched(false, err);
+                  // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
                 }
               })
             }}
