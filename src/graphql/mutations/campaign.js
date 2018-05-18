@@ -15,6 +15,7 @@ export const CAPTURE_COUPON = gql`
         totalCoupons
         huntedCoupons
         redeemedCoupons
+        remainingCoupons
         status
         title
         description

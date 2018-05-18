@@ -24,6 +24,7 @@ export const ALL_CAMPAIGNS = gql`
         image
         initialAgeRange
         finalAgeRange
+        remainingCoupons
         maker {
           id
           name
@@ -47,6 +48,7 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       huntedCoupons
       redeemedCoupons
       canHunt
+      remainingCoupons
       status
       title
       description
@@ -76,6 +78,7 @@ export const MY_COUPONS = gql`
           huntedCoupons
           redeemedCoupons
           status
+          remainingCoupons
           title
           description
           customMessage

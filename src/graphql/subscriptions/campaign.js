@@ -29,7 +29,7 @@ export const REDEEMED_COUPON = gql`
           name
           image
         }
-        remaingCoupons
+        remainingCoupons
       }
     }
   }

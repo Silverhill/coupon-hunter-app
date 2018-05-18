@@ -20,7 +20,7 @@ class Campaign extends Component{
     try {
       const { myCoupons } = cache.readQuery({ query: Queries.MY_COUPONS });
       const newCoupon = { ...coupon, campaign }
-      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: [...myCoupons, newCoupon] } });
+      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: myCoupons.concat(newCoupon) } });
     } catch (err) {/*console.log(err);*/}
 
     const campaigns = ((allCampaigns || {}).campaigns || []).map((_campaign, i) => {
@@ -28,7 +28,7 @@ class Campaign extends Component{
         return {
           ..._campaign,
           canHunt: false,
-          totalCoupons: (_campaign.totalCoupons - _campaign.huntedCoupons),
+          remainingCoupons: campaign.remainingCoupons,
         };
       }
 
@@ -53,7 +53,7 @@ class Campaign extends Component{
 
   render(){
     const { alertVisible } = this.state;
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched, ...couponProps } = this.props;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -74,8 +74,6 @@ class Campaign extends Component{
 
     let intlFormattedStatus = this._getTranslatedStatus(currentStatus);
 
-    // console.log('FORMATED STATUS', intlFormattedStatus);
-
     return (
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
@@ -86,6 +84,7 @@ class Campaign extends Component{
         return (
           <StyledCoupon
             {...campaign}
+            totalCoupons={campaign.remainingCoupons}
             small={small}
             status={intlFormattedStatus}
             key={uuid()}
@@ -108,7 +107,7 @@ class Campaign extends Component{
                         campaign: {
                           ...campaign,
                           canHunt: false,
-                          totalCoupons: (campaign.totalCoupons - campaign.huntedCoupons),
+                          remainingCoupons: campaign.remainingCoupons - 1,
                         },
                         __typename: 'CouponHunted',
                       },
@@ -118,11 +117,9 @@ class Campaign extends Component{
                   setTimeout(() => {
                     hasBeenCatched(true);
                   }, 300)
-                  // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
                 } catch (err) {
                   console.log(err);
                   hasBeenCatched(false, err);
-                  // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
                 }
               })
             }}

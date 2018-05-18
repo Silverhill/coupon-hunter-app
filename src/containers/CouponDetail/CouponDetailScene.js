@@ -61,11 +61,12 @@ class CouponDetailScene extends Component {
       status,
       huntedCoupons,
       totalCoupons,
+      remainingCoupons,
       code = '',
       canHunt,
     } = campaign;
 
-    const availableCoupons = totalCoupons - huntedCoupons;
+    const availableCoupons = remainingCoupons;
 
     const availableText = intl
       .formatMessage(
