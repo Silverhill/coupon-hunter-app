@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components/native';
 import { View } from 'react-native';
 import { Typo } from 'coupon-components-native';
 import QRCode from './QRCode';
+import { Subscription } from 'react-apollo';
+import { Subscriptions } from '../../graphql';
 
 const Container = styled(View)`
   padding: 20px 20px;
@@ -16,7 +18,19 @@ const upperCaseText = (text = '') => text.toUpperCase();
 const CouponDescription = ({ children, qrCode = '', catched = false }) => {
   return (
     <Container catched={catched}>
-      {catched && (<QRCode value={qrCode} catched={catched} />)}
+      {catched && (
+        <Subscription subscription={Subscriptions.REDEEMED_COUPON}>{({ data, loading }) => {
+          // console.log('WAITING TO REDEMEED...', qrCode === ((data || {}).redeemedCoupon || {}).code);
+
+          return (
+            <QRCode
+              redeemed={qrCode === ((data || {}).redeemedCoupon || {}).code}
+              value={qrCode}
+              catched={catched}
+            />
+          );
+        }}</Subscription>
+      )}
       {children}
     </Container>
   );

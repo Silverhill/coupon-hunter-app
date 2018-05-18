@@ -6,9 +6,10 @@ import { Query } from 'react-apollo';
 import uuid from 'uuid/v4';
 
 import Campaign from '../Campaigns/Campaign';
-import { Queries } from '../../graphql';
+import { Queries, Subscriptions } from '../../graphql';
 
-const MyCoupons = ({ onPressCampaign }) => {
+let unsubscribe = null;
+const MyCoupons = ({ onPressCampaign, scrollEventThrottle, onScroll }) => {
   _keyExtractor = (item, index) => uuid();
   _renderItem = ({ item }) => {
     const { campaign: _campaign, code, id, status } = item;
@@ -24,6 +25,7 @@ const MyCoupons = ({ onPressCampaign }) => {
         campaign={campaign}
         onPress={onPressCampaign}
         hideTag
+        small
         hideTotalCoupons
       />
     );
@@ -31,13 +33,34 @@ const MyCoupons = ({ onPressCampaign }) => {
 
   return (
     <Query query={Queries.MY_COUPONS}>
-    {({ loading, data, error }) => {
+    {({ loading, data, error, subscribeToMore }) => {
       if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>;
       else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>
+
+      // FIXME: Agregar un componente que ejecute en componentDidMount una sola vez la subscripción
+      if(!unsubscribe) {
+        unsubscribe = subscribeToMore({
+          document: Subscriptions.REDEEMED_COUPON,
+          updateQuery: (prev, { subscriptionData }) => {
+            if(!subscriptionData.data) return prev;
+            const { redeemedCoupon } = subscriptionData.data;
+
+            // TODO: necesitamos mejorar esta lógica de extracción de un coupon del array
+            const myCouponsRemovedRedeemed = (prev.myCoupons || []).filter(coupon => coupon.code !== redeemedCoupon.code);
+            return {
+              ...prev,
+              myCoupons: myCouponsRemovedRedeemed,
+            }
+          }
+        })
+      }
 
       return (
         <ScreenContent>
           <FlatList
+            contentContainerStyle={{ paddingTop: 10 }}
+            scrollEventThrottle={scrollEventThrottle}
+            onScroll={onScroll}
             keyExtractor={_keyExtractor}
             renderItem={_renderItem}
             data={data.myCoupons}

@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { View, ActivityIndicator, ScrollView, FlatList, Modal } from 'react-native';
+import { View, ScrollView, ActivityIndicator, FlatList, Modal } from 'react-native';
 import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import styled, { css } from 'styled-components/native';
-import { Query } from 'react-apollo';
-import { connect } from 'react-redux';
+import { Query, Subscription } from 'react-apollo';
 import { Palette } from 'coupon-components-native/styles';
-import uuid from 'uuid/v4';
+import { Subscriptions } from '../../graphql';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import MyRedeemedCoupons from '../../components/User/MyRedeemedCoupons';
@@ -13,7 +12,6 @@ import MyRedeemedCoupons from '../../components/User/MyRedeemedCoupons';
 const WalletContainer = styled(ScrollView)`
   flex: 1;
   background-color: white;
-  padding-top: 10;
 `;
 
 const Container = styled(View)`
@@ -37,13 +35,17 @@ class MyOldCoupons extends Component {
 
   render() {
     const { modalVisible, currentDetails } = this.state;
-    const { navigation } = this.props;
+    const { navigation, scrollEventThrottle, onScroll } = this.props;
     if(!navigation) console.warn('Require pass navigation props to MyCurrentCoupons Component');
 
     return (
       <WalletContainer>
         <Container>
-          <MyRedeemedCoupons onPressCampaign={this.pressCoupon}/>
+          <MyRedeemedCoupons
+            onPressCampaign={this.pressCoupon}
+            onScroll={onScroll}
+            scrollEventThrottle={scrollEventThrottle}
+          />
         </Container>
 
         <Modal

@@ -10,10 +10,9 @@ import uuid from 'uuid/v4';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import MyCoupons from '../../components/User/MyCoupons';
 
-const WalletContainer = styled(ScrollView)`
+const WalletContainer = styled(View)`
   flex: 1;
   background-color: white;
-  padding-top: 10;
 `;
 
 const Container = styled(View)`
@@ -37,13 +36,17 @@ class MyCurrentCoupons extends Component {
 
   render() {
     const { modalVisible, currentDetails } = this.state;
-    const { navigation } = this.props;
+    const { navigation, scrollEventThrottle, onScroll } = this.props;
     if(!navigation) console.warn('Require pass navigation props to MyCurrentCoupons Component');
 
     return (
       <WalletContainer>
         <Container>
-          <MyCoupons onPressCampaign={this.pressCoupon}/>
+          <MyCoupons
+            onPressCampaign={this.pressCoupon}
+            onScroll={onScroll}
+            scrollEventThrottle={scrollEventThrottle}
+          />
         </Container>
 
         <Modal

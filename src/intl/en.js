@@ -18,10 +18,12 @@ export default {
     personalInfo: 'Personal Information',
     done: 'Done',
     skip: 'Skip',
+    thanks: 'Thanks',
 
     messages: {
       alert: {
         couponHunted: 'Coupon Hunted!',
+        addedToWallet: 'The coupon has been added to your wallet correctly',
         onlyOneCoupon: 'You can only hunted a coupon for this campaign',
       }
     },

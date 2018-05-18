@@ -97,7 +97,7 @@ const CouponCover = ({ background, date, title, companyName, couponsCount, coupo
             </TicketsContainer>
           )}
 
-          <CompanyName catched={catched} small inverted>{upperCaseText(companyName)}</CompanyName>
+          <CompanyName catched={catched} small inverted>{upperCaseText(companyName || '')}</CompanyName>
 
           {!catched && (
             <TicketsContainer>

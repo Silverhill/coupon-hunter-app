@@ -18,11 +18,12 @@ export default {
     personalInfo: 'Información Personal',
     done: 'Listo!',
     skip: 'Saltar',
+    thanks: 'Gracias',
 
     messages: {
-
       alert: {
         couponHunted: 'Cupones Capturados!',
+        addedToWallet: 'El cupón ha sido agregado a tu wallet correctamente',
         onlyOneCoupon: 'Solo puedes capturar un cupón de esta campaña',
       }
     },

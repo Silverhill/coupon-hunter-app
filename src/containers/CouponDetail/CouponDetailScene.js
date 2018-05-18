@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { compose, Mutation } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
@@ -35,16 +35,21 @@ class CouponDetailScene extends Component {
   }
 
   catchCoupon = async (campaignId, mutation) => {
-    const { intl, onClose } = this.props;
+    const { intl, onClose, hasBeenCatched } = this.props;
     try {
       await mutation.captureCoupon({ variables: { campaignId } });
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
       onClose();
-      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+
+      setTimeout(() => {
+        hasBeenCatched(true);
+      }, 200);
+      // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
     } catch (error) {
       console.log(error.message);
+      hasBeenCatched(false, error.message);
       //TODO: remover estas alertas por las alertar propias cuando estén creadas
-      Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+      // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
     }
   }
 
@@ -56,11 +61,12 @@ class CouponDetailScene extends Component {
       status,
       huntedCoupons,
       totalCoupons,
+      remainingCoupons,
       code = '',
       canHunt,
     } = campaign;
 
-    const availableCoupons = totalCoupons - huntedCoupons;
+    const availableCoupons = remainingCoupons;
 
     const availableText = intl
       .formatMessage(

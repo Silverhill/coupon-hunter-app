@@ -12,12 +12,13 @@ import { Queries } from '../../graphql';
 class AllCampaigns extends PureComponent {
   _keyExtractor = (item, index) => item.id;
   _renderItem = ({ item }) => {
-    const { onPressCampaign } = this.props;
+    const { onPressCampaign, onCatchCampaign } = this.props;
 
     return (
       <Campaign
         campaign={item}
         onPress={onPressCampaign}
+        hasBeenCatched={onCatchCampaign}
       />
     );
   }

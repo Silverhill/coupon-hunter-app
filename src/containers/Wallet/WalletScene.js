@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { View, Dimensions, Animated, TouchableOpacity } from 'react-native';
+import { View, Dimensions, Animated, TouchableOpacity, ScrollView } from 'react-native';
 import { Typo, HeaderBar } from 'coupon-components-native';
 import { injectIntl } from 'react-intl';
 import styled from 'styled-components/native';
 import { Palette } from 'coupon-components-native/styles';
 import uuid from 'uuid/v4';
 import { Query } from 'react-apollo';
+import { Constants } from 'expo';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
@@ -22,8 +23,8 @@ const WalletContainer = styled(View)`
   background-color: white;
 `;
 
-const HeaderBarContainer = styled(View)`
-  margin-bottom: 5;
+const HeaderBarContainer = styled(Animated.View)`
+  margin-bottom: 0;
 `;
 
 const LabelTab = styled(Typo.TextBody)`
@@ -34,6 +35,7 @@ const keyRoutes = {
   HUNTED: 'hunted',
   USED: 'used'
 };
+
 class WalletScene extends Component {
   state = {
     index: 0,
@@ -54,7 +56,7 @@ class WalletScene extends Component {
     return (
       <TabBar
         {...props}
-        style={{ backgroundColor: Palette.white }}
+        style={{ backgroundColor: Palette.white, justifyContent: 'flex-end' }}
         renderLabel={({ route, focused  }) => {
           const title = `walletScreen.tabs.${route.key}`;
           return <LabelTab bold highlight={focused}>{intl.formatMessage({ id: title })}</LabelTab>
@@ -65,8 +67,16 @@ class WalletScene extends Component {
   }
 
   _renderScene = SceneMap({
-    hunted: () => <MyCurrentCoupons navigation={this.props.navigation} />,
-    used: () => <MyOldCoupons navigation={this.props.navigation} />,
+    hunted: () => (
+      <MyCurrentCoupons
+        navigation={this.props.navigation}
+      />
+    ),
+    used: () => (
+      <MyOldCoupons
+        navigation={this.props.navigation}
+      />
+    ),
   });
 
   render() {

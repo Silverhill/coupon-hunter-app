@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components/native';
-import { View } from 'react-native';
+import { View, Animated, Easing } from 'react-native';
 import { Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
-import _QRCode from 'react-native-qrcode';
+import Code from './Code';
+import RedeemedConfirmation from './RedeemedConfimation';
+
 
 const Container = styled(View)`
   box-shadow: 5px 5px 5px ${Palette.dark.alpha(0.4).css()};
@@ -21,23 +23,23 @@ const Container = styled(View)`
   align-items: center;
 `;
 
-const QRCode = ({ children, value }) => {
-  return (
-    <Container>
-      <_QRCode
-        value={value}
-        size={260}
-        bgColor={Palette.accent.css()}
-        fgColor='white'
-      />
-    </Container>
-  );
+class QRCode extends Component {
+  render() {
+    const { value, redeemed = false, catched } = this.props;
+
+    return (
+      <Container>
+        {!redeemed && <Code value={value} />}
+        {redeemed && <RedeemedConfirmation />}
+      </Container>
+    );
+  }
 };
 
 QRCode.propTypes = {
-  children: PropTypes.string,
-  typoProps: PropTypes.any,
   catched: PropTypes.bool,
+  value: PropTypes.string,
+  redeemed: PropTypes.bool,
 }
 
 export default QRCode;

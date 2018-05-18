@@ -1,31 +1,35 @@
 import gql from 'graphql-tag';
 
-export const CAPTURE_COUPON = gql`
-  mutation captureCoupon($campaignId: String!) {
-    captureCoupon(input: { campaignId: $campaignId }) {
+export const REDEEMED_COUPON = gql`
+  subscription redeemedCoupon {
+    redeemedCoupon {
       id
-      status
       code
-      campaign {
+      status
+      campaign{
         id
         startAt
         endAt
         country
         city
+        image
         totalCoupons
         huntedCoupons
         redeemedCoupons
-        remainingCoupons
         status
         title
         description
         customMessage
         deleted
-        image
-        maker {
+        initialAgeRange
+        finalAgeRange
+        createdAt
+        maker{
           id
           name
+          image
         }
+        remainingCoupons
       }
     }
   }

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Text, ScrollView, AsyncStorage, StatusBar, View,  Modal } from 'react-native';
-import { Button, HeaderBar, Coupon } from 'coupon-components-native';
+import { Button, HeaderBar, Coupon, CustomAlert, Typo } from 'coupon-components-native';
 import styled from 'styled-components/native';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import uuid from 'uuid/v4';
 
 import { authService, statusService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import AllCampaigns from '../../components/Campaigns/AllCampaigns';
+import Like from '../../components/Animations/Like';
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -34,15 +35,50 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: false, currentDetails: {} });
   }
 
+  get actionsAlert() {
+    const { intl } = this.props;
+    const thanks = intl.formatMessage({ id:'commons.thanks' });
+
+    // TODO: colocar el texto correcto para confirmación del cupón
+    return [
+      { text: `OK, ${thanks}`, type: 'cancel' , onPress: () => this.alert.close()},
+    ]
+  }
+
+  get alertContent() {
+    const { intl } = this.props;
+    const couponCatched = intl.formatMessage({ id:'commons.messages.alert.addedToWallet' });
+    const SIZE = 200;
+
+    return (
+      <View style={{ width: SIZE, height: SIZE }}>
+        <Like size={SIZE} style={{ top: 45 }}/>
+        <Typo.Header center small bold>{couponCatched}</Typo.Header>
+      </View>
+    );
+  }
+
   render() {
     const { navigation } = this.props;
+
+    // TODO: WIP: haciendo nuevamente la alerta - aplicando una alerta al momento de que el couopón se haya capturado
 
     return (
       <TodayContainer>
         <CampaignsContainer>
-          <AllCampaigns onPressCampaign={this.pressCoupon} />
-        </CampaignsContainer>
+          <AllCampaigns
+            onPressCampaign={this.pressCoupon}
+            onCatchCampaign={(isCapture) => {
+              if(isCapture) this.alert.show();
+            }}
+          />
 
+          <CustomAlert
+            ref={ref => (this.alert = ref)}
+            actions={this.actionsAlert}
+            alertContent={this.alertContent}
+          />
+        </CampaignsContainer>
         <Modal
           animationType="slide"
           transparent={false}
@@ -52,6 +88,9 @@ class HomeScreen extends Component {
             navigation={navigation}
             onClose={this.handleCloseModal}
             campaign={this.state.currentDetails}
+            hasBeenCatched={(isCapture) => {
+              if(isCapture) this.alert.show();
+            }}
           />
         </Modal>
       </TodayContainer>
@@ -76,4 +115,4 @@ const HeaderBarContainer = styled(View)`
   margin-bottom: 20;
 `;
 
-export default HomeScreen;
+export default injectIntl(HomeScreen);

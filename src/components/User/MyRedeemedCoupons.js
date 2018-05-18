@@ -7,10 +7,10 @@ import { Query } from 'react-apollo';
 import uuid from 'uuid/v4';
 
 import Campaign from '../Campaigns/Campaign';
-import { Queries } from '../../graphql';
+import { Queries, Subscriptions } from '../../graphql';
 
-
-const MyRedeemCoupons = ({ onPressCampaign }) => {
+let unsubscribe = null;
+const MyRedeemCoupons = ({ onPressCampaign, scrollEventThrottle, onScroll }) => {
   _keyExtractor = (item, index) => uuid();
 
   _renderItem = ({ item }) => {
@@ -26,6 +26,7 @@ const MyRedeemCoupons = ({ onPressCampaign }) => {
       <Campaign
         campaign={campaign}
         hideTotalCoupons
+        small
         onPress={onPressCampaign}
       />
     );
@@ -33,15 +34,35 @@ const MyRedeemCoupons = ({ onPressCampaign }) => {
 
   return (
     <Query query={Queries.MY_REDEEMED_COUPONS}>
-    {({ loading, data, error }) => {
+    {({ loading, data, error, subscribeToMore }) => {
       if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>;
       else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>
+
+      // FIXME: Agregar un componente que ejecute en componentDidMount una sola vez la subscripción
+      if(!unsubscribe) {
+        unsubscribe = subscribeToMore({
+          document: Subscriptions.REDEEMED_COUPON,
+          updateQuery: (prev, { subscriptionData }) => {
+            if(!subscriptionData.data) return prev;
+            const { redeemedCoupon } = subscriptionData.data;
+
+            // console.log('REDEEMED COUPON', redeemedCoupon)
+            return {
+              ...prev,
+              myRedeemedCoupons: [...prev.myRedeemedCoupons, redeemedCoupon],
+            }
+          }
+        })
+      }
 
       return (
         <ScreenContent>
           <FlatList
             keyExtractor={_keyExtractor}
             renderItem={_renderItem}
+            contentContainerStyle={{ paddingTop: 10 }}
+            scrollEventThrottle={scrollEventThrottle}
+            onScroll={onScroll}
             data={data.myRedeemedCoupons}
           />
         </ScreenContent>

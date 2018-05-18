@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { Coupon } from 'coupon-components-native';
 import { Mutation } from 'react-apollo';
@@ -10,13 +10,17 @@ import { Mutations, Queries } from '../../graphql';
 import { statusService } from '../../services';
 
 class Campaign extends Component{
+  state = {
+    alertVisible: false,
+  }
+
   updateCampaigns = (cache, { data: { captureCoupon: { campaign, ...coupon } } }) => {
     const { allCampaigns } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS });
 
     try {
       const { myCoupons } = cache.readQuery({ query: Queries.MY_COUPONS });
       const newCoupon = { ...coupon, campaign }
-      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: [...myCoupons, newCoupon] } });
+      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: myCoupons.concat(newCoupon) } });
     } catch (err) {/*console.log(err);*/}
 
     const campaigns = ((allCampaigns || {}).campaigns || []).map((_campaign, i) => {
@@ -24,7 +28,7 @@ class Campaign extends Component{
         return {
           ..._campaign,
           canHunt: false,
-          totalCoupons: (_campaign.totalCoupons - _campaign.huntedCoupons),
+          remainingCoupons: campaign.remainingCoupons,
         };
       }
 
@@ -48,7 +52,8 @@ class Campaign extends Component{
   }
 
   render(){
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons } = this.props;
+    const { alertVisible } = this.state;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -69,8 +74,6 @@ class Campaign extends Component{
 
     let intlFormattedStatus = this._getTranslatedStatus(currentStatus);
 
-    // console.log(campaign);
-
     return (
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
@@ -81,11 +84,13 @@ class Campaign extends Component{
         return (
           <StyledCoupon
             {...campaign}
+            totalCoupons={campaign.remainingCoupons}
+            small={small}
             status={intlFormattedStatus}
             key={uuid()}
             hideTag={hideTag}
             hideTotalCoupons={hideTotalCoupons}
-            onPress={() => onPress(campaign)}
+            onPress={() => {onPress(campaign)}}
             tagButton={{
               onPress: currentStatus.key === 'available' && currentStatus.key !== 'hunted' && (async () => {
                 if(!campaign.canHunt) return;
@@ -102,16 +107,19 @@ class Campaign extends Component{
                         campaign: {
                           ...campaign,
                           canHunt: false,
-                          totalCoupons: (campaign.totalCoupons - campaign.huntedCoupons),
+                          remainingCoupons: campaign.remainingCoupons - 1,
                         },
                         __typename: 'CouponHunted',
                       },
                     },
                   });
-                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
+
+                  setTimeout(() => {
+                    hasBeenCatched(true);
+                  }, 300)
                 } catch (err) {
                   console.log(err);
-                  Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
+                  hasBeenCatched(false, err);
                 }
               })
             }}
