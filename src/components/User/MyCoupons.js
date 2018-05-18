@@ -25,6 +25,7 @@ const MyCoupons = ({ onPressCampaign }) => {
         campaign={campaign}
         onPress={onPressCampaign}
         hideTag
+        small
         hideTotalCoupons
       />
     );

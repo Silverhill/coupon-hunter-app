@@ -53,7 +53,7 @@ class Campaign extends Component{
 
   render(){
     const { alertVisible } = this.state;
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, hasBeenCatched } = this.props;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched, ...couponProps } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -86,6 +86,7 @@ class Campaign extends Component{
         return (
           <StyledCoupon
             {...campaign}
+            small={small}
             status={intlFormattedStatus}
             key={uuid()}
             hideTag={hideTag}

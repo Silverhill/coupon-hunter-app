@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, ScrollView, AsyncStorage, StatusBar, View,  Modal } from 'react-native';
 import { Button, HeaderBar, Coupon, CustomAlert, Typo } from 'coupon-components-native';
 import styled from 'styled-components/native';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import uuid from 'uuid/v4';
 
 import { authService, statusService } from '../../services';
@@ -36,17 +36,24 @@ class HomeScreen extends Component {
   }
 
   get actionsAlert() {
+    const { intl } = this.props;
+    const thanks = intl.formatMessage({ id:'commons.thanks' });
+
+    // TODO: colocar el texto correcto para confirmación del cupón
     return [
-      { text: 'Gracias', onPress: () => this.alert.close()},
+      { text: `OK, ${thanks}`, type: 'cancel' , onPress: () => this.alert.close()},
     ]
   }
 
   get alertContent() {
+    const { intl } = this.props;
+    const couponCatched = intl.formatMessage({ id:'commons.messages.alert.addedToWallet' });
     const SIZE = 200;
+
     return (
       <View style={{ width: SIZE, height: SIZE }}>
-        <Like size={SIZE}/>
-        <Typo.Header center small bold>Coupon Capturado!</Typo.Header>
+        <Like size={SIZE} style={{ top: 45 }}/>
+        <Typo.Header center small bold>{couponCatched}</Typo.Header>
       </View>
     );
   }
@@ -108,4 +115,4 @@ const HeaderBarContainer = styled(View)`
   margin-bottom: 20;
 `;
 
-export default HomeScreen;
+export default injectIntl(HomeScreen);

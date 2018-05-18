@@ -20,7 +20,7 @@ const CouponDescription = ({ children, qrCode = '', catched = false }) => {
     <Container catched={catched}>
       {catched && (
         <Subscription subscription={Subscriptions.REDEEMED_COUPON}>{({ data, loading }) => {
-          console.log('WAITING TO REDEMEED...', qrCode === ((data || {}).redeemedCoupon || {}).code);
+          // console.log('WAITING TO REDEMEED...', qrCode === ((data || {}).redeemedCoupon || {}).code);
 
           return (
             <QRCode
