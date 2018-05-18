@@ -9,7 +9,7 @@ import Campaign from '../Campaigns/Campaign';
 import { Queries, Subscriptions } from '../../graphql';
 
 let unsubscribe = null;
-const MyCoupons = ({ onPressCampaign }) => {
+const MyCoupons = ({ onPressCampaign, scrollEventThrottle, onScroll }) => {
   _keyExtractor = (item, index) => uuid();
   _renderItem = ({ item }) => {
     const { campaign: _campaign, code, id, status } = item;
@@ -58,6 +58,9 @@ const MyCoupons = ({ onPressCampaign }) => {
       return (
         <ScreenContent>
           <FlatList
+            contentContainerStyle={{ paddingTop: 10 }}
+            scrollEventThrottle={scrollEventThrottle}
+            onScroll={onScroll}
             keyExtractor={_keyExtractor}
             renderItem={_renderItem}
             data={data.myCoupons}

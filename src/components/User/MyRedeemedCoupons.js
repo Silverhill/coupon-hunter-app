@@ -10,7 +10,7 @@ import Campaign from '../Campaigns/Campaign';
 import { Queries, Subscriptions } from '../../graphql';
 
 let unsubscribe = null;
-const MyRedeemCoupons = ({ onPressCampaign }) => {
+const MyRedeemCoupons = ({ onPressCampaign, scrollEventThrottle, onScroll }) => {
   _keyExtractor = (item, index) => uuid();
 
   _renderItem = ({ item }) => {
@@ -60,6 +60,9 @@ const MyRedeemCoupons = ({ onPressCampaign }) => {
           <FlatList
             keyExtractor={_keyExtractor}
             renderItem={_renderItem}
+            contentContainerStyle={{ paddingTop: 10 }}
+            scrollEventThrottle={scrollEventThrottle}
+            onScroll={onScroll}
             data={data.myRedeemedCoupons}
           />
         </ScreenContent>
