@@ -9,6 +9,7 @@ import { authService, statusService } from '../../services';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import AllCampaigns from '../../components/Campaigns/AllCampaigns';
 import Like from '../../components/Animations/Like';
+import AlertCatchedCoupon from '../../components/Alert/AlertCatchedCoupon';
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -35,49 +36,19 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: false, currentDetails: {} });
   }
 
-  get actionsAlert() {
-    const { intl } = this.props;
-    const thanks = intl.formatMessage({ id:'commons.thanks' });
-
-    // TODO: colocar el texto correcto para confirmación del cupón
-    return [
-      { text: `OK, ${thanks}`, type: 'cancel' , onPress: () => this.alert.close()},
-    ]
-  }
-
-  get alertContent() {
-    const { intl } = this.props;
-    const couponCatched = intl.formatMessage({ id:'commons.messages.alert.addedToWallet' });
-    const SIZE = 200;
-
-    return (
-      <View style={{ width: SIZE, height: SIZE }}>
-        <Like size={SIZE} style={{ top: 45 }}/>
-        <Typo.Header center small bold>{couponCatched}</Typo.Header>
-      </View>
-    );
-  }
-
   render() {
     const { navigation } = this.props;
-
-    // TODO: WIP: haciendo nuevamente la alerta - aplicando una alerta al momento de que el couopón se haya capturado
-
     return (
       <TodayContainer>
         <CampaignsContainer>
           <AllCampaigns
             onPressCampaign={this.pressCoupon}
             onCatchCampaign={(isCapture) => {
-              if(isCapture) this.alert.show();
+              if(isCapture) this.alertCatched.show();
             }}
           />
 
-          <CustomAlert
-            ref={ref => (this.alert = ref)}
-            actions={this.actionsAlert}
-            alertContent={this.alertContent}
-          />
+          <AlertCatchedCoupon ref={ref => (this.alertCatched = ref)} />
         </CampaignsContainer>
         <Modal
           animationType="slide"
@@ -89,7 +60,7 @@ class HomeScreen extends Component {
             onClose={this.handleCloseModal}
             campaign={this.state.currentDetails}
             hasBeenCatched={(isCapture) => {
-              if(isCapture) this.alert.show();
+              if(isCapture) this.alertCatched.show();
             }}
           />
         </Modal>
@@ -115,4 +86,4 @@ const HeaderBarContainer = styled(View)`
   margin-bottom: 20;
 `;
 
-export default injectIntl(HomeScreen);
+export default HomeScreen;

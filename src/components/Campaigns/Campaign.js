@@ -53,7 +53,7 @@ class Campaign extends Component{
 
   render(){
     const { alertVisible } = this.state;
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched } = this.props;
+    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched = () => null } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 

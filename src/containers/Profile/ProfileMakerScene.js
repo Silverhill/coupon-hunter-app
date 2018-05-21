@@ -12,6 +12,7 @@ import { injectIntl } from 'react-intl';
 import { removeAuthenticationAsync } from '../../services/auth';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import CampaignsByMakerId from '../../components/Campaigns/CampaignsByMakerId';
+import AlertCatchedCoupon from '../../components/Alert/AlertCatchedCoupon'
 
 class ProfileMakerScene extends Component {
   state = {
@@ -74,11 +75,14 @@ class ProfileMakerScene extends Component {
             <CampaignsByMakerId
               makerId={maker.id}
               onPressCampaign={this.pressCoupon}
+              onCatchCampaign={(isCapture) => {
+                if(isCapture) this.alertCatched.show();
+              }}
             />
           </ContainerScreen>
 
         </Content>
-
+        <AlertCatchedCoupon ref={ref => (this.alertCatched = ref)} />
         <Modal
           animationType="slide"
           transparent={false}
@@ -88,6 +92,9 @@ class ProfileMakerScene extends Component {
             withoutMakerProfile
             onClose={this.handleCloseModal}
             campaign={currentDetails}
+            hasBeenCatched={(isCapture) => {
+              if(isCapture) this.alertCatched.show();
+            }}
           />
         </Modal>
       </ProfileContainer>

@@ -28,8 +28,6 @@ export const ALL_CAMPAIGNS = gql`
         maker {
           id
           name
-          provider
-          role
         }
       }
     }
@@ -47,8 +45,9 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       totalCoupons
       huntedCoupons
       redeemedCoupons
+      couponsRedeemedByMe
+      couponsHuntedByMe
       canHunt
-      remainingCoupons
       status
       title
       description
@@ -57,6 +56,11 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       image
       initialAgeRange
       finalAgeRange
+      remainingCoupons
+      maker {
+        id
+        name
+      }
     }
   }
 `;

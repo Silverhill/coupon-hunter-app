@@ -9,12 +9,13 @@ import uuid from 'uuid/v4';
 import Campaign from './Campaign';
 import { Queries } from '../../graphql';
 
-const CampaignsByMakerId = ({ makerId, onPressCampaign }) => {
+const CampaignsByMakerId = ({ makerId, onPressCampaign, onCatchCampaign }) => {
   _keyExtractor = (item, index) => uuid();
   _renderItem = ({ item }) => (
     <Campaign
       campaign={item}
       onPress={onPressCampaign}
+      hasBeenCatched={onCatchCampaign}
     />
   );
 
