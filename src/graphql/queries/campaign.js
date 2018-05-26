@@ -25,6 +25,7 @@ export const ALL_CAMPAIGNS = gql`
         initialAgeRange
         finalAgeRange
         remainingCoupons
+        background
         maker {
           id
           name
@@ -57,6 +58,7 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       initialAgeRange
       finalAgeRange
       remainingCoupons
+      background
       maker {
         id
         name
@@ -88,6 +90,7 @@ export const MY_COUPONS = gql`
           customMessage
           deleted
           image
+          background
           maker {
             id
             name
@@ -120,6 +123,7 @@ export const MY_REDEEMED_COUPONS = gql`
           customMessage
           deleted
           image
+          background
           maker {
             id
             name

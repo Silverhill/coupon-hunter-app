@@ -22,6 +22,7 @@ export const CAPTURE_COUPON = gql`
         customMessage
         deleted
         image
+        background
         maker {
           id
           name
