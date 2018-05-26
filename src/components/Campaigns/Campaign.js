@@ -7,42 +7,11 @@ import uuid from 'uuid/v4';
 import gql from 'graphql-tag';
 import { injectIntl } from 'react-intl';
 import { Mutations, Queries } from '../../graphql';
-import { statusService } from '../../services';
+import { statusService, UpdateQuery } from '../../services';
 
 class Campaign extends Component{
   state = {
     alertVisible: false,
-  }
-
-  updateCampaigns = (cache, { data: { captureCoupon: { campaign, ...coupon } } }) => {
-    const { allCampaigns } = cache.readQuery({ query: Queries.ALL_CAMPAIGNS });
-
-    try {
-      const { myCoupons } = cache.readQuery({ query: Queries.MY_COUPONS });
-      const newCoupon = { ...coupon, campaign }
-      cache.writeQuery({ query: Queries.MY_COUPONS, data: { myCoupons: myCoupons.concat(newCoupon) } });
-    } catch (err) {/*console.log(err);*/}
-
-    const campaigns = ((allCampaigns || {}).campaigns || []).map((_campaign, i) => {
-      if(campaign.id === _campaign.id) {
-        return {
-          ..._campaign,
-          canHunt: false,
-          remainingCoupons: campaign.remainingCoupons,
-        };
-      }
-
-      return _campaign;
-    });
-
-    const newDataAllCampaigns = {
-      allCampaigns: {
-        ...allCampaigns,
-        campaigns,
-      },
-    };
-
-    cache.writeQuery({ query: Queries.ALL_CAMPAIGNS, data: newDataAllCampaigns });
   }
 
   _getTranslatedStatus = (status) => {
@@ -53,7 +22,17 @@ class Campaign extends Component{
 
   render(){
     const { alertVisible } = this.state;
-    const { campaign, onPress = () => null, onHunt, intl, hideTag, hideTotalCoupons, small, hasBeenCatched = () => null } = this.props;
+    const {
+      campaign,
+      onPress = () => null,
+      onHunt,
+      intl,
+      hideTag,
+      hideTotalCoupons,
+      small,
+      hasBeenCatched = () => null,
+      mutationProps,
+    } = this.props;
     let startAt = (campaign || {}).startAt;
     let endAt = (campaign || {}).endAt;
 
@@ -78,8 +57,9 @@ class Campaign extends Component{
       <Mutation
         mutation={Mutations.CAPTURE_COUPON}
         variables={{ campaignId: campaign.id }}
-        update={this.updateCampaigns}
+        update={UpdateQuery.campaigns}
         key={campaign.id}
+        {...mutationProps}
       >{(captureCoupon, { loading, error }) => {
         return (
           <StyledCoupon

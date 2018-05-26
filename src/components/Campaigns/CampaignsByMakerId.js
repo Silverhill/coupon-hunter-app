@@ -15,6 +15,9 @@ const CampaignsByMakerId = ({ makerId, onPressCampaign, onCatchCampaign }) => {
     <Campaign
       campaign={item}
       onPress={onPressCampaign}
+      mutationProps={{
+        refetchQueries:['campaignsByMakerId'],
+      }}
       hasBeenCatched={onCatchCampaign}
     />
   );

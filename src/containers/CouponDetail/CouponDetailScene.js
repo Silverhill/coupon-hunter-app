@@ -13,7 +13,7 @@ import { Mutation } from 'react-apollo';
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
-import { statusService } from '../../services';
+import { statusService, UpdateQuery } from '../../services';
 import QRCode from './QRCode';
 
 // Graphql
@@ -34,27 +34,8 @@ class CouponDetailScene extends Component {
     }
   }
 
-  catchCoupon = async (campaignId, mutation) => {
-    const { intl, onClose, hasBeenCatched } = this.props;
-    try {
-      await mutation.captureCoupon({ variables: { campaignId } });
-      //TODO: remover estas alertas por las alertar propias cuando estén creadas
-      onClose();
-
-      setTimeout(() => {
-        hasBeenCatched(true);
-      }, 200);
-      // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.couponHunted" }));
-    } catch (error) {
-      console.log(error.message);
-      hasBeenCatched(false, error.message);
-      //TODO: remover estas alertas por las alertar propias cuando estén creadas
-      // Alert.alert(intl.formatMessage({ id: "commons.messages.alert.onlyOneCoupon" }))
-    }
-  }
-
   render() {
-    const { campaign, intl, onClose = () => null, withoutMakerProfile = false } = this.props;
+    const { campaign, intl, onClose = () => null, withoutMakerProfile = false, hasBeenCatched = () => null } = this.props;
     const {
       startAt = '',
       endAt = '',
@@ -122,13 +103,43 @@ class CouponDetailScene extends Component {
             {canHunt && (
               <Mutation
                 mutation={Mutations.CAPTURE_COUPON}
-                refetchQueries={['allCampaigns', 'myCoupons', 'campaignsByMakerId']}
+                update={UpdateQuery.campaigns}
+                variables={{ campaignId: campaign.id }}
               >{(captureCoupon) => (
                 <CaptureButton
                   title="Capturar Cupon"
                   pill
-                  onPress={() => this.catchCoupon(campaign.id, {captureCoupon})}
                   iconColor={Palette.white.css()}
+                  onPress={async () => {
+                    if(!campaign.canHunt) return;
+
+                    try {
+                      await captureCoupon({
+                        optimisticResponse: {
+                          __typename: 'Mutation',
+                          captureCoupon: {
+                            id: -1,
+                            status: 'hunted',
+                            code: -1,
+                            campaign: {
+                              ...campaign,
+                              canHunt: false,
+                              remainingCoupons: campaign.remainingCoupons - 1,
+                            },
+                            __typename: 'CouponHunted',
+                          },
+                        },
+                      });
+                      onClose();
+
+                      setTimeout(() => {
+                        hasBeenCatched(true);
+                      }, 300)
+                    } catch (error) {
+                      console.log(error);
+                      hasBeenCatched(false, error);
+                    }
+                  }}
                 />
               )}
               </Mutation>
