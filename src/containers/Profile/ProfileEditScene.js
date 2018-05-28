@@ -10,6 +10,7 @@ import { ReactNativeFile } from 'apollo-upload-client';
 import uuid from 'uuid/v4';
 
 import { Queries, Mutations } from '../../graphql';
+import { UpdateQuery } from '../../services';
 
 class ProfileEditScene extends Component {
   state = {
@@ -54,17 +55,7 @@ class ProfileEditScene extends Component {
       <ProfileContainer>
         <Mutation
           variables={user}
-          update={(cache, { data: { updateUser } }) => {
-            const data = cache.readQuery({ query: Queries.ME });
-
-            cache.writeQuery({
-              query: Queries.ME,
-              data: { me: {
-                ...data.me,
-                ...updateUser
-              } }
-            });
-          }}
+          update={UpdateQuery.me}
           mutation={Mutations.UPDATE_USER}>{(updateUser, { loading }) => (
           <HeaderBarContainer>
             <FormattedMessage id="profileScene.edit.titlePage">{(txt) => (

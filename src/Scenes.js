@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
 import { AppLoading, DangerZone } from 'expo';
+import ModalHost from 'expo/src/modal/ModalHost';
 import { connect, Provider } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
@@ -161,7 +162,9 @@ export default class Scenes extends Component {
             messages={intlService.flattenMessages(messages[locale])}
             textComponent={Text}
           >
-            <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
+            <ModalHost>
+              <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
+            </ModalHost>
           </IntlProvider>
         </Provider>
       </ApolloProvider>
