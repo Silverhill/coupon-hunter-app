@@ -1,19 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { View, Image } from 'react-native';
 import { Typo, ButtonTag } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
+import chroma from 'chroma-js';
 
 const Container = styled(View)`
   padding: 20px 20px
-  background-color: ${Palette.neutralLight};
-  border-top-color: ${Palette.neutral};
-  border-bottom-color: ${Palette.neutral};
-  border-bottom-width: 1;
-  border-top-width: 1;
+  background-color: ${props => props.background ? props.background : Palette.neutralLight};
   align-items: center;
   justify-content: center;
+  border-top-color: ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
+  border-bottom-color: ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
+  border-bottom-width: 1;
+  border-top-width: 1;
 `;
 
 const Description = styled(Typo.TextBody)`
@@ -38,20 +39,31 @@ const Slogan = styled(Typo.TextBody)`
   text-align: center;
 `;
 
-const GetCouponButton = styled(ButtonTag)`
+const ProfileButton = styled(ButtonTag)`
+`;
+
+const InfoContainer = styled(View)`
+  align-items: center;
+  background-color: ${Palette.white};
+  padding: 10px;
+  border-radius: 10px;
+  min-width: 50%;
+  border: 2px solid ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
 `;
 
 const upperCaseText = (text = '') => text.toUpperCase();
 
-const CompanyProfileRow = ({ avatar, name, slogan, button }) => {
+const CompanyProfileRow = ({ avatar, name, slogan, button, background }) => {
   return (
-    <Container>
-      {avatar && <Avatar resizeMode="cover" source={avatar}/>}
-      <Info>
-        {name && <Name small>{upperCaseText(name)}</Name>}
-        {slogan && <Slogan secondary small>{slogan}</Slogan>}
-      </Info>
-      <GetCouponButton {...button} />
+    <Container background={background}>
+      <InfoContainer background={background}>
+        {avatar && <Avatar resizeMode="cover" source={{uri: avatar}}/>}
+        <Info>
+          {name && <Name bold small>{upperCaseText(name)}</Name>}
+          {slogan && <Slogan secondary small>{slogan}</Slogan>}
+        </Info>
+        <ProfileButton {...button} />
+      </InfoContainer>
     </Container>
   );
 };

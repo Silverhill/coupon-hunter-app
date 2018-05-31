@@ -25,11 +25,11 @@ const Container = styled(View)`
 
 class QRCode extends Component {
   render() {
-    const { value, redeemed = false, catched } = this.props;
+    const { value, redeemed = false, catched, bgColor } = this.props;
 
     return (
       <Container>
-        {!redeemed && <Code value={value} />}
+        {!redeemed && <Code bgColor={bgColor} value={value} />}
         {redeemed && <RedeemedConfirmation />}
       </Container>
     );

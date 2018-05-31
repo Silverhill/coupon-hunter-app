@@ -78,9 +78,12 @@ const TicketCode = styled(Typo.Title)`
 
 const upperCaseText = (text = '') => text.toUpperCase();
 
-const CouponCover = ({ background, date, title, companyName, couponsCount, couponsCountCaption, catched = false, code = '' }) => {
+const CouponCover = ({ backgroundImg, date, title, companyName, couponsCount, couponsCountCaption, catched = false, code = '' }) => {
+
+  const bgImage = backgroundImg && { source: { uri: backgroundImg } };
+
   return (
-    <Container source={background} resizeMode="cover">
+    <Container {...bgImage} resizeMode="cover">
       <Layout>
         <Header>
           <TitleAndDateContainer>

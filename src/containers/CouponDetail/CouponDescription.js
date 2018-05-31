@@ -15,7 +15,7 @@ const Container = styled(View)`
 
 const upperCaseText = (text = '') => text.toUpperCase();
 
-const CouponDescription = ({ children, qrCode = '', catched = false }) => {
+const CouponDescription = ({ children, qrCode = '', catched = false, qrColor }) => {
   return (
     <Container catched={catched}>
       {catched && (
@@ -24,6 +24,7 @@ const CouponDescription = ({ children, qrCode = '', catched = false }) => {
 
           return (
             <QRCode
+              bgColor={qrColor}
               redeemed={qrCode === ((data || {}).redeemedCoupon || {}).code}
               value={qrCode}
               catched={catched}

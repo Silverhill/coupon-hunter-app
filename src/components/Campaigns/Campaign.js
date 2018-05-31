@@ -47,7 +47,11 @@ class Campaign extends Component{
     }
 
     let currentStatus = statusService.getCurrentStatus(campaign.status);
-    if(!campaign.canHunt && currentStatus.key !== 'expired' && currentStatus.key !== 'redeemed') {
+    if(!campaign.canHunt
+      && currentStatus.key !== 'expired'
+      && currentStatus.key !== 'redeemed'
+      && currentStatus.key !== 'unavailable'
+    ) {
       currentStatus = statusService.getCurrentStatus(statusService.constants.HUNTED);
     }
 

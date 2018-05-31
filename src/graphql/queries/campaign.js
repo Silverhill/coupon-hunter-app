@@ -29,6 +29,7 @@ export const ALL_CAMPAIGNS = gql`
         maker {
           id
           name
+          image
         }
       }
     }
@@ -62,6 +63,7 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       maker {
         id
         name
+        image
       }
     }
   }
@@ -94,6 +96,7 @@ export const MY_COUPONS = gql`
           maker {
             id
             name
+            image
           }
         }
       }
@@ -127,6 +130,7 @@ export const MY_REDEEMED_COUPONS = gql`
           maker {
             id
             name
+            image
           }
         }
       }

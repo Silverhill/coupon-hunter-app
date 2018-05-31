@@ -71,7 +71,7 @@ class CouponDetailScene extends Component {
         <ScrollView>
           <CouponCover
             catched={hunted}
-            background={campaign.image}
+            backgroundImg={campaign.image}
             date={date}
             title={campaign.title}
             companyName={((campaign || {}).maker || {}).name}
@@ -80,15 +80,23 @@ class CouponDetailScene extends Component {
             code={code}
           />
 
-          <CouponDescription catched={hunted} qrCode={hunted ? code : ''}>
-            <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
-            <Typo.TextBody>{campaign.description}</Typo.TextBody>
+          <CouponDescription catched={hunted} qrCode={hunted ? code : ''} qrColor={(campaign || {}).background}>
+            <Conditions>
+              <Typo.Header bold>Terminos y Condiciones:</Typo.Header>
+              <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
+            </Conditions>
+
+            <Description>
+              <Typo.Header bold>Descripción:</Typo.Header>
+              <Typo.TextBody>{campaign.description}</Typo.TextBody>
+            </Description>
           </CouponDescription>
 
           {!withoutMakerProfile && (
             <View>
               <CompanyProfileRow
-                avatar={campaign.avatarSource}
+                background={campaign.background}
+                avatar={((campaign || {}).maker || {}).image}
                 name={((campaign || {}).maker || {}).name}
                 slogan={((campaign || {}).maker || {}).slogan}
                 button={{
@@ -181,6 +189,13 @@ const CaptureButton = styled(ButtonGradient)`
   margin-vertical: 30;
   margin-horizontal: 50;
   border-color: black;
+`;
+
+const Conditions = styled(View)`
+  margin-bottom: 20;
+`;
+
+const Description = styled(View)`
 `;
 
 export default injectIntl(CouponDetailScene);

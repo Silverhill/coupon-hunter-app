@@ -73,7 +73,10 @@ export default class Scenes extends Component {
     const wsLink = new WebSocketLink({
       uri: config.wsEndpoint,
       options: {
-        reconnect: true
+        reconnect: true,
+        connectionParams: {
+          authentication: token,
+        }
       }
     });
 
