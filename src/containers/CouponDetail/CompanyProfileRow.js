@@ -69,10 +69,7 @@ const CompanyProfileRow = ({ avatar, name, slogan, button, background }) => {
 };
 
 CompanyProfileRow.propTypes = {
-  avatar: PropTypes.shape({
-    source: PropTypes.any,
-    uri: PropTypes.string,
-  }),
+  avatar: PropTypes.string,
   name: PropTypes.string,
   slogan: PropTypes.string,
   button: PropTypes.object,
