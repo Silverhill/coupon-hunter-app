@@ -22,10 +22,15 @@ export const ALL_CAMPAIGNS = gql`
         customMessage
         deleted
         image
-        initialAgeRange
-        finalAgeRange
         remainingCoupons
         background
+        office {
+          address
+          company {
+            logo
+            businessName
+          }
+        }
         maker {
           id
           name
@@ -56,10 +61,15 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
       customMessage
       deleted
       image
-      initialAgeRange
-      finalAgeRange
       remainingCoupons
       background
+      office {
+        address
+        company {
+          logo
+          businessName
+        }
+      }
       maker {
         id
         name
@@ -93,6 +103,13 @@ export const MY_COUPONS = gql`
           deleted
           image
           background
+          office {
+            address
+            company {
+              logo
+              businessName
+            }
+          }
           maker {
             id
             name
@@ -127,6 +144,13 @@ export const MY_REDEEMED_COUPONS = gql`
           deleted
           image
           background
+          office {
+            address
+            company {
+              logo
+              businessName
+            }
+          }
           maker {
             id
             name

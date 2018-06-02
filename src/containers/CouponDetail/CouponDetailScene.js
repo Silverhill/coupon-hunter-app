@@ -81,9 +81,14 @@ class CouponDetailScene extends Component {
           />
 
           <CouponDescription catched={hunted} qrCode={hunted ? code : ''} qrColor={(campaign || {}).background}>
+            {((campaign || {}).office || {}).address && <Conditions>
+              <Typo.Header bold>Dirección:</Typo.Header>
+              <TermAndConditions>{campaign.office.address}</TermAndConditions>
+            </Conditions>}
+
             <Conditions>
               <Typo.Header bold>Terminos y Condiciones:</Typo.Header>
-              <Typo.TextBody>{campaign.customMessage}</Typo.TextBody>
+              <TermAndConditions>{campaign.customMessage}</TermAndConditions>
             </Conditions>
 
             <Description>
@@ -98,7 +103,7 @@ class CouponDetailScene extends Component {
                 background={campaign.background}
                 avatar={((campaign || {}).maker || {}).image}
                 name={((campaign || {}).maker || {}).name}
-                slogan={((campaign || {}).maker || {}).slogan}
+                slogan={(((campaign || {}).office || {}).company || {}).slogan}
                 button={{
                   title: <FormattedMessage id="commons.viewProfile" />,
                   onPress: this.goToMakerProfile,
@@ -193,9 +198,15 @@ const CaptureButton = styled(ButtonGradient)`
 
 const Conditions = styled(View)`
   margin-bottom: 20;
+  flex: 1;
 `;
 
 const Description = styled(View)`
+  flex: 1;
+`;
+
+const TermAndConditions = styled(Typo.TextBody)`
+  flex: 1;
 `;
 
 export default injectIntl(CouponDetailScene);
