@@ -5,6 +5,12 @@ import styled from 'styled-components/native';
 import Swiper from 'react-native-swiper';
 import OnboardingPage from './OnboardingPage';
 
+// images
+import fishing from '../../assets/images/fishing_coupons.png';
+import upLevel from '../../assets/images/up_your_level.png';
+import ecoAmbientalist from '../../assets/images/eco_ambientalist.png';
+import gifter from '../../assets/images/gift.png';
+
 class OnboardingScene extends Component {
 
   async componentWillMount() {
@@ -23,7 +29,6 @@ class OnboardingScene extends Component {
   render() {
     return (
       <Container>
-        <StatusBar barStyle='light-content' />
         <Swiper
           loop={false}
           activeDot={<View style={{backgroundColor: 'white', width: 8, height: 15, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
@@ -31,20 +36,30 @@ class OnboardingScene extends Component {
         >
           <OnboardingPage
             onSkip={this.onSkip}
+            backgroundColor={Palette.white.darken(0.2).css()}
             title='Bienvenido Hunter!'
-            uri='https://images.unsplash.com/photo-1522204605090-c9a2ae146cb3?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0147eeb73ae17cd12d9f3d9523ba01a6&auto=format&fit=crop&w=2091&q=80'
-            message='Diviertete capturando coupones'/>
+            source={fishing}
+            message='Ahora eres parte de nuestra red de coupon Hunters. Diviertete capturando y buscando coupones que aprecerán según tus preferencias '/>
           <OnboardingPage
-            backgroundColor={Palette.dark}
+            backgroundColor={Palette.white.darken(0.2).css()}
             onSkip={this.onSkip}
-            uri='https://images.unsplash.com/photo-1507412306066-2977c0e91a68?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=aba7f52648017e9500343100cea8baee&auto=format&fit=crop&w=2000&q=80'
-            title='Bienvenido Hunter!'
-            message='Diviertete capturando coupones'/>
+            source={upLevel}
+            title='Sube tu nivel'
+            message='Que buscar y reclamar cupones no sea aburrido, sube de nivel y gana puntos para mejorar como hunter, y ganar cupones'/>
           <OnboardingPage
-            title='Bienvenido Hunter!'
-            uri='https://images.unsplash.com/photo-1493807742375-fbc46d996e8f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6f0038573a81b1169576b6674a3ce202&auto=format&fit=crop&w=1076&q=80'
-            message='Diviertete capturando coupones'
-            onDone={this.onSkip}/>
+            backgroundColor={Palette.white.darken(0.2).css()}
+            onSkip={this.onSkip}
+            source={ecoAmbientalist}
+            title='Contribuye con el medio ambiente!'
+            message='Una de nuestros objetivos principales es reducir el impacto negativo del medio ambiente. Ayudanos a evitar la palelería con coupones digitales'
+            />
+
+            <OnboardingPage
+            backgroundColor={Palette.white.darken(0.2).css()}
+            onDone={this.onSkip}
+            source={gifter}
+            title='Beneficiate con regalos!'
+            message='Gana medallas que tienen recompensas únicas para tí, solo por cumplir con nuestros retos'/>
         </Swiper>
       </Container>
     );

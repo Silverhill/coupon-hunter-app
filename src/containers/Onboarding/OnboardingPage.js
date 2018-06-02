@@ -1,29 +1,29 @@
 import React from 'react'
-import { View, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 import { Button, Typo } from 'coupon-components-native';
 import styled from 'styled-components/native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
 import { LinearGradient, BlurView } from 'expo';
 
-const Page = ({ onDone, onSkip, backgroundColor, title, message, uri }) => {
+const Page = ({ onDone, onSkip, backgroundColor, title, message, uri, source }) => {
+  const currentSource = uri ? { uri } : source;
+
   return (
     <PageContainer bgColor={backgroundColor}>
       <Body>
-        <Card>
-          <ImageCard source={{ uri }} />
-        </Card>
+        <ImageCard source={currentSource} resizeMode='contain'/>
       </Body>
 
       {onSkip && (
         <OnSkip onPress={onSkip}>
-          <Typo.TextBody color={Palette.white.css()}><FormattedMessage id="commons.skip" /></Typo.TextBody>
+          <Typo.TextBody bold color={Palette.white.css()}><FormattedMessage id="commons.skip" /></Typo.TextBody>
         </OnSkip>
       )}
 
       <Footer colors={['#FF974D', '#FD3886']}>
-        <Title inverted bold>{title}</Title>
-        <Typo.TextBody inverted>{message}</Typo.TextBody>
+        <Title center inverted bold>{title}</Title>
+        <Typo.TextBody center inverted>{message}</Typo.TextBody>
       </Footer>
       {onDone && (
         <FormattedMessage id="commons.done">{(txt) => (
@@ -55,7 +55,6 @@ const PageContainer = styled(View)`
 const Body = styled(View)`
   width: 100%;
   height: 100%;
-  background-color: #3a3d4c;
   align-items: center;
   justify-content: center;
 `;
@@ -66,7 +65,7 @@ const BlurViewContainer = styled(BlurView)`
 `;
 
 const Footer = styled(LinearGradient)`
-  height: 300;
+  height: 40%;
   width: 100%;
   align-self: stretch;
   position: absolute;
@@ -77,20 +76,11 @@ const Footer = styled(LinearGradient)`
   justify-content: flex-start;
 `;
 
-const Card = styled(View)`
-  border-radius: 10;
-  overflow: hidden;
-  width: 80%;
-  height: 60%;
-  bottom: 80;
-  box-shadow: 5px 1px 5px ${Palette.dark.alpha(0.2).css()};
-`;
 
-const ImageCard = styled(ImageBackground)`
-  background-color: white;
-  border-radius: 10;
-  width: 100%;
-  height: 100%;
+const ImageCard = styled(Image)`
+  width: 90%;
+  position: absolute;
+  top: 10;
 `;
 
 
@@ -102,6 +92,9 @@ const OnSkip = styled(TouchableOpacity)`
   position: absolute;
   top: 40;
   right: 30;
+  background-color: ${Palette.dark};
+  padding: 5px 10px;
+  border-radius: 15;
 `;
 
 const PhantomButton = styled(Button)`
