@@ -6,6 +6,8 @@ export const REDEEMED_COUPON = gql`
       id
       code
       status
+      huntedAt
+      redeemedAt
       campaign{
         id
         startAt
@@ -21,9 +23,15 @@ export const REDEEMED_COUPON = gql`
         description
         customMessage
         deleted
-        initialAgeRange
-        finalAgeRange
+        background
         createdAt
+        office {
+          address
+          company {
+            logo
+            businessName
+          }
+        }
         maker{
           id
           name

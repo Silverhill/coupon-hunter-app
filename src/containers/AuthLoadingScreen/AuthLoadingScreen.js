@@ -9,7 +9,7 @@ import {
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { HEADER_AUTHENTICATION_KEY } from '../../constants';
-import { getAuthenticationAsync, isAuthorized, removeAuthenticationAsync } from '../../services/auth';
+import { getAuthenticationAsync, isAuthorized } from '../../services/auth';
 // Actions
 import * as userActions from '../../actions/userActions';
 

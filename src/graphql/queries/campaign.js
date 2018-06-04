@@ -81,11 +81,13 @@ export const CAMPAIGNS_BY_MAKER_ID = gql`
 
 export const MY_COUPONS = gql`
   query myCoupons{
-    myCoupons(sortField: "startAt", limit: 30, sortDirection: -1) {
+    myCoupons(sortField: "huntedAt", limit: 30, sortDirection: -1) {
       id
       status
       code
       ... on CouponHunted {
+        huntedAt
+        redeemedAt
         campaign {
           id
           startAt
@@ -123,11 +125,13 @@ export const MY_COUPONS = gql`
 
 export const MY_REDEEMED_COUPONS = gql`
   query myRedeemedCoupons{
-    myRedeemedCoupons(sortField: "startAt", limit: 30, sortDirection: -1) {
+    myRedeemedCoupons(sortField: "redeemedAt", limit: 30, sortDirection: -1) {
       id
       status
       code
       ... on CouponHunted {
+        redeemedAt
+        huntedAt
         campaign {
           id
           startAt

@@ -62,6 +62,7 @@ class Campaign extends Component{
         mutation={Mutations.CAPTURE_COUPON}
         variables={{ campaignId: campaign.id }}
         update={UpdateQuery.campaigns}
+        refetchQueries={['myCoupons']}
         key={campaign.id}
         {...mutationProps}
       >{(captureCoupon, { loading, error }) => {

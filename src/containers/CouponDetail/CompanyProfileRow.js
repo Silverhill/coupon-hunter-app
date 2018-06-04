@@ -11,10 +11,12 @@ const Container = styled(View)`
   background-color: ${props => props.background ? props.background : Palette.neutralLight};
   align-items: center;
   justify-content: center;
-  border-top-color: ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
-  border-bottom-color: ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
-  border-bottom-width: 1;
-  border-top-width: 1;
+  ${props => !props.background && css`
+    border-top-color: ${Palette.neutral};
+    border-bottom-color: ${Palette.neutral};
+    border-bottom-width: 1;
+    border-top-width: 1;
+  `};
 `;
 
 const Description = styled(Typo.TextBody)`
@@ -48,7 +50,9 @@ const InfoContainer = styled(View)`
   padding: 10px;
   border-radius: 10px;
   min-width: 50%;
-  border: 2px solid ${props => props.background ? chroma(props.background).darken(0.8) : Palette.neutral};
+  ${props => !props.background && css`
+    border: 2px solid ${Palette.neutral};
+  `};
 `;
 
 const upperCaseText = (text = '') => text.toUpperCase();

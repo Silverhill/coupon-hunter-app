@@ -17,7 +17,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 
-import { getAuthenticationAsync, isAuthorized } from './services/auth';
+import { getAuthenticationAsync, isAuthorized, removeAuthenticationAsync } from './services/auth';
 
 // Redux
 import store from './store';
@@ -118,11 +118,19 @@ export default class Scenes extends Component {
       link: ApolloLink.from([
         onError(({ graphQLErrors, networkError }) => {
           if (graphQLErrors)
-            graphQLErrors.map(({ message, locations, path }) =>
-              console.log(
-                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-              ),
-            );
+            graphQLErrors.map(({ message, locations, path }) => {
+              if(/Invalid token/.test(message)) {
+                this.setState(prevState => ({
+                  authorized: false,
+                }), () => {
+                  removeAuthenticationAsync();
+                })
+              }
+
+              return console.log(
+                `[GraphQL error]: Message: ${message}`
+              )
+            });
           if (networkError) console.log(`[Network error]: ${networkError}`);
         }),
         authMiddleware,
