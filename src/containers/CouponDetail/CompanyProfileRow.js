@@ -7,7 +7,7 @@ import { Palette } from 'coupon-components-native/styles';
 import chroma from 'chroma-js';
 
 const Container = styled(View)`
-  padding: 20px 20px
+  padding: 20px 20px;
   background-color: ${props => props.background ? props.background : Palette.neutralLight};
   align-items: center;
   justify-content: center;

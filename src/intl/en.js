@@ -77,13 +77,13 @@ export default {
   },
 
   todayScreen: {
-    otherDays: 'All Coupons',
-    header: 'Coupons',
+    otherDays: 'All Campaigns',
+    header: 'Campaign',
   },
 
   walletScreen: {
     titlePage: 'My Wallet',
-    subTitle: 'Mis Coupons',
+    subTitle: 'Mis Hunted Campaigns',
     tabs: {
       hunted: 'Hunted',
       used: 'Used',
