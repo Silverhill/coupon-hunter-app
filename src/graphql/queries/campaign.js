@@ -25,8 +25,10 @@ export const ALL_CAMPAIGNS = gql`
         remainingCoupons
         background
         office {
+          id
           address
           company {
+            id
             logo
             businessName
           }

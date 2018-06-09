@@ -4709,6 +4709,12 @@ graphql-anywhere@^4.1.0-alpha.0, graphql-anywhere@^4.1.10:
   dependencies:
     apollo-utilities "^1.0.12"
 
+graphql-normalizr@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/graphql-normalizr/-/graphql-normalizr-1.0.2.tgz#932b6c656c74c5a9a8656ad2d5333f1a2bc5780e"
+  dependencies:
+    pluralize "7.0.0"
+
 graphql-tag@^2.8.0:
   version "2.9.2"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.9.2.tgz#2f60a5a981375f430bf1e6e95992427dc18af686"
@@ -7011,6 +7017,10 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
+normalizr@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/normalizr/-/normalizr-3.2.4.tgz#16aafc540ca99dc1060ceaa1933556322eac4429"
+
 npm-bundled@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.0.3.tgz#7e71703d973af3370a9591bafe3a63aca0be2308"
@@ -7485,6 +7495,10 @@ plugin-error@^0.1.2:
     arr-diff "^1.0.1"
     arr-union "^2.0.1"
     extend-shallow "^1.1.2"
+
+pluralize@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-7.0.0.tgz#298b89df8b93b0221dbf421ad2b1b1ea23fc6777"
 
 pn@^1.1.0:
   version "1.1.0"

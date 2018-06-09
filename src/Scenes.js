@@ -119,7 +119,7 @@ export default class Scenes extends Component {
         onError(({ graphQLErrors, networkError }) => {
           if (graphQLErrors)
             graphQLErrors.map(({ message, locations, path }) => {
-              if(/Invalid token/.test(message)) {
+              if(/Invalid token/gi.test(message) || /Invalid signature/gi.test(message)) {
                 this.setState(prevState => ({
                   authorized: false,
                 }), () => {

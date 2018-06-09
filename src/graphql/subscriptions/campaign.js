@@ -42,3 +42,43 @@ export const REDEEMED_COUPON = gql`
     }
   }
 `;
+
+export const UPDATE_CAMPAIGN = gql`
+  subscription updatedCampaign($campaignId: String!) {
+    updatedCampaign(campaignId: $campaignId) {
+      id
+      startAt
+      endAt
+      country
+      city
+      totalCoupons
+      huntedCoupons
+      redeemedCoupons
+      couponsRedeemedByMe
+      couponsHuntedByMe
+      canHunt
+      status
+      title
+      description
+      customMessage
+      deleted
+      image
+      remainingCoupons
+      background
+      office {
+        id
+        address
+        company {
+          id
+          logo
+          businessName
+        }
+      }
+      maker {
+        id
+        name
+        image
+      }
+    }
+  }
+`;
