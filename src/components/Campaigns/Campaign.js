@@ -1,15 +1,13 @@
 import React, { PureComponent} from 'react';
-import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { Coupon } from 'coupon-components-native';
 import { Mutation, Subscription } from 'react-apollo';
-import uuid from 'uuid/v4';
-import gql from 'graphql-tag';
+// import { Image } from 'react-native-expo-image-cache';
 import { injectIntl } from 'react-intl';
-import { Mutations, Queries, Subscriptions } from '../../graphql';
+import { Mutations, Subscriptions } from '../../graphql';
 import { statusService, UpdateQuery } from '../../services';
 
-class Campaign extends PureComponent{
+class Campaign extends PureComponent {
   _getTranslatedStatus = (status) => {
     const { intl } = this.props;
     const labelTranslated = intl.formatMessage({ id: status.id });
@@ -63,7 +61,6 @@ class Campaign extends PureComponent{
             .formatDate(endAt, { month: 'short', day: 'numeric', year: 'numeric' })
             .toUpperCase();
         }
-
 
         return <Mutation
           mutation={Mutations.CAPTURE_COUPON}

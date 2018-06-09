@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View, ActivityIndicator, ScrollView, FlatList, Modal } from 'react-native';
 import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import styled, { css } from 'styled-components/native';
@@ -19,7 +19,7 @@ const Container = styled(View)`
   height: 100%;
 `;
 
-class MyCurrentCoupons extends Component {
+class MyCurrentCoupons extends PureComponent {
   state = {
     modalVisible: false,
     error: '',

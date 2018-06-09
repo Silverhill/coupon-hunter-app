@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View, Dimensions, Animated, TouchableOpacity, ScrollView } from 'react-native';
 import { Typo, HeaderBar } from 'coupon-components-native';
 import { injectIntl } from 'react-intl';
@@ -36,7 +36,7 @@ const keyRoutes = {
   USED: 'used'
 };
 
-class WalletScene extends Component {
+class WalletScene extends PureComponent {
   state = {
     index: 0,
     routes: [
@@ -84,10 +84,6 @@ class WalletScene extends Component {
     const title = intl.formatMessage({ id: 'walletScreen.titlePage' });
     const subTitle = intl.formatMessage({ id: 'walletScreen.subTitle' });
 
-    // let sourceImage;
-    // if(((data || {}).me || {}).image) {
-    //   sourceImage = { source: { uri: data.me.image } };
-    // }
     return (
       <WalletContainer>
         <HeaderBarContainer>

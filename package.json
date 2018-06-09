@@ -53,6 +53,7 @@
     "react-apollo": "^2.1.1",
     "react-intl": "^2.4.0",
     "react-native": "~0.55.2",
+    "react-native-expo-image-cache": "^3.1.1",
     "react-native-gesture-handler": "^1.0.0-alpha.42",
     "react-native-qrcode": "^0.2.6",
     "react-native-swiper": "^1.5.13",
