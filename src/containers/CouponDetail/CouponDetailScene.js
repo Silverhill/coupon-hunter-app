@@ -1,20 +1,16 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
-import { View, Text, StatusBar, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
 import { ButtonGradient, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
-import { removeAuthenticationAsync } from '../../services/auth';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Mutation } from 'react-apollo';
 
 import CouponCover from './CouponCover';
 import CouponDescription from './CouponDescription';
 import CompanyProfileRow from './CompanyProfileRow';
-import { statusService, UpdateQuery } from '../../services';
-import QRCode from './QRCode';
+import { UpdateQuery } from '../../services';
 
 // Graphql
 import { Mutations } from '../../graphql';
