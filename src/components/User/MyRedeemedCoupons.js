@@ -17,7 +17,6 @@ class MyRedeemCoupons extends PureComponent {
     const { onPressCampaign } = this.props;
     const { campaign: _campaign, code, id, status } = item;
 
-    console.log(_campaign);
     const campaign = {
       ..._campaign,
       status,

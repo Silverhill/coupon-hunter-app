@@ -37,29 +37,29 @@ class OnboardingScene extends Component {
           <OnboardingPage
             onSkip={this.onSkip}
             backgroundColor={Palette.white.darken(0.2).css()}
-            title='Bienvenido Hunter!'
+            title='Bienvenido nuevo Hunter!'
             source={fishing}
-            message='Ahora eres parte de nuestra red de coupon Hunters. Diviertete capturando y buscando coupones que aprecerán según tus preferencias '/>
+            message='Forma parte de nuestra equipo de Hunters. Diviertete capturando y buscando promociones de tu localidad que enrealidad te interesen'/>
           <OnboardingPage
             backgroundColor={Palette.white.darken(0.2).css()}
             onSkip={this.onSkip}
             source={upLevel}
             title='Sube tu nivel'
-            message='Que buscar y reclamar cupones no sea aburrido, sube de nivel y gana puntos para mejorar como hunter, y ganar cupones'/>
+            message='Haz que buscar y reclamar promociones no sea aburrido, sube de nivel y gana puntos para mejorar como hunter, y ganar recompensas'/>
           <OnboardingPage
             backgroundColor={Palette.white.darken(0.2).css()}
             onSkip={this.onSkip}
             source={ecoAmbientalist}
             title='Contribuye con el medio ambiente!'
-            message='Una de nuestros objetivos principales es reducir el impacto negativo del medio ambiente. Ayudanos a evitar la palelería con coupones digitales'
-            />
-
-            <OnboardingPage
+            message='Una de nuestros objetivos principales es reducir el impacto negativo del medio ambiente. Ayudanos a evitar la palelería con promociones digitales'
+          />
+          <OnboardingPage
             backgroundColor={Palette.white.darken(0.2).css()}
             onDone={this.onSkip}
             source={gifter}
-            title='Beneficiate con regalos!'
-            message='Gana medallas que tienen recompensas únicas para tí, solo por cumplir con nuestros retos'/>
+            title='Beneficiate con logros!'
+            message='Colecciona medallas que tienen recompensas que podrás canjearlas en el mundo real, solo por cumplir con nuestros retos'
+          />
         </Swiper>
       </Container>
     );
