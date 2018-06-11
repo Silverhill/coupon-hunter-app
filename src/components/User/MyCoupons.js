@@ -3,6 +3,7 @@ import { View, FlatList, Image } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { Typo } from 'coupon-components-native';
 import { Query } from 'react-apollo';
+import { FormattedMessage } from 'react-intl';
 import { CacheManager } from "react-native-expo-image-cache";
 import uuid from 'uuid/v4';
 
@@ -83,7 +84,7 @@ class MyCoupons extends PureComponent {
             {!hasCoupons && (
               <EmptyContainer>
                 <EmptyState resizeMode='contain' source={coupon_catch} />
-                <Typo.TextBody secondary center>Cada vez que obtengas una promoción se guardará aquí en tu wallet, hasta que las puedas reclamar o que la campaña expire.</Typo.TextBody>
+                <Typo.TextBody secondary center><FormattedMessage id='walletScreen.emptyStates.hunted' /></Typo.TextBody>
               </EmptyContainer>
             )}
           </ScreenContent>

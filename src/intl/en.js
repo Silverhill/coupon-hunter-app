@@ -84,6 +84,10 @@ export default {
   walletScreen: {
     titlePage: 'My Wallet',
     subTitle: 'Mis Hunted Campaigns',
+    emptyStates: {
+      hunted: 'Every time you get a promotion it will be stored here in your wallet, until you can use it or the campaign expires.',
+      used: 'Each time a promotion is used successfully it will be saved as redeemed in this section of your wallet',
+    },
     tabs: {
       hunted: 'Hunted',
       used: 'Used',

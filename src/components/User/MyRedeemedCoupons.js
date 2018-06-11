@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { View, FlatList, Image } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { CacheManager } from "react-native-expo-image-cache";
@@ -89,7 +90,7 @@ class MyRedeemCoupons extends PureComponent {
             {!hasCoupons && (
               <EmptyContainer>
                 <EmptyState resizeMode='contain' source={coupon_redeemed} />
-                <Typo.TextBody secondary center>Cada vez que una promoción se use exitosamente aparecerá como canjeada en esta sección de tu wallet.</Typo.TextBody>
+                <Typo.TextBody secondary center><FormattedMessage id='walletScreen.emptyStates.used' /></Typo.TextBody>
               </EmptyContainer>
             )}
           </ScreenContent>
