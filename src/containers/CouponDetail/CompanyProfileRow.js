@@ -12,8 +12,8 @@ const Container = styled(View)`
   align-items: center;
   justify-content: center;
   ${props => !props.background && css`
-    border-top-color: ${Palette.neutral};
-    border-bottom-color: ${Palette.neutral};
+    border-top-color: ${Palette.neutral.alpha(0.3).css()};
+    border-bottom-color: ${Palette.neutral.alpha(0.3).css()};
     border-bottom-width: 1;
     border-top-width: 1;
   `};
@@ -31,7 +31,6 @@ const Avatar = styled(Image)`
 
 const Info = styled(View)`
   margin: 20px 0px;
-  max-width: 240px;
 `;
 
 const Name = styled(Typo.Header)`
@@ -46,13 +45,7 @@ const ProfileButton = styled(ButtonTag)`
 
 const InfoContainer = styled(View)`
   align-items: center;
-  background-color: ${Palette.white};
   padding: 10px;
-  border-radius: 10px;
-  min-width: 50%;
-  ${props => !props.background && css`
-    border: 2px solid ${Palette.neutral};
-  `};
 `;
 
 const upperCaseText = (text = '') => text.toUpperCase();

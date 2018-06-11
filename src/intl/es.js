@@ -111,7 +111,10 @@ export default {
   },
 
   couponDetailScene: {
-    couponAvailable: '{totalCoupons, plural, =0 {No Disponibles} one {# Disponible} other {# Disponibles} }',
+    couponAvailable: '{totalCoupons, plural, =0 {Disponibles} one {# Disponible} other {# Disponibles} }',
+    termsAndConditions: 'Terminos y Condiciones',
+    description: 'Descripción',
+    address: 'Dirección',
   },
 
   component: {

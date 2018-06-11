@@ -4,7 +4,7 @@ import { ButtonGradient, Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { Mutation } from 'react-apollo';
 
 import CouponCover from './CouponCover';
@@ -70,7 +70,7 @@ class CouponDetailScene extends Component {
             backgroundImg={campaign.image}
             date={date}
             title={campaign.title}
-            companyName={((campaign || {}).maker || {}).name}
+            companyName={(((campaign || {}).office || {}).company || {}).businessName}
             couponsCount={availableCoupons}
             couponsCountCaption={availableText}
             code={code}
@@ -78,80 +78,80 @@ class CouponDetailScene extends Component {
 
           <CouponDescription catched={hunted} qrCode={hunted ? code : ''} qrColor={(campaign || {}).background}>
             {((campaign || {}).office || {}).address && <Conditions>
-              <Typo.Header bold>Dirección:</Typo.Header>
+              <Typo.Header small bold>{intl.formatMessage({ id: 'couponDetailScene.address' })}</Typo.Header>
               <TermAndConditions>{campaign.office.address}</TermAndConditions>
             </Conditions>}
 
             <Conditions>
-              <Typo.Header bold>Terminos y Condiciones:</Typo.Header>
+              <Typo.Header small bold>{intl.formatMessage({ id: 'couponDetailScene.termsAndConditions' })}</Typo.Header>
               <TermAndConditions>{campaign.customMessage}</TermAndConditions>
             </Conditions>
 
             <Description>
-              <Typo.Header bold>Descripción:</Typo.Header>
+              <Typo.Header small bold>{intl.formatMessage({ id: 'couponDetailScene.description' })}</Typo.Header>
               <Typo.TextBody>{campaign.description}</Typo.TextBody>
             </Description>
           </CouponDescription>
 
+          {canHunt && (
+            <Mutation
+              mutation={Mutations.CAPTURE_COUPON}
+              update={UpdateQuery.campaigns}
+              variables={{ campaignId: campaign.id }}
+            >{(captureCoupon) => (
+              <CaptureButton
+                title="Capturar Cupon"
+                pill
+                iconColor={Palette.white.css()}
+                onPress={async () => {
+                  if(!campaign.canHunt) return;
+
+                  try {
+                    await captureCoupon({
+                      optimisticResponse: {
+                        __typename: 'Mutation',
+                        captureCoupon: {
+                          id: -1,
+                          status: 'hunted',
+                          code: -1,
+                          campaign: {
+                            ...campaign,
+                            canHunt: false,
+                            remainingCoupons: campaign.remainingCoupons - 1,
+                          },
+                          __typename: 'CouponHunted',
+                        },
+                      },
+                    });
+                    onClose();
+
+                    setTimeout(() => {
+                      hasBeenCatched(true);
+                    }, 300)
+                  } catch (error) {
+                    console.log(error);
+                    hasBeenCatched(false, error);
+                  }
+                }}
+              />
+            )}
+            </Mutation>
+          )}
+
           {!withoutMakerProfile && (
             <View>
               <CompanyProfileRow
-                background={campaign.background}
                 avatar={((campaign || {}).maker || {}).image}
-                name={((campaign || {}).maker || {}).name}
+                name={((campaign || {}).maker || {}).name || ''}
                 slogan={(((campaign || {}).office || {}).company || {}).slogan}
                 button={{
-                  title: <FormattedMessage id="commons.viewProfile" />,
+                  title: intl.formatMessage({ id: 'commons.viewProfile' }),
                   onPress: this.goToMakerProfile,
                   big: true,
                   backgroundColor: Palette.secondaryAccent.css(),
                 }}
               />
               </View>
-            )}
-            {canHunt && (
-              <Mutation
-                mutation={Mutations.CAPTURE_COUPON}
-                update={UpdateQuery.campaigns}
-                variables={{ campaignId: campaign.id }}
-              >{(captureCoupon) => (
-                <CaptureButton
-                  title="Capturar Cupon"
-                  pill
-                  iconColor={Palette.white.css()}
-                  onPress={async () => {
-                    if(!campaign.canHunt) return;
-
-                    try {
-                      await captureCoupon({
-                        optimisticResponse: {
-                          __typename: 'Mutation',
-                          captureCoupon: {
-                            id: -1,
-                            status: 'hunted',
-                            code: -1,
-                            campaign: {
-                              ...campaign,
-                              canHunt: false,
-                              remainingCoupons: campaign.remainingCoupons - 1,
-                            },
-                            __typename: 'CouponHunted',
-                          },
-                        },
-                      });
-                      onClose();
-
-                      setTimeout(() => {
-                        hasBeenCatched(true);
-                      }, 300)
-                    } catch (error) {
-                      console.log(error);
-                      hasBeenCatched(false, error);
-                    }
-                  }}
-                />
-              )}
-              </Mutation>
             )}
         </ScrollView>
 

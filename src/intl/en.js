@@ -78,7 +78,7 @@ export default {
 
   todayScreen: {
     otherDays: 'All Campaigns',
-    header: 'Campaign',
+    header: 'Campaigns',
   },
 
   walletScreen: {
@@ -112,6 +112,9 @@ export default {
 
   couponDetailScene: {
     couponAvailable: '{totalCoupons, plural, =0 {Not Available} one {# Available} other {# Available} }',
+    termsAndConditions: 'Terms and Conditions',
+    description: 'Description',
+    address: 'Address',
   },
 
   component: {
