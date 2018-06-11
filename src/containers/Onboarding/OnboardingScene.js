@@ -31,7 +31,12 @@ class OnboardingScene extends Component {
       <Container>
         <Swiper
           loop={false}
-          activeDot={<View style={{backgroundColor: 'white', width: 8, height: 15, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
+          activeDot={
+            <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', width: 15, height: 15, borderRadius: 7.5, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3 }} />
+              <View style={{ position: 'absolute', backgroundColor: 'white', width: 8, height: 8, borderRadius: 5, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3 }} />
+            </View>
+          }
           dotStyle={{ alignSelf: 'flex-end', 'backgroundColor': Palette.white.alpha(0.5).css() }}
         >
           <OnboardingPage
@@ -39,7 +44,7 @@ class OnboardingScene extends Component {
             backgroundColor={Palette.white.darken(0.2).css()}
             title='Bienvenido nuevo Hunter!'
             source={fishing}
-            message='Forma parte de nuestra equipo de Hunters. Diviertete capturando y buscando promociones de tu localidad que enrealidad te interesen'/>
+            message='Forma parte de nuestro equipo de Hunters. Diviertete capturando y buscando promociones de tu localidad que enrealidad te interesen'/>
           <OnboardingPage
             backgroundColor={Palette.white.darken(0.2).css()}
             onSkip={this.onSkip}

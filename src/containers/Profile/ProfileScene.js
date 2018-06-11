@@ -63,16 +63,16 @@ class ProfileScene extends Component {
             if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
             else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
 
-            let avatarProfile = { source: { adam } };
+            let avatarProfile = adam;
             if(me.image) {
-              avatarProfile = { source:{ uri: me.image }}
+              avatarProfile = { uri: me.image }
             }
 
             return (
               <Content>
                 {/* Profile */}
                 <RowContent>
-                  <Avatar size={70} {...avatarProfile} />
+                  <Avatar size={70} source={avatarProfile} />
                   <ColumnGroup style={{ marginLeft: 10 }} fullWidth>
                     <Typo.Header numberOfLines={1} normal>{me.name}</Typo.Header>
                     <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>

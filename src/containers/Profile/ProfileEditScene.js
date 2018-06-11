@@ -11,6 +11,7 @@ import uuid from 'uuid/v4';
 
 import { Queries, Mutations } from '../../graphql';
 import { UpdateQuery } from '../../services';
+import adam from '../../assets/images/adam.png';
 
 class ProfileEditScene extends Component {
   state = {
@@ -82,10 +83,10 @@ class ProfileEditScene extends Component {
             if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
             else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
 
-            let avatar;
-            if(me.image) avatar = me.image;
+            let avatar = adam;
+            if(me.image) avatar = { uri: me.image };
             if(Object.keys(currentAvatar || {}).length > 0) {
-              avatar = currentAvatar.uri;
+              avatar = { uri: currentAvatar.uri };
             }
 
             return (
@@ -96,7 +97,7 @@ class ProfileEditScene extends Component {
 
                 <RowContent horizontalCenter verticalCenter>
                   <ColumnGroup verticalCenter>
-                    <Avatar size={100} source={{uri: avatar}} />
+                    <Avatar size={100} source={avatar} />
 
                     <LinkChangePhoto
                       onPickerImage={(result) => this.setState({ currentAvatar: result })}
