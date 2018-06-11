@@ -18,13 +18,14 @@ export default {
     require('./images/adam.png'),
     require('./images/anjali.png'),
     require('./images/be_the_hero.png'),
-    require('./images/coupon_hunter_logo.png'),
     require('./images/eco_ambientalist.png'),
     require('./images/fishing_coupons.png'),
     require('./images/gift.png'),
     require('./images/stars.png'),
     require('./images/up_your_level.png'),
     require('./images/wip_achievements.png'),
+    require('./images/coupon_catch_example.png'),
+    require('./images/coupon_redeemed_example.png'),
   ],
 
   /**

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, ActivityIndicator, ScrollView, FlatList, Modal } from 'react-native';
+import { View, ActivityIndicator, FlatList, Modal } from 'react-native';
 import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import styled, { css } from 'styled-components/native';
 import { Query } from 'react-apollo';

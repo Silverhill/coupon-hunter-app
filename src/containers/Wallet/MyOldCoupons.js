@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, ScrollView, ActivityIndicator, FlatList, Modal } from 'react-native';
+import { View, ActivityIndicator, FlatList, Modal } from 'react-native';
 import { Typo, HeaderBar, Coupon } from 'coupon-components-native';
 import styled, { css } from 'styled-components/native';
 import { Query, Subscription } from 'react-apollo';
@@ -9,7 +9,7 @@ import { Subscriptions } from '../../graphql';
 import CouponDetailScene from '../CouponDetail/CouponDetailScene';
 import MyRedeemedCoupons from '../../components/User/MyRedeemedCoupons';
 
-const WalletContainer = styled(ScrollView)`
+const WalletContainer = styled(View)`
   flex: 1;
   background-color: white;
 `;
