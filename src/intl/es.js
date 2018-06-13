@@ -129,7 +129,7 @@ export default {
 
   component: {
     StepForm: {
-      backStep: 'Volver al paso anterior',
+      backStep: 'Regresar al paso anterior',
     }
   },
 
