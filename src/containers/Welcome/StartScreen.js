@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
-  AsyncStorage,
   ImageBackground,
   TouchableOpacity,
   Image,
@@ -10,14 +8,12 @@ import {
 } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
 import { LinearGradient } from 'expo';
-import { Input, Button, Card, Typo, ButtonGradient, NavBar, Loader } from 'coupon-components-native';
+import { Button, Card, Typo, ButtonGradient } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
-import { colors } from 'coupon-components-native/styles/palette';
 import { FormattedMessage } from 'react-intl';
 import * as userActions from '../../actions/userActions';
-import * as CONSTANTS from '../../constants';
+import * as notificationActions from '../../actions/notificationActions';
 
 // Assets
 import cplogo from '../../assets/images/coupon_hunter_logo.png';
@@ -66,8 +62,14 @@ const ContainerButton = styled(Button)`
   width: 100%;
 `;
 
+const ContainerButtonGradient = styled(ButtonGradient)`
+  margin-bottom: 10;
+  width: 100%;
+`;
+
 @connect(null, {
   loginAsync: userActions.loginAsync,
+  showAlert: notificationActions.showAlert,
 })
 class StartScreen extends Component {
   static navigationOptions = {
@@ -86,19 +88,23 @@ class StartScreen extends Component {
 
   get accessButtons() {
     return (
-      <Card marginBetweenChildrens centerItemsVertical centerItemsHorizontal height={200}>
-        <FormattedMessage id="startScreen.fbButton">{(txt) => (
-          <ContainerButton iconColor={Palette.white.css()} leftIcon="logo-facebook" pill backgroundColor={colors.facebook} title={txt} />
-        )}</FormattedMessage>
+      // TODO: Commented until we can login with fb and twitter
 
-        <FormattedMessage id="startScreen.twButton">{(txt) => (
-          <ContainerButton iconColor={Palette.white.css()} leftIcon="logo-twitter" pill backgroundColor={colors.twitter} title={txt} />
-        )}</FormattedMessage>
+      // <Card marginBetweenChildrens centerItemsVertical centerItemsHorizontal height={200}>
+      //   {/*
+      //   <FormattedMessage id="startScreen.fbButton">{(txt) => (
+      //     <ContainerButton onPress={() => showAlert({ message: 'Hola' })} iconColor={Palette.white.css()} leftIcon="logo-facebook" pill backgroundColor={colors.facebook} title={txt} />
+      //   )}</FormattedMessage>
 
-        <TouchableOpacity onPress={this.goToSignInScene}>
-          <Link highlight><FormattedMessage id="startScreen.signInEmail" /></Link>
-        </TouchableOpacity>
-      </Card>
+      //   <FormattedMessage id="startScreen.twButton">{(txt) => (
+      //     <ContainerButton iconColor={Palette.white.css()} leftIcon="logo-twitter" pill backgroundColor={colors.twitter} title={txt} />
+      //   )}</FormattedMessage>
+      //   */}
+      //   </Card>
+      <FormattedMessage id="startScreen.signInEmail">{(txt) => (
+        <ContainerButtonGradient pill onPress={this.goToSignInScene} title={txt} />
+      )
+      }</FormattedMessage>
     )
   }
 
@@ -121,7 +127,7 @@ class StartScreen extends Component {
                     </Typo.TextBody>
 
                     <TouchableOpacity onPress={this.goToRegisterScene}>
-                      <Typo.TextBody highlight bold><FormattedMessage id="commons.createAccount"/></Typo.TextBody>
+                      <Typo.TextBody highlight bold> <FormattedMessage id="commons.createAccount"/></Typo.TextBody>
                     </TouchableOpacity>
                   </InlineText>
                 </Card>

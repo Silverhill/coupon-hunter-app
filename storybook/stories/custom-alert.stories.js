@@ -16,7 +16,6 @@ class CustomAlertClass extends PureComponent {
   }
 
   render() {
-    const alert = new CustomAlert;
     const actionsAlert = [
       {
         text: 'Ok, Sure!',

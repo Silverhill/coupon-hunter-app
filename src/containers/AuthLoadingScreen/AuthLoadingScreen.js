@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
-  StyleSheet,
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { HEADER_AUTHENTICATION_KEY } from '../../constants';
-import { getAuthenticationAsync, isAuthorized } from '../../services/auth';
+import { isAuthorized } from '../../services/auth';
 // Actions
 import * as userActions from '../../actions/userActions';
 
@@ -17,8 +14,9 @@ const Container = styled(View)`
   flex: 1;
 `;
 
-@connect(state => ({
-  auth: state.user.auth,
+@connect(store => ({
+  auth: store.user.auth,
+  alert: store.notifications.alert,
 }), {
   loginAsync: userActions.loginAsync,
 })

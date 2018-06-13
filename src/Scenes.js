@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, AsyncStorage, NativeModules } from 'react-native';
+import { Text, View } from 'react-native';
 import { AppLoading, DangerZone } from 'expo';
 import ModalHost from 'expo/src/modal/ModalHost';
-import { connect, Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
+import styled from 'styled-components/native';
 
 import { ApolloClient } from 'apollo-client';
 import { onError } from 'apollo-link-error';
 import { withClientState } from 'apollo-link-state';
-import { BatchHttpLink } from "apollo-link-batch-http";
 import { ApolloProvider } from 'react-apollo';
 import { toIdValue, getMainDefinition } from 'apollo-utilities';
-import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, concat, split } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
+import NotificationSystem from './NotificationSystem';
 
 import { getAuthenticationAsync, isAuthorized, removeAuthenticationAsync } from './services/auth';
 
@@ -120,11 +120,7 @@ export default class Scenes extends Component {
           if (graphQLErrors)
             graphQLErrors.map(({ message, locations, path }) => {
               if(/Invalid token/gi.test(message) || /Invalid signature/gi.test(message)) {
-                this.setState(prevState => ({
-                  authorized: false,
-                }), () => {
-                  removeAuthenticationAsync();
-                })
+                this.setState(prevState => ({authorized: false}), () => removeAuthenticationAsync());
               }
 
               return console.log(
@@ -174,7 +170,10 @@ export default class Scenes extends Component {
             textComponent={Text}
           >
             <ModalHost>
-              <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
+              <AppContainer>
+                <StackNavigator screenProps={{ changeLoginState: this.handleChangeLoginState }}/>
+                <NotificationSystem />
+              </AppContainer>
             </ModalHost>
           </IntlProvider>
         </Provider>
@@ -182,3 +181,7 @@ export default class Scenes extends Component {
     );
   }
 }
+
+const AppContainer = styled(View)`
+  flex: 1;
+`

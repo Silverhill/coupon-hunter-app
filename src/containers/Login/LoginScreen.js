@@ -15,8 +15,8 @@ const Container = styled(View)`
   background-color: white;
 `;
 
-@connect(state => ({
-  auth: state.user.auth,
+@connect(store => ({
+  auth: store.user.auth,
 }), {
   logInAsync: userActions.loginAsync,
 })
