@@ -8,14 +8,16 @@ import Campaign from '../Campaigns/Campaign';
 import { HeaderBar, Typo } from 'coupon-components-native';
 import { Queries, Subscriptions } from '../../graphql';
 import Campaigns from './Campaigns';
+import Loading from '../Animations/Loading';
 
 class AllCampaigns extends PureComponent {
   render() {
-    const { onPressCampaign, onCatchCampaign } = this.props;
+    const { onPressCampaign, onCatchCampaign, intl } = this.props;
     return (
       <Query query={Queries.ALL_CAMPAIGNS}>
       {({ loading, data, error, subscribeToMore, ...results }) => {
-        if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>;
+
+        if(loading) return <Loading loadingText={ intl.formatMessage({ id:'todayScreen.loading' })} />;
         else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>
 
         const { allCampaigns: { campaigns } } = data;

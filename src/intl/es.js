@@ -41,6 +41,7 @@ export default {
   },
 
   loginScreen: {
+    loading: 'Iniciando Sesión...',
     form: {
       fields: {
         email: {
@@ -79,11 +80,13 @@ export default {
   todayScreen: {
     otherDays: 'Todas las Promociones',
     header: 'Promociones',
+    loading: 'Cargando Promociones',
   },
 
   walletScreen: {
     titlePage: 'Mi Wallet',
     subTitle: 'Mis Promociones',
+    loading: 'Cargando mis promociones...',
     emptyStates: {
       hunted: 'Cada vez que obtengas una promoción se guardará aquí en tu wallet, hasta que las puedas reclamar o que la campaña expire.',
       used: 'Cada vez que una promoción se utiliza de manera exitosa se guardara como canjeada en esta sección de tu wallet.',

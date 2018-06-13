@@ -9,7 +9,7 @@ import uuid from 'uuid/v4';
 // Notification Icons
 
 class NotificationsScene extends Component {
-  _keyExtractor = (item, index) => uuid();
+  _keyExtractor = () => uuid();
   _renderItem = ({ item }) => {
 
     return (
@@ -33,12 +33,12 @@ class NotificationsScene extends Component {
           <HeaderBar title={pageTitle} />
         </HeaderBarContainer>
 
-        <FlatList
+        {/*<FlatList
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
           data={tmpData}
           ItemSeparatorComponent={SeparatorLine}
-        />
+        />*/}
       </Container>
     )
   }

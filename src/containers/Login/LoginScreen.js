@@ -65,7 +65,6 @@ class LoginScreen extends Component {
       this.showLoading(false);
     }
 
-
   }
 
   get _renderFormSteps() {
@@ -94,6 +93,7 @@ class LoginScreen extends Component {
 
   render() {
     const { waitingSignIn } = this.state;
+    const { intl } = this.props;
 
     return (
       <ApolloConsumer>{client => {
@@ -104,7 +104,7 @@ class LoginScreen extends Component {
               steps={this._renderFormSteps}
               onSubmit={(form) => this.handleSubmit(form, client)}
             />
-            <Loader visible={waitingSignIn} />
+            <Loader visible={waitingSignIn} loadingText={intl.formatMessage({id: 'loginScreen.loading'})}/>
           </Container>
         );
       }}</ApolloConsumer>

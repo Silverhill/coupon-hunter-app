@@ -17,7 +17,7 @@ class Like extends Component {
   }
 
   render() {
-    const { size, style } = this.props
+    const { size = 100, style } = this.props
     return (
       <Container style={style}>
         <LottieView

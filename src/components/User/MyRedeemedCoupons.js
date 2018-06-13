@@ -10,6 +10,7 @@ import uuid from 'uuid/v4';
 import Campaign from '../Campaigns/Campaign';
 import { Queries, Subscriptions } from '../../graphql';
 import coupon_redeemed from '../../assets/images/coupon_redeemed_example.png';
+import Loading from '../Animations/Loading';
 
 let unsubscribe = null;
 class MyRedeemCoupons extends PureComponent {
@@ -41,7 +42,7 @@ class MyRedeemCoupons extends PureComponent {
     return (
       <Query query={Queries.MY_REDEEMED_COUPONS}>
       {({ loading, data, error, subscribeToMore }) => {
-        if(loading) return <Typo.TextBody>Loading...</Typo.TextBody>;
+        if(loading) return <Loading loadingText={<FormattedMessage id='walletScreen.loading' />} />;
         else if(error) return <Typo.TextBody>{`Error:${error.name} ${error.message}`}</Typo.TextBody>
 
         const hasCoupons = data.myRedeemedCoupons.length > 0;
