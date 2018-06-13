@@ -118,8 +118,8 @@ const EmptyContainer = styled(View)`
 `;
 
 const EmptyState = styled(Image)`
-  width: 200;
-  margin-bottom: 20;
+  width: 250;
+  margin-bottom: 10;
 `;
 
 

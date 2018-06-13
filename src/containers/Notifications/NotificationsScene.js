@@ -54,7 +54,7 @@ class NotificationsScene extends Component {
 }
 
 const NotificationImage = styled(Image)`
-  width: 150;
+  width: 250;
 `;
 
 const EmptyNotificationContainer = styled(View)`
