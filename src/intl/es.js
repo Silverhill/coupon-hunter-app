@@ -102,6 +102,9 @@ export default {
 
   notifications: {
     titlePage: 'Notificaciones',
+    emptyState: {
+      placeholder: 'No tienes notificaciones por el momento',
+    },
   },
 
   profileScene: {

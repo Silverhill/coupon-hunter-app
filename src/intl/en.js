@@ -102,6 +102,9 @@ export default {
 
   notifications: {
     titlePage: 'Notifications',
+    emptyState: {
+      placeholder: 'You do not have notifications',
+    },
   },
 
   profileScene: {

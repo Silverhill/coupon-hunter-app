@@ -12,7 +12,7 @@ import uuid from 'uuid/v4';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { Queries } from '../../graphql';
 import adam from '../../assets/images/adam.png';
-import stars from '../../assets/images/stars.png';
+import achievements from '../../assets/images/recommended.png';
 
 @connect((state) => ({
   auth: state.user.auth,
@@ -155,7 +155,7 @@ class ProfileScene extends Component {
 
                     <RowContent fullWidth horizontalCenter>
                       <ColumnGroup style={{ paddingVertical: 20, paddingHorizontal: 40 }} fullWidth horizontalCenter verticalCenter backgroundColor={Palette.neutralLight.css()}>
-                        <WipImage resizeMode='contain' source={stars} />
+                        <WipImage resizeMode='contain' source={achievements} />
                         <Typo.TextBody bold small secondary center>Pronto podrás acceder a nuestro sistema de logros, cumple con los retos y tendrás recompensas en el mundo real.</Typo.TextBody>
                       </ColumnGroup>
                     </RowContent>

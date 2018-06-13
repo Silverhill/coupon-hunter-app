@@ -26,6 +26,8 @@ export default {
     require('./images/wip_achievements.png'),
     require('./images/coupon_catch_example.png'),
     require('./images/coupon_redeemed_example.png'),
+    require('./images/recommended.png'),
+    require('./images/notifications.png'),
   ],
 
   /**

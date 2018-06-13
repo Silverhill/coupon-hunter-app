@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { View, FlatList } from 'react-native';
+import { View, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { Typo, HeaderBar, Notification } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { injectIntl } from 'react-intl';
 import uuid from 'uuid/v4';
+import notification_empty from '../../assets/images/notifications.png';
 
 // Notification Icons
 
@@ -33,6 +34,14 @@ class NotificationsScene extends Component {
           <HeaderBar title={pageTitle} />
         </HeaderBarContainer>
 
+        <EmptyNotificationContainer>
+          <NotificationImage
+            source={notification_empty}
+            resizeMode='contain'
+          />
+          <Typo.TextBody secondary center>{intl.formatMessage({ id: 'notifications.emptyState.placeholder' })}</Typo.TextBody>
+        </EmptyNotificationContainer>
+
         {/*<FlatList
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
@@ -43,6 +52,16 @@ class NotificationsScene extends Component {
     )
   }
 }
+
+const NotificationImage = styled(Image)`
+  width: 150;
+`;
+
+const EmptyNotificationContainer = styled(View)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Container = styled(View)`
   flex: 1;

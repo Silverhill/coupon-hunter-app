@@ -82,12 +82,11 @@ class WalletScene extends PureComponent {
   render() {
     const { intl } = this.props;
     const title = intl.formatMessage({ id: 'walletScreen.titlePage' });
-    const subTitle = intl.formatMessage({ id: 'walletScreen.subTitle' });
 
     return (
       <WalletContainer>
         <HeaderBarContainer>
-          <HeaderBar title={title} subTitle={subTitle}/>
+          <HeaderBar title={title} />
         </HeaderBarContainer>
 
         <TabViewAnimated
