@@ -19,6 +19,9 @@ export default {
     done: 'Done',
     skip: 'Skip',
     thanks: 'Thanks',
+    pickPhoto: 'Pick a Photo',
+    takePhoto: 'Take a Photo',
+    updateProfile: 'Update Profile',
 
     messages: {
       alert: {
@@ -105,7 +108,8 @@ export default {
     titlePage: 'Profile',
 
     edit: {
-      titlePage: 'Edit Profile'
+      titlePage: 'Edit Profile',
+      updatingProfile: 'Updating Profile...',
     }
   },
 

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Button, HeaderBar, Typo, ModalOptions, Input, Avatar, PhotoPicker } from 'coupon-components-native';
+import { View } from 'react-native';
+import { HeaderBar, Typo, Input, Avatar, PhotoPicker, Loader } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import styled, { css } from 'styled-components/native';
-import { Entypo } from '@expo/vector-icons';
 import { Query, Mutation } from 'react-apollo';
 import { ReactNativeFile } from 'apollo-upload-client';
 import uuid from 'uuid/v4';
@@ -17,6 +16,7 @@ class ProfileEditScene extends Component {
   state = {
     currentAvatar: null,
     user: {},
+    isUpdating: false,
   }
 
   goToBack = () => {
@@ -32,11 +32,11 @@ class ProfileEditScene extends Component {
   }
 
   render() {
-    let { currentAvatar, user } = this.state;
+    let { currentAvatar, user, isUpdating } = this.state;
     const { intl } = this.props;
 
     const RightButtonText = (
-      <Typo.TextBody>{intl.formatMessage({ id: 'commons.done' })}</Typo.TextBody>
+      <Typo.TextBody color={Palette.secondaryAccent.css()}>{intl.formatMessage({ id: 'commons.updateProfile' })}</Typo.TextBody>
     );
 
     if(Object.keys(currentAvatar || {}).length > 0) {
@@ -57,25 +57,34 @@ class ProfileEditScene extends Component {
         <Mutation
           variables={user}
           update={UpdateQuery.me}
-          mutation={Mutations.UPDATE_USER}>{(updateUser, { loading }) => (
-          <HeaderBarContainer>
-            <FormattedMessage id="profileScene.edit.titlePage">{(txt) => (
-              <HeaderBar
-                backButton={this.goToBack}
-                title={txt}
-                loading={loading}
-                rightButton={RightButtonText}
-                onPressRightButton={async () => {
-                  try {
-                    if(Object.keys(user).length > 0) await updateUser();
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}
-              />
-            )}</FormattedMessage>
-          </HeaderBarContainer>
-        )}
+          mutation={Mutations.UPDATE_USER}>{(updateUser, { loading }) => {
+            return (
+              <HeaderBarContainer>
+                <FormattedMessage id="profileScene.edit.titlePage">{(txt) => (
+                  <HeaderBar
+                    backButton={this.goToBack}
+                    title={txt}
+                    // loading={loading}
+                    rightButton={RightButtonText}
+                    onPressRightButton={async () => {
+                      this.setState({ isUpdating: true });
+
+                      try {
+                        if(Object.keys(user).length > 0) {
+                          await updateUser()
+                        }
+                      } catch (error) {
+                        console.log(error);
+                      }
+
+                      this.setState({ isUpdating: false });
+                    }}
+                  />
+                )}</FormattedMessage>
+              </HeaderBarContainer>
+            )
+          }
+        }
         </Mutation>
 
         <Content>
@@ -101,7 +110,9 @@ class ProfileEditScene extends Component {
 
                     <LinkChangePhoto
                       onPickerImage={(result) => this.setState({ currentAvatar: result })}
-                      cancelLabel='Cancelar'
+                      pickPhotoLabel={intl.formatMessage({ id: 'commons.pickPhoto' })}
+                      takePhotoLabel={intl.formatMessage({ id: 'commons.takePhoto' })}
+                      cancelLabel={intl.formatMessage({ id: 'commons.cancel' })}
                     >
                       <Typo.TextBody  color={Palette.secondaryAccent.css()}>Cambiar foto de perfil</Typo.TextBody>
                     </LinkChangePhoto>
@@ -131,6 +142,12 @@ class ProfileEditScene extends Component {
               </Content>
             )
           }}</Query>
+
+          {/* Loader */}
+          <Loader
+            visible={isUpdating}
+            loadingText={intl.formatMessage({id: 'profileScene.edit.updatingProfile'})}
+          />
         </Content>
       </ProfileContainer>
     )

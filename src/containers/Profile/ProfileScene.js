@@ -41,14 +41,31 @@ class ProfileScene extends Component {
     this.setModalVisible(true);
   }
 
-  render() {
-    const { openOptions, currentAvatar } = this.state;
+  get modalOptions() {
     const { navigation } = this.props;
 
-    const options = [
-      {label: <FormattedMessage id="commons.editProfile" />, id: uuid(), key: 'edit' },
+    return [
+      {
+        label: <FormattedMessage id="commons.editProfile" />,
+        id: uuid(),
+        key: 'edit',
+        fn: () => {
+          navigation.navigate('ProfileEdit');
+          this.setModalVisible(false);
+        }
+      },
+      {
+        label: <FormattedMessage id="commons.logOut" />,
+        id: uuid(),
+        key: 'logout',
+        fn: () => this.signOut(),
+        cancel: true,
+      },
     ];
+  }
 
+  render() {
+    const { openOptions, currentAvatar } = this.state;
     // TODO: add profile phrase o mini bio
     return (
       <ProfileContainer>
@@ -144,16 +161,6 @@ class ProfileScene extends Component {
                     </RowContent>
                   </ColumnGroup>
                 </RowContent>
-
-                {/* Footer Log Out */}
-                <RowContent fullWidth horizontalCenter verticalCenter>
-                  <LogOutButton
-                    onPress={this.signOut}
-                    backgroundColor={Palette.accent.css()}
-                    shadow={false}
-                    title='Cerrar Sesión'
-                  />
-                </RowContent>
               </Content>
             )
           }}</Query>
@@ -162,15 +169,7 @@ class ProfileScene extends Component {
 
         <ModalOptions
           isOpen={openOptions}
-          // opacity={0.7}
-          cancelLabel={<FormattedMessage id="commons.cancel" />}
-          options={options}
-          onClickOption={(option) => {
-            if(option.key === 'edit') {
-              navigation.navigate('ProfileEdit');
-              this.setModalVisible(false);
-            }
-          }}
+          options={this.modalOptions}
           onCloseRequest={() => this.setModalVisible(false)}
         />
 
