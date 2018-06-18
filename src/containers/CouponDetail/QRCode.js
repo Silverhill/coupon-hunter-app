@@ -6,7 +6,8 @@ import { Typo } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import Code from './Code';
 import RedeemedConfirmation from './RedeemedConfimation';
-
+import { connect } from 'react-redux';
+import * as notificationActions from '../../actions/notificationActions';
 
 const Container = styled(View)`
   box-shadow: 5px 5px 5px ${Palette.dark.alpha(0.4).css()};
@@ -23,10 +24,19 @@ const Container = styled(View)`
   align-items: center;
 `;
 
+@connect(null, {
+  showAlert: notificationActions.showAlert,
+})
 class QRCode extends Component {
-  render() {
-    const { value, redeemed = false, catched, bgColor } = this.props;
+  // componentWillReceiveProps(nextProps) {
+  //   const { showAlert } = this.props;
+  //   if(nextProps.redeemed) {
+  //     showAlert({ message: 'Tu promoción se ha reclamado exitosamente' });
+  //   }
+  // }
 
+  render() {
+    const { value, redeemed = false, catched, bgColor, showAlert} = this.props;
     return (
       <Container>
         {!redeemed && <Code bgColor={bgColor} value={value} />}

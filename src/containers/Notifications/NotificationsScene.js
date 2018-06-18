@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Image } from 'react-native';
+import { View, Image, SafeAreaView } from 'react-native';
 import styled from 'styled-components/native';
 import { Typo, HeaderBar, Notification } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
@@ -63,7 +63,7 @@ const EmptyNotificationContainer = styled(View)`
   justify-content: center;
 `;
 
-const Container = styled(View)`
+const Container = styled(SafeAreaView)`
   flex: 1;
 `;
 

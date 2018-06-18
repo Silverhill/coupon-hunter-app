@@ -4,3 +4,4 @@ export { default as assetsService } from './assets';
 export { default as statusService } from './status';
 export { default as UpdateQuery } from './updateQuery';
 export { default as normalize } from './normalize-data';
+export { default as InfoLevel } from './level';

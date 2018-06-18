@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { Achievement, HeaderBar, Typo, ModalOptions, Avatar, Bar, Button } from 'coupon-components-native';
 import { Palette } from 'coupon-components-native/styles';
 import { FormattedMessage } from 'react-intl';
@@ -12,6 +12,7 @@ import uuid from 'uuid/v4';
 import { removeAuthenticationAsync } from '../../services/auth';
 import { Queries } from '../../graphql';
 import adam from '../../assets/images/adam.png';
+import { InfoLevel } from '../../services';
 import achievements from '../../assets/images/recommended.png';
 
 @connect((state) => ({
@@ -68,112 +69,119 @@ class ProfileScene extends Component {
     const { openOptions, currentAvatar } = this.state;
     // TODO: add profile phrase o mini bio
     return (
-      <ProfileContainer>
-        <HeaderBarContainer>
-          <FormattedMessage id="profileScene.titlePage">{(txt) => (
-            <HeaderBar title={txt} />
-          )}</FormattedMessage>
-        </HeaderBarContainer>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <ProfileContainer>
+          <HeaderBarContainer>
+            <FormattedMessage id="profileScene.titlePage">{(txt) => (
+              <HeaderBar title={txt} />
+            )}</FormattedMessage>
+          </HeaderBarContainer>
 
-        <Content>
-          <Query query={Queries.ME}>{({ data: { me }, loading, error }) => {
-            if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
-            else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
+          <Content>
+            <Query query={Queries.ME}>{({ data: { me }, loading, error }) => {
+              if(loading) return <Typo.TextBody>loading...</Typo.TextBody>;
+              else if(error) return <Typo.TextBody>{error.message}</Typo.TextBody>;
 
-            let avatarProfile = adam;
-            if(me.image) {
-              avatarProfile = { uri: me.image }
-            }
+              let avatarProfile = adam;
+              if(me.image) {
+                avatarProfile = { uri: me.image }
+              }
 
-            return (
-              <Content>
-                {/* Profile */}
-                <RowContent>
-                  <Avatar size={70} source={avatarProfile} />
-                  <ColumnGroup style={{ marginLeft: 10 }} fullWidth>
-                    <Typo.Header numberOfLines={1} normal>{me.name}</Typo.Header>
-                    <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
-                    <Typo.TextBody small secondary>{me.email}</Typo.TextBody>
-                  </ColumnGroup>
+              const profileLevel = new InfoLevel({ points: me.score });
+              const currentScore = profileLevel.points;
+              const currentLevel = profileLevel.currentLevel();
+              const percentageBar = profileLevel.percentage;
 
-                  <RowGroup>
-                    <TouchableOpacity onPress={this.onPressOptions}>
-                      <Entypo name="cog" size={30}/>
-                    </TouchableOpacity>
-                  </RowGroup>
-                </RowContent>
+              return (
+                <Content>
+                  {/* Profile */}
+                  <RowContent>
+                    <Avatar size={70} source={avatarProfile} />
+                    <ColumnGroup style={{ marginLeft: 10 }} fullWidth>
+                      <Typo.Header numberOfLines={1} normal>{me.name}</Typo.Header>
+                      <Typo.TextBody small secondary>Cafecito para el alma</Typo.TextBody>
+                      <Typo.TextBody small secondary>{me.email}</Typo.TextBody>
+                    </ColumnGroup>
 
-                {/* Status */}
-                <RowContent fullWidth horizontalCenter verticalCenter>
-                  <DividerHorizontal top />
+                    <RowGroup>
+                      <TouchableOpacity onPress={this.onPressOptions}>
+                        <Entypo name="cog" size={30}/>
+                      </TouchableOpacity>
+                    </RowGroup>
+                  </RowContent>
 
-                  <ColumnGroup fullWidth>
-                    <RowContent fullWidth spaceBetween>
-                      <Typo.Header small bold>Hunter Status</Typo.Header>
-                      <Typo.TextBody bold color={Palette.neutral.css()}>Level 1</Typo.TextBody>
-                    </RowContent>
+                  {/* Status */}
+                  <RowContent fullWidth horizontalCenter verticalCenter>
+                    <DividerHorizontal top />
 
-                    <Bar percentage={0.3}/>
+                    <ColumnGroup fullWidth>
+                      <RowContent fullWidth spaceBetween>
+                        <Typo.Header small bold>Hunter Status</Typo.Header>
+                        <Typo.TextBody bold color={Palette.neutral.css()}>Level {currentLevel} - {Math.round(percentageBar * 100)}%</Typo.TextBody>
+                      </RowContent>
 
-                    <RowContent fullWidth spaceBetween>
-                      <Typo.Header small bold>Total: 10 pts</Typo.Header>
-                      <Typo.TextBody small color={Palette.neutral.css()}>Siguiente: 100/100 pts</Typo.TextBody>
-                    </RowContent>
-                  </ColumnGroup>
-                </RowContent>
+                      <Bar percentage={percentageBar} />
 
-                {/* Stats */}
-                <RowContent fullWidth verticalCenter spaceAround>
-                  <DividerHorizontal top />
+                      <RowContent fullWidth spaceBetween>
+                        <Typo.Header small bold>Total: {currentScore} pts</Typo.Header>
+                        <Typo.TextBody small color={Palette.neutral.css()}>Siguiente Nivel: {profileLevel.pointsToNextLevel} pts</Typo.TextBody>
+                      </RowContent>
+                    </ColumnGroup>
+                  </RowContent>
 
-                  <ColumnGroup verticalCenter horizontalCenter>
-                    <Achievement color={Palette.secondaryAccent.css()} content={<Typo.Title bold inverted>120</Typo.Title>}/>
-                    <SubTitleContainer>
-                      <Typo.TextBody center small bold>Promociones Capturadas</Typo.TextBody>
-                    </SubTitleContainer>
-                  </ColumnGroup>
+                  {/* Stats */}
+                  <RowContent fullWidth verticalCenter spaceAround>
+                    <DividerHorizontal top />
 
-                  <DividerVertical />
+                    <ColumnGroup verticalCenter horizontalCenter>
+                      <Achievement color={Palette.secondaryAccent.css()} content={<Typo.Title bold inverted>120</Typo.Title>}/>
+                      <SubTitleContainer>
+                        <Typo.TextBody center small bold>Promociones Capturadas</Typo.TextBody>
+                      </SubTitleContainer>
+                    </ColumnGroup>
 
-                  <ColumnGroup verticalCenter horizontalCenter>
-                    <Achievement color={Palette.colors.aquamarine.css()} content={<Typo.Title bold inverted>50</Typo.Title>}/>
-                    <SubTitleContainer>
-                      <Typo.TextBody center small bold>Promociones Canjeadas</Typo.TextBody>
-                    </SubTitleContainer>
-                  </ColumnGroup>
-                </RowContent>
+                    <DividerVertical />
 
-                {/* Achievements */}
-                <RowContent fullWidth horizontalCenter>
-                  <DividerHorizontal top />
+                    <ColumnGroup verticalCenter horizontalCenter>
+                      <Achievement color={Palette.colors.aquamarine.css()} content={<Typo.Title bold inverted>50</Typo.Title>}/>
+                      <SubTitleContainer>
+                        <Typo.TextBody center small bold>Promociones Canjeadas</Typo.TextBody>
+                      </SubTitleContainer>
+                    </ColumnGroup>
+                  </RowContent>
 
-                  <ColumnGroup fullWidth>
-                    <RowContent fullWidth spaceBetween>
-                      <Typo.Header bold center small>Logros</Typo.Header>
-                      <Typo.Header color={Palette.neutral.css()} bold center small>0</Typo.Header>
-                    </RowContent>
+                  {/* Achievements */}
+                  <RowContent fullWidth horizontalCenter>
+                    <DividerHorizontal top />
 
-                    <RowContent fullWidth horizontalCenter>
-                      <ColumnGroup style={{ paddingVertical: 20, paddingHorizontal: 40 }} fullWidth horizontalCenter verticalCenter backgroundColor={Palette.neutralLight.css()}>
-                        <WipImage resizeMode='contain' source={achievements} />
-                        <Typo.TextBody bold small secondary center>Pronto podrás acceder a nuestro sistema de logros, cumple con los retos y tendrás recompensas en el mundo real.</Typo.TextBody>
-                      </ColumnGroup>
-                    </RowContent>
-                  </ColumnGroup>
-                </RowContent>
-              </Content>
-            )
-          }}</Query>
+                    <ColumnGroup fullWidth>
+                      <RowContent fullWidth spaceBetween>
+                        <Typo.Header bold center small>Logros</Typo.Header>
+                        <Typo.Header color={Palette.neutral.css()} bold center small>0/0</Typo.Header>
+                      </RowContent>
 
-        </Content>
+                      <RowContent fullWidth horizontalCenter>
+                        <ColumnGroup style={{ paddingVertical: 20, paddingHorizontal: 40 }} fullWidth horizontalCenter verticalCenter backgroundColor={Palette.neutralLight.css()}>
+                          <WipImage resizeMode='contain' source={achievements} />
+                          <Typo.TextBody bold small secondary center>Pronto podrás acceder a nuestro sistema de logros, cumple con los retos y tendrás recompensas en el mundo real.</Typo.TextBody>
+                        </ColumnGroup>
+                      </RowContent>
+                    </ColumnGroup>
+                  </RowContent>
+                </Content>
+              )
+            }}</Query>
 
-        <ModalOptions
-          isOpen={openOptions}
-          options={this.modalOptions}
-          onCloseRequest={() => this.setModalVisible(false)}
-        />
+          </Content>
 
-      </ProfileContainer>
+          <ModalOptions
+            isOpen={openOptions}
+            options={this.modalOptions}
+            onCloseRequest={() => this.setModalVisible(false)}
+          />
+
+        </ProfileContainer>
+      </SafeAreaView>
     )
   }
 }
@@ -196,6 +204,10 @@ const RowContent = styled(View)`
   flex-direction: row;
   align-items: center;
   background-color: ${Palette.white};
+
+  ${props => props.flexEnd && css`
+    justify-content: flex-end;
+  `};
 
   ${props => props.spaceAround && css`
     justify-content: space-around;
